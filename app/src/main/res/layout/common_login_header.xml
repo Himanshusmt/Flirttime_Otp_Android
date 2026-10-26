@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_bg"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_240sdp"
+        android:layout_marginHorizontal="@dimen/_minus20sdp"
+        android:layout_marginTop="@dimen/_minus10sdp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/img_login_new" />
+
+    <View
+        android:id="@+id/view_curve"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_minus12sdp"
+        android:background="@drawable/bg_full_loginnumber"
+        android:backgroundTint="@color/white"
+        android:visibility="visible" />
+
+    <View
+        android:id="@+id/view_spacer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_10sdp"
+        android:background="@color/white"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/iv_app_title"
+        android:layout_width="140dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/img_app_title" />
+
+</LinearLayout>

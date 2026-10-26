@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/img_splash_bg"
+    tools:context=".feature.splash.presentation.SplashActivity">
+
+    <!-- Background Wallpaper -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/img_splash_bg" />
+
+    <!-- Static Logo (kept hidden, as logo was already presented by system splash) -->
+    <ImageView
+        android:id="@+id/imgSplashLogo"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_120sdp"
+        android:layout_centerInParent="true"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/img_splash_logo"
+        android:visibility="gone" />
+
+    <!-- Animated Lottie: Plays directly as Phase 2 of the splash experience -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view"
+        android:layout_width="@dimen/_150sdp"
+        android:layout_height="@dimen/_150sdp"
+        android:layout_centerInParent="true"
+        android:visibility="visible"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="splash_animation.json"
+        app:lottie_loop="true" />
+
+</RelativeLayout>

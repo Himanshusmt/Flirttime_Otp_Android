@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true"
+    tools:context=".feature.auth.presentation.email.EmailVerifyActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/view_collapse_header"
+            layout="@layout/common_login_header" />
+
+        <LinearLayout
+            android:id="@+id/lnErrorPop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <include
+                android:id="@+id/view_error"
+                layout="@layout/common_failed_message"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/linearAccount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/linearEmailHeading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:fontFamily="@font/fredokamedium"
+                        android:letterSpacing="0"
+                        android:text="@string/account_verification"
+                        android:textColor="@color/text_gry"
+                        android:textSize="24sp"
+                        app:lineHeight="36sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/fredokaregular"
+                        android:letterSpacing="0"
+                        android:lineHeight="24sp"
+                        android:text="@string/enter_your_e_mail_adddress"
+                        android:textColor="@color/text_gry"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:background="@drawable/loginnumber_bg"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_10sdp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingVertical="@dimen/_10sdp">
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:layout_gravity="center_vertical"
+                            android:contentDescription="@null"
+                            android:src="@drawable/img_loginnumber_gmail" />
+
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/et_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/_15sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:background="@null"
+                        android:fontFamily="@font/fredokaregular"
+                        android:hint="@string/you_mail_here"
+                        android:imeOptions="actionDone"
+                        android:inputType="textEmailAddress"
+                        android:maxLength="320"
+                        android:textColor="@color/btn_border"
+                        android:textColorHint="@color/light_gry"
+                        android:textSize="@dimen/_13ssp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="17dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:letterSpacing="0"
+                    android:text="@string/flirtime_will_send_you_a_mail_with_a_verification_code_message_and_data_rates_may_apply"
+                    android:textColor="@color/light_gry"
+                    android:textSize="12sp"
+                    app:lineHeight="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_secure_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="7dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:textColor="@color/light_gry"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/tvContinue"
+                    style="@style/common_style_button_new"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:alpha="0.5"
+                    android:enabled="false"
+                    android:text="@string/continue_" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:text="@string/or_sign_in_with"
+                    android:textColor="@color/light_gry"
+                    android:textSize="13sp"
+                    app:lineHeight="18sp" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/_10sdp">
+
+                    <LinearLayout
+                        android:id="@+id/linearPhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/loginnumber_bg"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="@dimen/_30sdp"
+                        android:paddingVertical="@dimen/_7sdp">
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:contentDescription="@null"
+                            android:padding="@dimen/_2sdp"
+                            android:src="@drawable/img_phone" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linearGoogle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_toEndOf="@id/linearPhone"
+                        android:background="@drawable/loginnumber_bg"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="@dimen/_30sdp"
+                        android:paddingVertical="@dimen/_7sdp">
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:contentDescription="@null"
+                            android:padding="@dimen/_2sdp"
+                            android:src="@drawable/img_login_google"
+                            app:tint="@color/btn_border" />
+
+                    </LinearLayout>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linearAccount"
+                android:layout_alignParentBottom="true"
+                android:layout_weight="1"
+                android:gravity="bottom"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_privacy_policy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvContinue"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_marginBottom="24dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:gravity="center_horizontal|bottom"
+                    android:letterSpacing="0"
+                    android:textColor="@color/btn_border"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</ScrollView>

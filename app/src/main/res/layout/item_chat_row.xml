@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="10dp">
+
+    <!-- Avatar Container with Optional Green Story Ring and Verified Badge -->
+    <FrameLayout
+        android:layout_width="56dp"
+        android:layout_height="56dp">
+
+        <!-- Outer Green/Teal Ring -->
+        <View
+            android:id="@+id/viewStoryRing"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_avatar_ring_green"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!-- User Avatar with CenterCrop and Circle Rounding -->
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ivAvatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            app:actualImageScaleType="centerCrop"
+            app:roundAsCircle="true" />
+
+        <!-- Verified Badge on Bottom-Right -->
+        <ImageView
+            android:id="@+id/ivVerifiedBadge"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="bottom|end"
+            android:contentDescription="Verified"
+            android:src="@drawable/verified_badge"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </FrameLayout>
+
+    <!-- Center Column: Contact Name and Last Message Preview -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvContactName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/fredokasemibold"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="#18181B"
+            android:textSize="15.5sp"
+            tools:text="Sophia Carter" />
+
+        <!-- Message Preview Row -->
+        <LinearLayout
+            android:id="@+id/layoutMessagePreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Red Double-Check Icon (for sent messages) -->
+            <ImageView
+                android:id="@+id/ivDoubleCheck"
+                android:layout_width="16dp"
+                android:layout_height="12dp"
+                android:layout_marginEnd="4dp"
+                android:contentDescription="Status"
+                android:src="@drawable/ic_double_check_red"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <!-- Last Message Text -->
+            <TextView
+                android:id="@+id/tvLastMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/fredokaregular"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="#71717A"
+                android:textSize="13.5sp"
+                tools:text="There's a live music night near my place..." />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Right Column: Timestamp & Optional Unread Counter Badge -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end|center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvTimestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredokaregular"
+            android:includeFontPadding="false"
+            android:textColor="#8E8E93"
+            android:textSize="12sp"
+            tools:text="23 hr ago" />
+
+        <!-- Red Circular Unread Badge -->
+        <TextView
+            android:id="@+id/tvUnreadBadge"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_unread_badge_red"
+            android:fontFamily="@font/fredokasemibold"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:visibility="gone"
+            tools:text="1"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+</LinearLayout>

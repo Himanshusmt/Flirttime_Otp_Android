@@ -1,0 +1,42 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Ribbon loops -->
+    <path
+        android:fillColor="#F4F5F2"
+        android:pathData="M31,25 C21,24 14,17 17,12 C20,7 29,12 32,22 C34,12 43,7 46,12 C49,17 42,24 33,25 Z"
+        android:strokeColor="#D9DDD8"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1" />
+
+    <!-- Gift box lid -->
+    <path
+        android:fillColor="#F4F5F2"
+        android:pathData="M14.5,27 H49.5 A1.5,1.5 0 0,1 51,28.5 V33.5 A1.5,1.5 0 0,1 49.5,35 H14.5 A1.5,1.5 0 0,1 13,33.5 V28.5 A1.5,1.5 0 0,1 14.5,27 Z"
+        android:strokeColor="#D9DDD8"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1" />
+
+    <!-- Gift box base -->
+    <path
+        android:fillColor="#F4F5F2"
+        android:pathData="M18.5,35 H45.5 A1.5,1.5 0 0,1 47,36.5 V53.5 A1.5,1.5 0 0,1 45.5,55 H18.5 A1.5,1.5 0 0,1 17,53.5 V36.5 A1.5,1.5 0 0,1 18.5,35 Z"
+        android:strokeColor="#D9DDD8"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1" />
+
+    <!-- Ribbon stripe -->
+    <path
+        android:fillColor="#F4F5F2"
+        android:pathData="M29,27 H35 V55 H29 Z" />
+
+    <!-- Center vertical line -->
+    <path
+        android:pathData="M32,27 V55"
+        android:strokeColor="#C9D0CA"
+        android:strokeWidth="1.2" />
+
+</vector>

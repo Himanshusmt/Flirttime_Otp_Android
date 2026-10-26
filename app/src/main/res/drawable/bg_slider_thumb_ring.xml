@@ -1,0 +1,12 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="22dp"
+    android:height="22dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Inner White Circle with Outer Brand Red Stroke -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#DE2D2D"
+        android:strokeWidth="3.0"
+        android:pathData="M12,12m-9.5,0a9.5,9.5 0,1 1,19,0a9.5,9.5 0,1 1,-19,0" />
+</vector>

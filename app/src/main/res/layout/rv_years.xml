@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/yearTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/fredokamedium"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/_8sdp"
+        android:paddingVertical="@dimen/_18sdp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_11sdp" />
+
+</LinearLayout>

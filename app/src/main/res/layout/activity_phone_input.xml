@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true"
+    android:clipToPadding="false"
+    tools:context=".feature.auth.presentation.phone.PhoneInputActivity">
+
+    <LinearLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <!-- Top Header Wave and Brand Logo -->
+        <include
+            android:id="@+id/view_collapse_header"
+            layout="@layout/common_login_header" />
+
+        <!-- Welcome Text Header -->
+        <LinearLayout
+            android:id="@+id/linearWelcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:fontFamily="@font/fredokamedium"
+                android:letterSpacing="0"
+                android:text="@string/welcome"
+                android:textColor="@color/text_gry"
+                android:textSize="24sp"
+                app:lineHeight="36sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/fredokaregular"
+                android:letterSpacing="0"
+                android:text="@string/enter_your_mobile_number"
+                android:textColor="@color/text_gry"
+                android:textSize="18sp"
+                app:lineHeight="24sp" />
+
+        </LinearLayout>
+
+        <!-- Inline Error Banner -->
+        <include
+            android:id="@+id/view_error"
+            layout="@layout/common_failed_message"
+            android:visibility="gone" />
+
+        <!-- Phone Input Container -->
+        <LinearLayout
+            android:id="@+id/linearMobile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:background="@drawable/loginnumber_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/_5sdp"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_10sdp">
+
+            <!-- Country Selector -->
+            <LinearLayout
+                android:id="@+id/ll_selectcountry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imgFlag"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_28sdp"
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="@null"
+                    android:src="@drawable/img_loginnumber_flag" />
+
+                <TextView
+                    android:id="@+id/tvMobileNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:text="+91"
+                    android:textColor="@color/text_gry"
+                    android:textSize="@dimen/_13ssp" />
+
+                <ImageView
+                    android:id="@+id/imgDown"
+                    android:layout_width="@dimen/_10sdp"
+                    android:layout_height="@dimen/_10sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/img_downvector" />
+
+            </LinearLayout>
+
+            <!-- Phone Number Edit Input -->
+            <EditText
+                android:id="@+id/et_mobile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:fontFamily="@font/fredokaregular"
+                android:hint="@string/mobile_number"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:maxLength="10"
+                android:minHeight="48dp"
+                android:textColor="@color/btn_border"
+                android:textColorHint="@color/login_phone_msg"
+                android:textSize="@dimen/_13ssp" />
+
+        </LinearLayout>
+
+        <!-- Terms Disclaimer -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="17dp"
+            android:fontFamily="@font/fredokaregular"
+            android:letterSpacing="0"
+            android:lineHeight="15sp"
+            android:text="@string/flirtime_will_send_you_a_text_with_a_verification_code_n_message_and_data_rates_may_apply"
+            android:textColor="@color/login_phone_msg"
+            android:textSize="12sp" />
+
+        <!-- Continue Button -->
+        <Button
+            android:id="@+id/tvContinue"
+            style="@style/common_style_button_new"
+            android:layout_marginTop="19dp"
+            android:alpha="0.5"
+            android:enabled="false"
+            android:text="@string/continue_" />
+
+        <!-- Social Login Divider -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="13dp"
+            android:fontFamily="@font/fredokaregular"
+            android:letterSpacing="0"
+            android:lineHeight="18sp"
+            android:text="@string/or_sign_in_with"
+            android:textColor="@color/login_phone_msg"
+            android:textSize="13sp" />
+
+        <!-- Social Buttons Container -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:orientation="horizontal">
+
+            <!-- Email Icon Button -->
+            <LinearLayout
+                android:id="@+id/iv_mail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/loginnumber_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingHorizontal="@dimen/_32sdp"
+                android:paddingVertical="@dimen/_8sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/img_loginnumber_gmail" />
+            </LinearLayout>
+
+            <!-- Google Icon Button -->
+            <LinearLayout
+                android:id="@+id/linearGoogleLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:background="@drawable/loginnumber_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingHorizontal="@dimen/_32sdp"
+                android:paddingVertical="@dimen/_8sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:contentDescription="@null"
+                    android:padding="@dimen/_2sdp"
+                    android:src="@drawable/img_login_google"
+                    app:tint="@color/btn_border" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Bottom Spacer to Push Privacy Policy to Bottom -->
+        <LinearLayout
+            android:id="@+id/linear_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="bottom"
+            android:orientation="vertical">
+
+            <!-- Privacy Policy Footer -->
+            <TextView
+                android:id="@+id/tv_privacy_policy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginBottom="24dp"
+                android:fontFamily="@font/fredokaregular"
+                android:gravity="center_horizontal"
+                android:letterSpacing="0"
+                android:text="@string/by_continuing_i_accept_flirt_time_s_privacy_policy"
+                android:textColor="@color/btn_border"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

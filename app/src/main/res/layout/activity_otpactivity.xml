@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true"
+    tools:context=".feature.auth.presentation.otp.OtpActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/pdialog"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:layout_centerInParent="true"
+            android:indeterminateTint="@color/btn_border"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_15sdp"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/view_collapse_header"
+                layout="@layout/common_login_header" />
+
+            <LinearLayout
+                android:id="@+id/linearOtpMsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:fontFamily="@font/fredokamedium"
+                    android:letterSpacing="0"
+                    android:text="@string/welcome"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    app:lineHeight="36sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:letterSpacing="0"
+                    android:text="@string/enter_the_verification_code"
+                    android:textColor="@color/text_gry"
+                    android:textSize="18sp"
+                    app:lineHeight="24sp" />
+
+            </LinearLayout>
+
+            <include
+                android:id="@+id/view_error"
+                layout="@layout/common_failed_message"
+                android:visibility="gone" />
+
+            <com.flirttime.core.ui.otpview.OtpTextView
+                android:id="@+id/otp_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:textColor="@color/black"
+                app:bar_enabled="true"
+                app:bar_height="2.5dp"
+                app:height="@dimen/_40sdp"
+                app:hide_otp="false"
+                app:length="6"
+                app:otp=""
+                app:otp_text_size="@dimen/_28sdp"
+                app:width="@dimen/_40sdp" />
+
+            <TextView
+                android:id="@+id/tv_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:fontFamily="@font/fredokaregular"
+                android:textColor="@color/light_gry"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvEmailVerify"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:fontFamily="@font/fredokaregular"
+                android:textColor="@color/light_gry"
+                android:textSize="@dimen/_9ssp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/tvContinue"
+                style="@style/common_style_button_new"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:alpha="0.5"
+                android:enabled="false"
+                android:text="@string/verify" />
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/fredokamedium"
+                android:text="@string/_1_00"
+                android:textColor="@color/btn_border"
+                android:textSize="@dimen/_10ssp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_resent_"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokaregular"
+                    android:text="didn't get OTP ? "
+                    android:textColor="@color/light_gry"
+                    android:textSize="@dimen/_10ssp" />
+
+                <TextView
+                    android:id="@+id/tv_resent_otp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.5"
+                    android:fontFamily="@font/fredokamedium"
+                    android:text="@string/resend"
+                    android:textColor="@color/btn_border"
+                    android:textSize="@dimen/_10ssp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_privacy_policy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/btn_border"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+</ScrollView>

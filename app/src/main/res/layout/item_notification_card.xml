@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="5dp"
+    android:background="@drawable/bg_notification_card_unread"
+    android:clickable="true"
+    android:focusable="true"
+    android:paddingStart="14dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="12dp">
+
+    <!-- Avatar Container -->
+    <FrameLayout
+        android:id="@+id/avatarContainer"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Fresco Drawee for user avatars -->
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ivAvatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            app:roundAsCircle="true" />
+
+        <!-- Fallback System FlirtTime Logo Avatar -->
+        <FrameLayout
+            android:id="@+id/systemAvatarContainer"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_notif_badge_red"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:src="@drawable/img_app_logo" />
+        </FrameLayout>
+
+        <!-- Overlay Corner Badge (Bottom-Right) -->
+        <FrameLayout
+            android:id="@+id/badgeContainer"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/bg_notif_badge_pink">
+
+            <ImageView
+                android:id="@+id/ivBadgeIcon"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_notif_badge_match" />
+        </FrameLayout>
+
+    </FrameLayout>
+
+    <!-- Top Right Row: Timestamp & Unread Red Indicator Dot -->
+    <LinearLayout
+        android:id="@+id/layoutTrailing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textContainer">
+
+        <TextView
+            android:id="@+id/tvTimestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredokaregular"
+            android:textColor="@color/notification_time_gray"
+            android:textSize="13sp"
+            tools:text="12m" />
+
+        <View
+            android:id="@+id/viewUnreadDot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_notification_dot" />
+
+    </LinearLayout>
+
+    <!-- Text Container (Title + Description) with refined spacing and vertical centering -->
+    <LinearLayout
+        android:id="@+id/textContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/avatarContainer"
+        app:layout_constraintEnd_toStartOf="@+id/layoutTrailing"
+        app:layout_constraintStart_toEndOf="@+id/avatarContainer"
+        app:layout_constraintTop_toTopOf="@+id/avatarContainer">
+
+        <!-- Notification Title -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/fredokasemibold"
+            android:maxLines="1"
+            android:textColor="@color/text_gry"
+            android:textSize="15.5sp"
+            tools:text="It's a match!" />
+
+        <!-- Notification Subtitle / Description -->
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/fredokaregular"
+            android:maxLines="2"
+            android:textColor="#6A6A6A"
+            android:textSize="13.5sp"
+            tools:text="You and Cindy liked each other. Say hi!" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

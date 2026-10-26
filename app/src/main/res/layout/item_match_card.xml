@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardViewRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardBackgroundColor="@color/black"
+    app:cardCornerRadius="26dp"
+    app:cardElevation="8dp"
+    app:cardPreventCornerOverlap="false"
+    app:strokeWidth="0dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Full-bleed User Profile Image loaded with Fresco -->
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ivUserPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            fresco:actualImageScaleType="centerCrop" />
+
+        <!-- Gradient Scrim at the bottom for crisp text readability -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bg_card_gradient_scrim" />
+
+        <!-- Top Badges Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp">
+
+            <!-- Top Left: Moments Count Badge -->
+            <LinearLayout
+                android:id="@+id/badgeMoments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_translucent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📸"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvMomentsCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/fredokamedium"
+                    android:text="61 Moments"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Top Right: Match Percentage Fire Badge -->
+            <LinearLayout
+                android:id="@+id/badgeMatchPercentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_match_fire"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🔥"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvMatchPercentage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/fredokamedium"
+                    android:text="83% Match"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Swipe Sticker 1: Interested (Right Swipe -> Top-Left Corner) -->
+        <LinearLayout
+            android:id="@+id/layoutStickerInterested"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|start"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="50dp"
+            android:alpha="0"
+            android:elevation="6dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:rotation="-14">
+
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/bg_sticker_circle_pink">
+
+                <ImageView
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="Interested"
+                    android:src="@drawable/ic_sticker_heart" />
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_sticker_pill_pink"
+                android:fontFamily="@font/fredokamedium"
+                android:letterSpacing="0.04"
+                android:paddingHorizontal="18dp"
+                android:paddingVertical="5dp"
+                android:text="INTERESTED"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Swipe Sticker 2: Not Interested (Left Swipe -> Top-Right Corner) -->
+        <LinearLayout
+            android:id="@+id/layoutStickerNotInterested"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="50dp"
+            android:alpha="0"
+            android:elevation="6dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:rotation="14">
+
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/bg_sticker_circle_grey">
+
+                <ImageView
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="Not Interested"
+                    android:src="@drawable/ic_sticker_heart_slash" />
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_sticker_pill_grey"
+                android:fontFamily="@font/fredokamedium"
+                android:letterSpacing="0.04"
+                android:paddingHorizontal="18dp"
+                android:paddingVertical="5dp"
+                android:text="NOT INTERESTED"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Swipe Sticker 3: Super Like (Up Swipe -> Center of Profile Image) -->
+        <LinearLayout
+            android:id="@+id/layoutStickerSuperLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="120dp"
+            android:alpha="0"
+            android:elevation="6dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:rotation="-6">
+
+            <ImageView
+                android:layout_width="84dp"
+                android:layout_height="84dp"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="Super Like"
+                android:src="@drawable/super_like_badge" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_sticker_pill_red"
+                android:fontFamily="@font/fredokamedium"
+                android:letterSpacing="0.04"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="5dp"
+                android:text="SUPER LIKE"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Swipe Sticker 4: Nope (Down Swipe -> Top-Center of Profile Image) -->
+        <LinearLayout
+            android:id="@+id/layoutStickerNope"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="65dp"
+            android:alpha="0"
+            android:elevation="6dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:rotation="-8">
+
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/bg_sticker_circle_grey">
+
+                <ImageView
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="Nope"
+                    android:src="@drawable/ic_sticker_thumbs_down" />
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_sticker_pill_grey"
+                android:fontFamily="@font/fredokamedium"
+                android:letterSpacing="0.04"
+                android:paddingHorizontal="22dp"
+                android:paddingVertical="5dp"
+                android:text="NOPE"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Bottom Profile Information Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="20dp">
+
+            <!-- Name, Age and Verification Checkmark -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvNameAge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/fredokamedium"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
+                    tools:text="Nisha, 28" />
+
+                <ImageView
+                    android:id="@+id/ivVerifiedBadge"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="6dp"
+                    android:contentDescription="Verified User"
+                    android:src="@drawable/verified_badge" />
+
+            </LinearLayout>
+
+            <!-- Location -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:contentDescription="Location Icon"
+                    android:src="@drawable/direction_arrow" />
+
+                <TextView
+                    android:id="@+id/tvLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/fredokaregular"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    tools:text="Hyderabad" />
+
+            </LinearLayout>
+
+            <!-- Row 1 Badges: Relationship Goal & Shared Interests -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Relationship Goal (e.g., Long-term) -->
+                <LinearLayout
+                    android:id="@+id/badgeGoal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_goal"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💍"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvRelationshipGoal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/fredokamedium"
+                        android:maxLines="1"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        tools:text="Long-term" />
+
+                </LinearLayout>
+
+                <!-- Shared Interests Badge -->
+                <LinearLayout
+                    android:id="@+id/badgeSharedInterests"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_badge_shared_interests"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💕"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvSharedInterests"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/fredokamedium"
+                        android:maxLines="1"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        tools:text="2 Shared Interests" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Row 2 Interest Chips (Fitness, Pets, Dance) -->
+            <LinearLayout
+                android:id="@+id/layoutInterestChips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Chip 1 -->
+                <LinearLayout
+                    android:id="@+id/chip1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_chip_interest_white"
+                    android:elevation="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp">
+
+                    <TextView
+                        android:id="@+id/tvChipEmoji1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💪"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvChipText1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/fredokamedium"
+                        android:maxLines="1"
+                        android:textColor="@color/btn_border"
+                        android:textSize="12sp"
+                        tools:text="Fitness" />
+
+                </LinearLayout>
+
+                <!-- Chip 2 -->
+                <LinearLayout
+                    android:id="@+id/chip2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_chip_interest_white"
+                    android:elevation="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp">
+
+                    <TextView
+                        android:id="@+id/tvChipEmoji2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🐾"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvChipText2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/fredokamedium"
+                        android:maxLines="1"
+                        android:textColor="@color/btn_border"
+                        android:textSize="12sp"
+                        tools:text="Pets" />
+
+                </LinearLayout>
+
+                <!-- Chip 3 -->
+                <LinearLayout
+                    android:id="@+id/chip3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_chip_interest_white"
+                    android:elevation="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp">
+
+                    <TextView
+                        android:id="@+id/tvChipEmoji3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💃"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvChipText3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/fredokamedium"
+                        android:maxLines="1"
+                        android:textColor="#333333"
+                        android:textSize="12sp"
+                        tools:text="Dance" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootBottomSheetComments"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_bottom_sheet_comments"
+    android:orientation="vertical">
+
+    <!-- Top Drag Handle -->
+    <View
+        android:id="@+id/viewDragHandle"
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_bottom_sheet_handle" />
+
+    <!-- Sheet Header: Title "Comments" -->
+    <TextView
+        android:id="@+id/tvSheetTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:fontFamily="@font/fredokamedium"
+        android:gravity="center"
+        android:text="Comments"
+        android:textColor="#1A1A1A"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- Subtle Divider below Header -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#EFEFEF" />
+
+    <!-- Frame containing Comments List & Empty State -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvComments"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingVertical="6dp"
+            tools:listitem="@layout/item_comment" />
+
+        <TextView
+            android:id="@+id/tvEmptyComments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/fredokaregular"
+            android:text="No comments yet.\nBe the first to say something!"
+            android:textAlignment="center"
+            android:textColor="#9E9E9E"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <!-- Subtle Divider above Input Row -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#EFEFEF" />
+
+    <!-- Bottom Input Row -->
+    <LinearLayout
+        android:id="@+id/layoutInputBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <!-- Logged-in User Profile Avatar -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivCurrentUserAvatar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_gallery_demo_girl"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
+
+        <!-- Input Pill Container -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_comment_input_box"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp">
+
+            <EditText
+                android:id="@+id/etCommentInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:fontFamily="@font/fredokaregular"
+                android:hint="Add a comment..."
+                android:imeOptions="actionSend"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLines="3"
+                android:textColor="#1A1A1A"
+                android:textColorHint="#9E9E9E"
+                android:textSize="13.5sp" />
+
+        </LinearLayout>
+
+        <!-- Send Comment Button (Initially disabled until text entered) -->
+        <FrameLayout
+            android:id="@+id/btnSendComment"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/bg_comment_send_btn"
+            android:clickable="true"
+            android:enabled="false"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/ivSendIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:alpha="0.5"
+                android:contentDescription="Send Comment"
+                android:src="@drawable/direction_arrow" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

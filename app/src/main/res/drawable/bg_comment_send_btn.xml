@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Enabled state: vibrant brand pink/red with ripple -->
+    <item android:state_enabled="true">
+        <ripple android:color="#33FFFFFF">
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#EA3355" />
+                    <corners android:radius="10dp" />
+                </shape>
+            </item>
+        </ripple>
+    </item>
+
+    <!-- Disabled state: soft muted pastel pink matching reference design -->
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <solid android:color="#F8CCD3" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+</selector>

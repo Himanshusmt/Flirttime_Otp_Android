@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ========================================================================= -->
+    <!-- FLIRTTIME DESIGN SYSTEM TOKENS (CORE THEME, SURFACES, TEXT, BORDERS)      -->
+    <!-- ========================================================================= -->
+
+    <!-- Brand / Theme Primary Colors -->
+    <color name="brand_primary">#EA3355</color>
+    <color name="brand_primary_dark">#C9223D</color>
+    <color name="brand_primary_light">#F8CCD3</color>
+    <color name="brand_primary_subtle">#FDECEF</color>
+
+    <!-- Surfaces & Backgrounds -->
+    <color name="bg_app_primary">#FAF6F6</color>
+    <color name="bg_surface_card">#FFFFFFFF</color>
+    <color name="bg_surface_muted">#F0F0F0</color>
+    <color name="bg_banner_warm">#FFF6F1</color>
+
+    <!-- Text Colors (Strict 3-Tier Hierarchy) -->
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_secondary">#555555</color>
+    <color name="text_tertiary">#8E8E93</color>
+    <color name="text_on_brand">#FFFFFFFF</color>
+    <color name="text_brand">#EA3355</color>
+
+    <!-- Borders & Dividers -->
+    <color name="border_subtle">#EFEFEF</color>
+    <color name="border_card">#E0E0E0</color>
+    <color name="divider_color">#F0F0F0</color>
+
+    <!-- ========================================================================= -->
+    <!-- LEGACY & SCREEN SPECIFIC COLORS (PRESERVED FOR COMPATIBILITY)             -->
+    <!-- ========================================================================= -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="screen_bg">#FAF6F6</color>
+    <color name="brand_red">#DE2D2D</color>
+    <color name="text_gry">#252525</color>
+    <color name="btn_border">#D92B2B</color>
+    <color name="border_light_gry">#E3E5E5</color>
+    <color name="login_phone_msg">#9D9D9D</color>
+    <color name="light_gry">#B4B6B8</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="blur_red">#EC9595</color>
+    <color name="teal_200">#D92B2B</color>
+    <color name="permission_sms_blue">#3EBAF3</color>
+    <color name="permission_location_pink">#E662FF</color>
+    <color name="permission_media_green">#00C683</color>
+    <color name="grey">#808080</color>
+    <color name="black_trans">#CC252525</color>
+    <color name="transColor">#00000000</color>
+    <color name="view_searchcountry">#F5F5F5</color>
+    <color name="red">#D92B2B</color>
+    <color name="colorSelected">#252525</color>
+    <color name="female">#FA4D5E</color>
+    <color name="male">#0F67FE</color>
+    <color name="others">#8A3FFC</color>
+    <color name="gray">#808080</color>
+    <color name="profile_hint_color">#252525</color>
+    <color name="light_purple">#F4E8FF</color>
+    <color name="light_blue">#E8F1FF</color>
+    <color name="light_pink">#FFE8EC</color>
+    <color name="success_green">#00CC64</color>
+    <color name="green0">#3377947C</color>
+    <color name="green1">#33539E69</color>
+    <color name="shadow_connect_red">#D0DE2D2D</color>
+    <color name="shadow_connect_ambient">#80DE2D2D</color>
+    <color name="shadow_soft_black">#26000000</color>
+    <color name="shadow_like_pink">#40E63946</color>
+
+    <!-- Notification Screen Specific Colors -->
+    <color name="notification_unread_bg">#FDE5E7</color>
+    <color name="notification_read_bg">#EDEDF0</color>
+    <color name="notification_dot_red">#DE2D2D</color>
+    <color name="notification_back_btn_bg">#FFF5F3</color>
+    <color name="notification_back_btn_stroke">#FFE3DE</color>
+    <color name="notification_badge_blue">#2F80ED</color>
+    <color name="notification_badge_green">#00C683</color>
+    <color name="notification_badge_orange">#F2994A</color>
+    <color name="notification_badge_pink">#FF4D67</color>
+    <color name="notification_time_gray">#9D9D9D</color>
+</resources>

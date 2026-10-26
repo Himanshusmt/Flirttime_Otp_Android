@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootCropLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- Top Navigation / Header Bar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#000000"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Cancel Text Button -->
+        <TextView
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/fredokamedium"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="8dp"
+            android:text="Cancel"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Title: e.g. "Crop photo 1 of 5" -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:fontFamily="@font/fredokasemibold"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16.5sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Crop photo 1 of 5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Center Crop View with rounded rectangle & grid -->
+    <com.canhub.cropper.CropImageView
+        android:id="@+id/cropImageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:cropAutoZoomEnabled="true"
+        app:cropBackgroundColor="#B3000000"
+        app:cropBorderCornerColor="@android:color/transparent"
+        app:cropBorderCornerLength="0dp"
+        app:cropBorderCornerOffset="0dp"
+        app:cropBorderCornerThickness="0dp"
+        app:cropBorderLineColor="#FFFFFF"
+        app:cropBorderLineThickness="2dp"
+        app:cropCornerRadius="16dp"
+        app:cropGuidelines="on"
+        app:cropGuidelinesColor="#80FFFFFF"
+        app:cropGuidelinesThickness="1dp"
+        app:cropScaleType="fitCenter"
+        app:cropShape="rectangle"
+        app:layout_constraintBottom_toTopOf="@id/tvHint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutHeader" />
+
+    <!-- Hint text below Crop Box -->
+    <TextView
+        android:id="@+id/tvHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/fredokaregular"
+        android:gravity="center"
+        android:text="Pinch and drag to frame your photo"
+        android:textColor="#BDBDBD"
+        android:textSize="13.5sp"
+        app:layout_constraintBottom_toTopOf="@id/layoutBottomActions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Bottom Action CTA Container -->
+    <LinearLayout
+        android:id="@+id/layoutBottomActions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#000000"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Next / Done Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnNext"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_btn_pill_red"
+            android:fontFamily="@font/fredokasemibold"
+            android:text="Next"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <!-- Loading Overlay during Crop Processing -->
+    <FrameLayout
+        android:id="@+id/layoutLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:indeterminateTint="@color/brand_red" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/fredokamedium"
+                android:text="Cropping photo..."
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

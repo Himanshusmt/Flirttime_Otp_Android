@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootExplore"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_bg"
+    android:orientation="vertical">
+
+    <!-- Top App Header -->
+    <LinearLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp">
+
+        <!-- FlirtTime Logo -->
+        <ImageView
+            android:id="@+id/ivAppLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="FlirtTime"
+            android:src="@drawable/img_app_title" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Search Icon Button -->
+        <ImageView
+            android:id="@+id/btnSearch"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Search"
+            android:focusable="true"
+            android:src="@drawable/ic_search_coral" />
+
+        <!-- Notification Bell Icon Button -->
+        <ImageView
+            android:id="@+id/btnNotification"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Notifications"
+            android:focusable="true"
+            android:src="@drawable/ic_bell_red" />
+
+    </LinearLayout>
+
+    <!-- Horizontal 4-Tab Bar -->
+    <LinearLayout
+        android:id="@+id/layoutTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <!-- 1. Likes Tab -->
+        <LinearLayout
+            android:id="@+id/tabLikes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/ivTabLikesIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_tab_likes" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvTabLikesLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/fredokamedium"
+                android:includeFontPadding="false"
+                android:text="Likes"
+                android:textColor="#8E8E93"
+                android:textSize="13.5sp" />
+
+            <!-- Underline Indicator -->
+            <View
+                android:id="@+id/indicatorTabLikes"
+                android:layout_width="48dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_tab_active_indicator"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <!-- 2. You Liked Tab (Default Active) -->
+        <LinearLayout
+            android:id="@+id/tabYouLiked"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/ivTabYouLikedIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_tab_you_liked" />
+
+                <!-- Notification Count Badge -->
+                <TextView
+                    android:id="@+id/tvYouLikedBadge"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="-4dp"
+                    android:background="@drawable/bg_tab_counter_badge"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="17"
+                    android:textColor="@color/white"
+                    android:textSize="9.5sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvTabYouLikedLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/fredokasemibold"
+                android:includeFontPadding="false"
+                android:text="You Liked"
+                android:textColor="#1A1A1A"
+                android:textSize="13.5sp" />
+
+            <!-- Underline Indicator -->
+            <View
+                android:id="@+id/indicatorTabYouLiked"
+                android:layout_width="56dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_tab_active_indicator"
+                android:visibility="visible" />
+
+        </LinearLayout>
+
+        <!-- 3. Matches Tab -->
+        <LinearLayout
+            android:id="@+id/tabMatches"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/ivTabMatchesIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_tab_matches" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvTabMatchesLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/fredokamedium"
+                android:includeFontPadding="false"
+                android:text="Matches"
+                android:textColor="#8E8E93"
+                android:textSize="13.5sp" />
+
+            <!-- Underline Indicator -->
+            <View
+                android:id="@+id/indicatorTabMatches"
+                android:layout_width="48dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_tab_active_indicator"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <!-- 4. Compliments Tab -->
+        <LinearLayout
+            android:id="@+id/tabCompliments"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/ivTabComplimentsIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_tab_compliments" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvTabComplimentsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/fredokamedium"
+                android:includeFontPadding="false"
+                android:text="Compliments"
+                android:textColor="#8E8E93"
+                android:textSize="13.5sp" />
+
+            <!-- Underline Indicator -->
+            <View
+                android:id="@+id/indicatorTabCompliments"
+                android:layout_width="60dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_tab_active_indicator"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom divider hairline -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EDEDF0" />
+
+    <!-- 2-Column Grid for Explore Profile Cards -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvExploreProfiles"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingHorizontal="14dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="84dp" />
+
+</LinearLayout>

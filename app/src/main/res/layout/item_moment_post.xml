@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Thread-Style Post Body Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="16dp">
+
+        <!-- Left: User Avatar -->
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ivAvatar"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            app:actualImageScaleType="centerCrop"
+            app:roundAsCircle="true" />
+
+        <!-- Right Content Column: Username, Location, Caption & Image All Start at Same Line -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Top Row: Name, Badge, Subtitle & More Options -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <!-- Username + Verified Badge -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvUsername"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/fredokamedium"
+                            android:maxLines="1"
+                            android:textColor="#1A1A1A"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            tools:text="dummy__aarav" />
+
+                        <ImageView
+                            android:id="@+id/ivVerified"
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_marginStart="4dp"
+                            android:contentDescription="Verified"
+                            android:src="@drawable/verified_badge" />
+
+                    </LinearLayout>
+
+                    <!-- Location & Time Subtitle -->
+                    <TextView
+                        android:id="@+id/tvLocationTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/fredokaregular"
+                        android:maxLines="1"
+                        android:textColor="#888888"
+                        android:textSize="11sp"
+                        tools:text="Mumbai, Maharashtra · 15m" />
+
+                </LinearLayout>
+
+                <!-- More Options Menu Button -->
+                <ImageView
+                    android:id="@+id/btnMoreOptions"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="More options"
+                    android:focusable="true"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_more_dots"
+                    app:tint="#1A1A1A" />
+
+            </LinearLayout>
+
+            <!-- Post Caption (subtly defined without being overly heavy) -->
+            <TextView
+                android:id="@+id/tvCaption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/fredokaregular"
+                android:lineSpacingExtra="2dp"
+                android:textColor="#181818"
+                android:textSize="14.5sp"
+                tools:text="Forest walks reset everything 🌲" />
+
+            <!-- Post Media Card with Balanced Rectangle Aspect Ratio -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardMediaContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="H,4:4.6"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeWidth="0dp">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <!-- Horizontal Swipeable Media ViewPager2 -->
+                        <androidx.viewpager2.widget.ViewPager2
+                            android:id="@+id/vpPostMedia"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <!-- Top-Right Count Badge (e.g. 1/5) -->
+                        <LinearLayout
+                            android:id="@+id/layoutMediaCountBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="top|end"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/bg_moment_media_counter"
+                            android:gravity="center"
+                            android:paddingHorizontal="9dp"
+                            android:paddingVertical="3.5dp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <TextView
+                                android:id="@+id/tvMediaCountBadge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredokamedium"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                tools:text="1/5" />
+                        </LinearLayout>
+
+                        <!-- Bottom-Left Dots Indicator -->
+                        <LinearLayout
+                            android:id="@+id/layoutMediaDotsIndicator"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|start"
+                            android:layout_marginStart="14dp"
+                            android:layout_marginBottom="14dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                        <!-- Vertical Action Bar (Floating on Bottom-Right of Image) -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|end"
+                            android:layout_marginEnd="12dp"
+                            android:layout_marginBottom="14dp"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <!-- 1. Like Action -->
+                            <LinearLayout
+                                android:id="@+id/btnLike"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <FrameLayout
+                                    android:layout_width="38dp"
+                                    android:layout_height="38dp"
+                                    android:background="@drawable/bg_translucent_action_circle">
+
+                                    <ImageView
+                                        android:id="@+id/ivLikeIcon"
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:layout_gravity="center"
+                                        android:contentDescription="Like"
+                                        android:src="@drawable/ic_thread_heart" />
+
+                                </FrameLayout>
+
+                                <TextView
+                                    android:id="@+id/tvLikeCount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:fontFamily="@font/fredokamedium"
+                                    android:shadowColor="#99000000"
+                                    android:shadowDx="0"
+                                    android:shadowDy="1"
+                                    android:shadowRadius="2"
+                                    android:textColor="@color/white"
+                                    android:textSize="11sp"
+                                    tools:text="1" />
+
+                            </LinearLayout>
+
+                            <!-- 2. Comment Action -->
+                            <LinearLayout
+                                android:id="@+id/btnComment"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <FrameLayout
+                                    android:layout_width="38dp"
+                                    android:layout_height="38dp"
+                                    android:background="@drawable/bg_translucent_action_circle">
+
+                                    <ImageView
+                                        android:layout_width="22dp"
+                                        android:layout_height="22dp"
+                                        android:layout_gravity="center"
+                                        android:contentDescription="Comment"
+                                        android:src="@drawable/chat_bubble" />
+
+                                </FrameLayout>
+
+                                <TextView
+                                    android:id="@+id/tvCommentCount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:fontFamily="@font/fredokamedium"
+                                    android:shadowColor="#99000000"
+                                    android:shadowDx="0"
+                                    android:shadowDy="1"
+                                    android:shadowRadius="2"
+                                    android:textColor="@color/white"
+                                    android:textSize="11sp"
+                                    tools:text="0" />
+
+                            </LinearLayout>
+
+                            <!-- 3. Gift Action -->
+                            <LinearLayout
+                                android:id="@+id/btnGift"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <FrameLayout
+                                    android:layout_width="38dp"
+                                    android:layout_height="38dp"
+                                    android:background="@drawable/bg_translucent_action_circle">
+
+                                    <ImageView
+                                        android:layout_width="22dp"
+                                        android:layout_height="22dp"
+                                        android:layout_gravity="center"
+                                        android:contentDescription="Gift"
+                                        android:src="@drawable/gift_icon" />
+
+                                </FrameLayout>
+
+                                <TextView
+                                    android:id="@+id/tvGiftCount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:fontFamily="@font/fredokamedium"
+                                    android:shadowColor="#99000000"
+                                    android:shadowDx="0"
+                                    android:shadowDy="1"
+                                    android:shadowRadius="2"
+                                    android:textColor="@color/white"
+                                    android:textSize="11sp"
+                                    tools:text="0" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </FrameLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Thin Horizontal Divider Line After Each Post -->
+    <View
+        android:id="@+id/postDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EDE7E7" />
+
+</LinearLayout>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootMoments"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_bg">
+
+    <!-- Top App Header -->
+    <LinearLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- FlirtTime Logo (exact same size as Matches screen) -->
+        <ImageView
+            android:id="@+id/ivAppLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="FlirtTime Logo"
+            android:src="@drawable/img_app_title" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Notification Bell Icon -->
+        <ImageView
+            android:id="@+id/btnNotification"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Notifications"
+            android:focusable="true"
+            android:src="@drawable/ic_notification" />
+
+    </LinearLayout>
+
+    <!-- Action Filter Bar with Comfortable Breathing Space -->
+    <LinearLayout
+        android:id="@+id/layoutFilterBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutHeader">
+
+        <!-- 1. Add New Moment (Red Pill) -->
+        <LinearLayout
+            android:id="@+id/btnAddNewMoment"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1.35"
+            android:background="@drawable/bg_action_pill_red"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="6dp">
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_plus_white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/fredokamedium"
+                android:maxLines="1"
+                android:text="Add new moment"
+                android:textColor="@color/white"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+        <!-- 2. Near by (White Pill) -->
+        <LinearLayout
+            android:id="@+id/btnNearby"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="0.85"
+            android:background="@drawable/bg_action_pill_white"
+            android:clickable="true"
+            android:elevation="0.5dp"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingHorizontal="6dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/fredokamedium"
+                android:maxLines="1"
+                android:text="Near by"
+                android:textColor="#555555"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+        <!-- 3. Less than 25km (White Pill) -->
+        <LinearLayout
+            android:id="@+id/btnDistance"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1.15"
+            android:background="@drawable/bg_action_pill_white"
+            android:clickable="true"
+            android:elevation="0.5dp"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingHorizontal="6dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/fredokamedium"
+                android:maxLines="1"
+                android:text="Less than 25km"
+                android:textColor="#555555"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Moments Thread Feed -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMoments"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingBottom="44dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutFilterBar"
+        tools:listitem="@layout/item_moment_post" />
+
+    <!-- Loading Indicator -->
+    <ProgressBar
+        android:id="@+id/progressBarMoments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/brand_red"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutFilterBar" />
+
+    <!-- Empty Moments State (Centered in the feed area) -->
+    <LinearLayout
+        android:id="@+id/layoutEmptyMoments"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutFilterBar"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/tvEmptyTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredokamedium"
+            android:gravity="center"
+            android:text="No moments yet"
+            android:textColor="#222222"
+            android:textSize="15.5sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvEmptySubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/fredokaregular"
+            android:gravity="center"
+            android:text="Be the first to share what's on your mind!"
+            android:textColor="#8E8E93"
+            android:textSize="13.5sp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="122dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <!-- Rounded Profile Picture Card (Increased height: 165dp, 20dp corners) -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="122dp"
+        android:layout_height="165dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="#F3F4F6"
+        app:cardPreventCornerOverlap="false">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ivPersonPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:actualImageScaleType="centerCrop" />
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Name and Verified Badge Row (Badge placed directly beside name) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvPersonName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="98dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/fredokamedium"
+            android:maxLines="1"
+            android:textColor="#1A1A1A"
+            android:textSize="13.5sp"
+            android:textStyle="bold"
+            tools:text="dummy_yash,..." />
+
+        <ImageView
+            android:id="@+id/ivVerifiedBadge"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginStart="4dp"
+            android:contentDescription="Verified"
+            android:src="@drawable/ic_verified_blue" />
+
+    </LinearLayout>
+
+    <!-- City / Location Subtitle -->
+    <TextView
+        android:id="@+id/tvPersonCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/fredokamedium"
+        android:maxLines="1"
+        android:textColor="#8E8E93"
+        android:textSize="12sp"
+        tools:text="Indore" />
+
+</LinearLayout>

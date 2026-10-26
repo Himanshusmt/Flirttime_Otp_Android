@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootSearch"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_bg"
+    android:orientation="vertical">
+
+    <!-- Top App Header: Back Arrow & FlirtTime Title -->
+    <LinearLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp">
+
+        <FrameLayout
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="Back"
+                android:src="@drawable/ic_notification_back" />
+
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/ivAppLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:layout_marginStart="4dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="FlirtTime Logo"
+            android:src="@drawable/img_app_title" />
+
+    </LinearLayout>
+
+    <!-- Search Input Pill Bar (Clean white rounded bar with coral search icon) -->
+    <LinearLayout
+        android:id="@+id/layoutSearchPill"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_search_input_pill"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:outlineAmbientShadowColor="#0D000000"
+        android:outlineSpotShadowColor="#14000000"
+        android:paddingHorizontal="14dp">
+
+        <!-- Coral Red Search Magnifier Icon -->
+        <ImageView
+            android:id="@+id/ivSearchIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="Search Icon"
+            android:src="@drawable/ic_search_coral" />
+
+        <!-- Search Input Field -->
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:fontFamily="@font/fredokamedium"
+            android:hint="Search"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="#1F1F1F"
+            android:textColorHint="#9E9E9E"
+            android:textSize="15sp" />
+
+        <!-- Clear Button (Circular grey with white 'X') -->
+        <FrameLayout
+            android:id="@+id/btnClear"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center"
+                android:contentDescription="Clear"
+                android:src="@drawable/ic_search_clear" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- Results Count Header (e.g. 2 results for “tush”) -->
+    <TextView
+        android:id="@+id/tvResultsCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp"
+        android:fontFamily="@font/fredokasemibold"
+        android:textColor="#1A1A1A"
+        android:textSize="16sp"
+        tools:text="2 results for “tush”" />
+
+    <!-- 2-Column Search Results Grid (Reuses item_explore_profile_card) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSearchResults"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="24dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        tools:itemCount="2"
+        tools:listitem="@layout/item_explore_profile_card" />
+
+    <!-- Empty State View -->
+    <LinearLayout
+        android:id="@+id/layoutEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvEmptyTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredokasemibold"
+            android:gravity="center"
+            android:text="No profiles found"
+            android:textColor="#1A1A1A"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tvEmptySubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:fontFamily="@font/fredokamedium"
+            android:gravity="center"
+            android:text="Try searching with a different name or location"
+            android:textColor="#8E8E93"
+            android:textSize="13.5sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

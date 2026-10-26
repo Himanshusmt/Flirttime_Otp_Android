@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:background="@drawable/bg_gift_card_unselected"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="96dp"
+    android:paddingHorizontal="4dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <!-- Gift Emoji / Icon Illustration -->
+    <TextView
+        android:id="@+id/tvGiftEmoji"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="🌹" />
+
+    <!-- Gift Name -->
+    <TextView
+        android:id="@+id/tvGiftName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/fredokamedium"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvGiftEmoji"
+        tools:text="Rose" />
+
+    <!-- Coin Price Row -->
+    <LinearLayout
+        android:id="@+id/layoutPriceRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvGiftName">
+
+        <ImageView
+            android:id="@+id/ivCoinIcon"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:contentDescription="Coin"
+            android:src="@drawable/ic_coin_gold" />
+
+        <TextView
+            android:id="@+id/tvGiftPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:fontFamily="@font/fredokasemibold"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            tools:text="1" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

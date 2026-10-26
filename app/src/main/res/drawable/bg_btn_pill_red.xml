@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Pressed State -->
+    <item android:state_pressed="true">
+        <layer-list>
+            <!-- Very soft omnidirectional glow -->
+            <item
+                android:left="1dp"
+                android:top="1dp"
+                android:right="1dp"
+                android:bottom="1dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="100dp" />
+                    <solid android:color="#18DE2D2D" />
+                </shape>
+            </item>
+
+            <!-- Main Pill (Pressed) -->
+            <item
+                android:left="3dp"
+                android:top="3dp"
+                android:right="3dp"
+                android:bottom="3dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="100dp" />
+                    <solid android:color="#C9223D" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- Normal State -->
+    <item>
+        <layer-list>
+            <!-- Outer soft ambient spread (all 4 directions) -->
+            <item
+                android:left="0dp"
+                android:top="0dp"
+                android:right="0dp"
+                android:bottom="0dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="100dp" />
+                    <solid android:color="#0FDE2D2D" />
+                </shape>
+            </item>
+
+            <!-- Mid soft ambient spread (all 4 directions) -->
+            <item
+                android:left="1.5dp"
+                android:top="1.5dp"
+                android:right="1.5dp"
+                android:bottom="1.5dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="100dp" />
+                    <solid android:color="#1ADE2D2D" />
+                </shape>
+            </item>
+
+            <!-- Inner subtle glow ring (all 4 directions) -->
+            <item
+                android:left="3dp"
+                android:top="3dp"
+                android:right="3dp"
+                android:bottom="3dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="100dp" />
+                    <solid android:color="#24DE2D2D" />
+                </shape>
+            </item>
+
+            <!-- Main Pill with original solid brand_red color -->
+            <item
+                android:left="4dp"
+                android:top="4dp"
+                android:right="4dp"
+                android:bottom="4dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="100dp" />
+                    <solid android:color="@color/brand_red" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+</selector>

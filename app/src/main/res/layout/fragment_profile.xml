@@ -1,0 +1,768 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="32dp">
+
+        <!-- 1. Top Cover Photo Container (Extends Edge-to-Edge behind Status Bar) -->
+        <FrameLayout
+            android:id="@+id/coverContainer"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivCoverPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="Cover Photo"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_login" />
+
+            <!-- Soft bottom gradient blending cover image into solid white -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="115dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/bg_cover_gradient_fade" />
+
+            <!-- Top Right Action Icons (Camera & Settings) -->
+            <LinearLayout
+                android:id="@+id/layoutTopActions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:id="@+id/btnEditCover"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:background="@drawable/bg_translucent_action_circle"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Edit Cover"
+                        android:src="@drawable/ic_camera_white" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/btnSettings"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_translucent_action_circle"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Settings"
+                        android:src="@drawable/ic_settings_white" />
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <!-- 2. Avatar + Percentage Circular Progress Ring -->
+        <FrameLayout
+            android:id="@+id/avatarSection"
+            android:layout_width="134dp"
+            android:layout_height="134dp"
+            app:layout_constraintBottom_toBottomOf="@+id/coverContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/coverContainer">
+
+            <!-- Circular Progress Ring (Red arc for completion %) -->
+            <com.flirttime.feature.main.presentation.profile.widget.ProfileProgressRingView
+                android:id="@+id/profileProgressRing"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_gravity="center" />
+
+            <!-- User Avatar with White Border Separation -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="114dp"
+                android:layout_height="114dp"
+                android:layout_gravity="center"
+                android:contentDescription="User Avatar"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_login"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                app:strokeColor="@color/white"
+                app:strokeWidth="4dp" />
+
+        </FrameLayout>
+
+        <!-- 3. Profile Completion Percentage Pill Badge -->
+        <LinearLayout
+            android:id="@+id/badgeComplete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-14dp"
+            android:background="@drawable/bg_pill_profile_complete"
+            android:clickable="true"
+            android:elevation="4dp"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="5dp"
+            app:layout_constraintEnd_toEndOf="@+id/avatarSection"
+            app:layout_constraintStart_toStartOf="@+id/avatarSection"
+            app:layout_constraintTop_toBottomOf="@+id/avatarSection">
+
+            <TextView
+                android:id="@+id/tvCompletionPercent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokamedium"
+                android:text="90% complete"
+                android:textColor="@color/white"
+                android:textSize="12.5sp" />
+
+            <ImageView
+                android:layout_width="11dp"
+                android:layout_height="11dp"
+                android:layout_marginStart="6dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_edit_pencil_white" />
+
+        </LinearLayout>
+
+        <!-- 4. User Name, Age & Ribbon/Badge -->
+        <LinearLayout
+            android:id="@+id/layoutNameAge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/badgeComplete">
+
+            <TextView
+                android:id="@+id/tvNameAge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokabold"
+                android:textColor="#1A1A1A"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                tools:text="tushar, 19" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="Location Pin"
+                android:src="@drawable/achievement_badge" />
+
+        </LinearLayout>
+
+        <!-- 5. User Location -->
+        <LinearLayout
+            android:id="@+id/layoutLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layoutNameAge">
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:contentDescription="Location Pin"
+                android:src="@drawable/ic_location_pin_red" />
+
+            <TextView
+                android:id="@+id/tvLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:fontFamily="@font/fredokamedium"
+                android:textColor="#757575"
+                android:textSize="13.5sp"
+                tools:text="Siwan, Bihar" />
+
+        </LinearLayout>
+
+        <!-- 6. User Bio / Description (Reduced line spacing as requested) -->
+        <TextView
+            android:id="@+id/tvBio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="28dp"
+            android:layout_marginTop="14dp"
+            android:fontFamily="@font/fredokaregular"
+            android:gravity="center"
+            android:textColor="#3A3A3C"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layoutLocation"
+            tools:text="“Def a. SCD kasndklat and you will never get a chance for this one day you are not going anywhere with your life in it you will be a legend and you are”" />
+
+        <!-- 7. Action CTAs (Edit Profile & Add Moment) -->
+        <LinearLayout
+            android:id="@+id/layoutCtas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvBio">
+
+            <!-- Edit Profile Button -->
+            <LinearLayout
+                android:id="@+id/btnEditProfile"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_edit_profile"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="14dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_edit_pencil_red" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:text="Edit Profile"
+                    android:textColor="#EA3355"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Add Moment Button -->
+            <LinearLayout
+                android:id="@+id/btnAddMoment"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_add_moment"
+                android:clickable="true"
+                android:elevation="3dp"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="14dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_plus_white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:text="Add Moment"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 8. Component: "My Voice" Header -->
+        <TextView
+            android:id="@+id/tvMyVoiceTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="26dp"
+            android:fontFamily="@font/fredokabold"
+            android:text="My Voice"
+            android:textColor="#1A1A1A"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layoutCtas" />
+
+        <!-- "My Voice" Container (Switches between Record Prompt and Player) -->
+        <FrameLayout
+            android:id="@+id/containerVoice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvMyVoiceTitle">
+
+            <!-- State A: Empty state when voice is not added yet -->
+            <LinearLayout
+                android:id="@+id/cardVoiceRecordPrompt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_voice_record_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="12dp">
+
+                <!-- Circular Red Mic Button -->
+                <FrameLayout
+                    android:id="@+id/btnRecordMic"
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    android:background="@drawable/bg_btn_play_circle"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Record Voice"
+                        android:src="@drawable/ic_mic_white" />
+
+                </FrameLayout>
+
+                <!-- Text Instruction & Description -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredokabold"
+                        android:text="Record your voice intro"
+                        android:textColor="#1A1A1A"
+                        android:textSize="15.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/fredokaregular"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Let matches hear your vibe. Up to 30 seconds."
+                        android:textColor="#757575"
+                        android:textSize="12.5sp" />
+
+                </LinearLayout>
+
+                <!-- Red Right Chevron Arrow -->
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_chevron_right_red" />
+
+            </LinearLayout>
+
+            <!-- State B: Active state when voice note is added -->
+            <LinearLayout
+                android:id="@+id/cardVoicePlayer"
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:background="@drawable/bg_voice_note_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <!-- Circular Play Button -->
+                <FrameLayout
+                    android:id="@+id/btnPlayVoice"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_btn_play_circle"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/ivPlayIcon"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Play Voice"
+                        android:src="@drawable/ic_play_white" />
+
+                </FrameLayout>
+
+                <!-- Audio Waveform Amplitude Bars -->
+                <com.flirttime.feature.main.presentation.profile.widget.AudioWaveformView
+                    android:id="@+id/audioWaveformView"
+                    android:layout_width="0dp"
+                    android:layout_height="28dp"
+                    android:layout_marginHorizontal="12dp"
+                    android:layout_weight="1" />
+
+                <!-- Duration Text -->
+                <TextView
+                    android:id="@+id/tvVoiceDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokamedium"
+                    android:text="0:05"
+                    android:textColor="#666666"
+                    android:textSize="13.5sp" />
+
+                <!-- Edit Voice Pencil Icon -->
+                <ImageView
+                    android:id="@+id/btnEditVoice"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="6dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Edit Voice Note"
+                    android:focusable="true"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_edit_pencil_red" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <!-- 9. Component: "Quick Moments" Header Row -->
+        <LinearLayout
+            android:id="@+id/layoutQuickMomentsHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="28dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/containerVoice">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/fredokabold"
+                android:text="Quick Moments"
+                android:textColor="#1A1A1A"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnAddQuickMoment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokabold"
+                android:paddingVertical="4dp"
+                android:paddingStart="8dp"
+                android:text="+ Add"
+                android:textColor="#EA3355"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Quick Moments Horizontal Items Row -->
+        <LinearLayout
+            android:id="@+id/layoutQuickMomentsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="14dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layoutQuickMomentsHeader">
+
+            <!-- Item 1: Add new -->
+            <LinearLayout
+                android:id="@+id/itemAddNewMoment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="68dp"
+                    android:layout_height="68dp">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/ivAddNewThumb"
+                        android:layout_width="62dp"
+                        android:layout_height="62dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Add New Moment"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/img_login"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                        app:strokeColor="#FFE5EA"
+                        app:strokeWidth="2dp" />
+
+                    <!-- Floating Plus Badge at Bottom-Right -->
+                    <FrameLayout
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/bg_add_circle_badge">
+
+                        <ImageView
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_plus_white" />
+
+                    </FrameLayout>
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/fredokamedium"
+                    android:text="Add new"
+                    android:textColor="#EA3355"
+                    android:textSize="12.5sp" />
+
+            </LinearLayout>
+
+            <!-- Item 2: Active Moment ("Hellow all") -->
+            <LinearLayout
+                android:id="@+id/itemActiveMoment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="68dp"
+                    android:layout_height="68dp">
+
+                    <!-- Outer Story Ring -->
+                    <View
+                        android:layout_width="66dp"
+                        android:layout_height="66dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_story_ring_red" />
+
+                    <!-- Inner Coral Gradient Circle with text -->
+                    <FrameLayout
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_moment_coral_gradient">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/fredokamedium"
+                            android:gravity="center"
+                            android:paddingHorizontal="4dp"
+                            android:text="Hellow all"
+                            android:textColor="@color/white"
+                            android:textSize="10.5sp"
+                            android:textStyle="bold" />
+
+                    </FrameLayout>
+
+                    <!-- Floating Reaction Pill Badge at Bottom-Center -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:background="@drawable/bg_reaction_badge_dark"
+                        android:elevation="2dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="2dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="😲"
+                            android:textSize="9.5sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:fontFamily="@font/fredokamedium"
+                            android:text="3"
+                            android:textColor="@color/white"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:text="22h"
+                    android:textColor="#757575"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 10. Component: "Enjoy All Benefits" Premium Banner -->
+        <LinearLayout
+            android:id="@+id/cardPremiumBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="95dp"
+            android:background="@drawable/bg_card_premium_banner"
+            android:clickable="true"
+            android:elevation="4dp"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:paddingHorizontal="18dp"
+            android:paddingVertical="18dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layoutQuickMomentsList">
+
+            <!-- Crown Icon with Concentric Rings -->
+            <FrameLayout
+                android:layout_width="62dp"
+                android:layout_height="62dp"
+                android:layout_gravity="top"
+                android:background="@drawable/bg_circle_translucent_white">
+
+                <!-- Inner White Circle -->
+                <FrameLayout
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_circle_white_container">
+
+                    <!-- Gold Crown Icon -->
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Premium Crown"
+                        android:src="@drawable/ic_crown_gold" />
+
+                </FrameLayout>
+
+            </FrameLayout>
+
+            <!-- Banner Text Details & CTA Button -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokabold"
+                    android:text="Enjoy All Benefits"
+                    android:textColor="@color/white"
+                    android:textSize="18.5sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Unlimited swiping, see who likes you and match without ads."
+                    android:textColor="#F3FFFFFF"
+                    android:textSize="12.5sp" />
+
+                <!-- "Upgrade to premium" Pill Button -->
+                <TextView
+                    android:id="@+id/btnUpgradePremium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_btn_pill_white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:gravity="center"
+                    android:paddingHorizontal="24dp"
+                    android:paddingVertical="9dp"
+                    android:text="Upgrade to premium"
+                    android:textColor="#EA3355"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

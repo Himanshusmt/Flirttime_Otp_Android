@@ -1,0 +1,1078 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootFiltersSheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_filters"
+    android:orientation="vertical">
+
+    <!-- Top Drag Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_bottom_sheet_handle" />
+
+    <!-- Sheet Header: Title, Close Button & Subtitle -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/fredokasemibold"
+                android:includeFontPadding="false"
+                android:text="Filters"
+                android:textColor="#18181B"
+                android:textSize="29sp" />
+
+            <!-- Close Button (Large circular white button with rounded cross) -->
+            <FrameLayout
+                android:id="@+id/btnClose"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circle_icon_button"
+                android:clickable="true"
+                android:elevation="2dp"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_filter_close" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:fontFamily="@font/fredokaregular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="3dp"
+            android:text="Tune who shows up so every swipe feels like your type."
+            android:textColor="#52525B"
+            android:textSize="15.5sp" />
+
+    </LinearLayout>
+
+    <!-- Scrollable Cards Container -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="16dp">
+
+            <!-- ============================================================== -->
+            <!-- CARD 1: Show me (Gender Selection)                           -->
+            <!-- ============================================================== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_filter_white_card"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <!-- Header: Badge + Title -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_squircle_pink_small">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_filter_heart" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:includeFontPadding="false"
+                        android:text="Show me"
+                        android:textColor="#18181B"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+                <!-- 4 Selectable Gender Cards in a Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <!-- 1. Women -->
+                    <LinearLayout
+                        android:id="@+id/optGenderWomen"
+                        android:layout_width="0dp"
+                        android:layout_height="82dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_filter_option_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="👱‍♀️"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/tvGenderWomen"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/fredokamedium"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:text="Women"
+                            android:textColor="#3F3F46"
+                            android:textSize="13.5sp" />
+                    </LinearLayout>
+
+                    <!-- 2. Men -->
+                    <LinearLayout
+                        android:id="@+id/optGenderMen"
+                        android:layout_width="0dp"
+                        android:layout_height="82dp"
+                        android:layout_marginHorizontal="2dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_filter_option_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="👱‍♂️"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/tvGenderMen"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/fredokamedium"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:text="Men"
+                            android:textColor="#3F3F46"
+                            android:textSize="13.5sp" />
+                    </LinearLayout>
+
+                    <!-- 3. Non-binary -->
+                    <LinearLayout
+                        android:id="@+id/optGenderNonBinary"
+                        android:layout_width="0dp"
+                        android:layout_height="82dp"
+                        android:layout_marginHorizontal="2dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_filter_option_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🧑"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/tvGenderNonBinary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/fredokamedium"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:text="Non-binary"
+                            android:textColor="#3F3F46"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- 4. Everyone (Active by default) -->
+                    <LinearLayout
+                        android:id="@+id/optGenderEveryone"
+                        android:layout_width="0dp"
+                        android:layout_height="82dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_filter_option_selected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🌈"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/tvGenderEveryone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/fredokasemibold"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:text="Everyone"
+                            android:textColor="@color/brand_red"
+                            android:textSize="13.5sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ============================================================== -->
+            <!-- CARD 2: Age range (Slider 18 - 70+)                           -->
+            <!-- ============================================================== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_filter_white_card"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <!-- Header: Badge + Title + Live Value -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_squircle_purple">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_filter_cake" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:includeFontPadding="false"
+                        android:text="Age range"
+                        android:textColor="#18181B"
+                        android:textSize="18sp" />
+
+                    <!-- Live Value Display -->
+                    <TextView
+                        android:id="@+id/tvAgeRangeValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:includeFontPadding="false"
+                        android:text="18 – 70+"
+                        android:textColor="@color/brand_red"
+                        android:textSize="17.5sp" />
+
+                </LinearLayout>
+
+                <!-- Dual-Thumb Material RangeSlider -->
+                <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/sliderAgeRange"
+                    style="@style/Widget.MaterialComponents.Slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:valueFrom="18.0"
+                    android:valueTo="70.0"
+                    app:haloColor="#30DE2D2D"
+                    app:haloRadius="18dp"
+                    app:labelBehavior="gone"
+                    app:thumbColor="@color/white"
+                    app:thumbElevation="3dp"
+                    app:thumbHeight="22dp"
+                    app:thumbRadius="11dp"
+                    app:thumbStrokeColor="@color/brand_red"
+                    app:thumbStrokeWidth="3.0dp"
+                    app:thumbWidth="22dp"
+                    app:tickVisible="false"
+                    app:tickColor="@android:color/transparent"
+                    app:tickColorActive="@android:color/transparent"
+                    app:tickColorInactive="@android:color/transparent"
+                    app:trackColorActive="@color/brand_red"
+                    app:trackColorInactive="#E5E7EB"
+                    app:trackHeight="4dp"
+                    app:trackStopIndicatorSize="0dp" />
+
+                <!-- Range Sub-Labels -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-2dp"
+                    android:paddingHorizontal="14dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/fredokamedium"
+                        android:includeFontPadding="false"
+                        android:text="18"
+                        android:textColor="#6B7280"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredokamedium"
+                        android:includeFontPadding="false"
+                        android:text="70+"
+                        android:textColor="#6B7280"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ============================================================== -->
+            <!-- CARD 3: Distance (Slider 1 km - Anywhere)                      -->
+            <!-- ============================================================== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_filter_white_card"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <!-- Header: Badge + Title + Live Value -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_squircle_blue">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_filter_nav_arrow" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:includeFontPadding="false"
+                        android:text="Distance"
+                        android:textColor="#18181B"
+                        android:textSize="18sp" />
+
+                    <!-- Live Value Display -->
+                    <TextView
+                        android:id="@+id/tvDistanceValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:includeFontPadding="false"
+                        android:text="Anywhere"
+                        android:textColor="@color/brand_red"
+                        android:textSize="17.5sp" />
+
+                </LinearLayout>
+
+                <!-- Single-Thumb Material Slider -->
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/sliderDistance"
+                    style="@style/Widget.MaterialComponents.Slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:value="100.0"
+                    android:valueFrom="1.0"
+                    android:valueTo="100.0"
+                    app:haloColor="#30DE2D2D"
+                    app:haloRadius="18dp"
+                    app:labelBehavior="gone"
+                    app:thumbColor="@color/white"
+                    app:thumbElevation="3dp"
+                    app:thumbHeight="22dp"
+                    app:thumbRadius="11dp"
+                    app:thumbStrokeColor="@color/brand_red"
+                    app:thumbStrokeWidth="3.0dp"
+                    app:thumbWidth="22dp"
+                    app:tickVisible="false"
+                    app:tickColor="@android:color/transparent"
+                    app:tickColorActive="@android:color/transparent"
+                    app:tickColorInactive="@android:color/transparent"
+                    app:trackColorActive="@color/brand_red"
+                    app:trackColorInactive="#E5E7EB"
+                    app:trackHeight="4dp"
+                    app:trackStopIndicatorSize="0dp" />
+
+                <!-- Distance Sub-Labels -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-2dp"
+                    android:paddingHorizontal="14dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/fredokamedium"
+                        android:includeFontPadding="false"
+                        android:text="1 km"
+                        android:textColor="#6B7280"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredokamedium"
+                        android:includeFontPadding="false"
+                        android:text="Anywhere"
+                        android:textColor="#6B7280"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ============================================================== -->
+            <!-- CARD 4: Looking for (Relationship Goal)                       -->
+            <!-- ============================================================== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_filter_white_card"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <!-- Header: Badge + Title -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_squircle_amber">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_filter_sparkles" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:includeFontPadding="false"
+                        android:text="Looking for"
+                        android:textColor="#18181B"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+                <!-- Looking For Chips -->
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cgLookingFor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    app:chipSpacingHorizontal="8dp"
+                    app:chipSpacingVertical="8dp"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipLookingForLongTerm"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💍 Long-term" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipLookingForCasual"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🥂 Something casual" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipLookingForNotSure"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🤔 Not sure yet" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+
+            <!-- ============================================================== -->
+            <!-- CARD 5: Interests                                             -->
+            <!-- ============================================================== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_filter_white_card"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <!-- Header: Badge + Title + Live Value ("Any" or count) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_squircle_peach">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_filter_star" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:includeFontPadding="false"
+                        android:text="Interests"
+                        android:textColor="#18181B"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/tvInterestsValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredokamedium"
+                        android:includeFontPadding="false"
+                        android:text="Any"
+                        android:textColor="#6B7280"
+                        android:textSize="15.5sp" />
+
+                </LinearLayout>
+
+                <!-- Subtitle Description -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:includeFontPadding="false"
+                    android:text="Show people who share at least one of these."
+                    android:textColor="#6B7280"
+                    android:textSize="14.5sp" />
+
+                <!-- Interests Multi-Select ChipGroup -->
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cgInterests"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    app:chipSpacingHorizontal="8dp"
+                    app:chipSpacingVertical="8dp"
+                    app:singleSelection="false">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestArt"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎨 Art" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestCinema"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎬 Cinema" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestCooking"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🍳 Cooking" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestDance"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💃 Dance" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestDrawing"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎨 Drawing" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestDrinks"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🍹 Drinks" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestExercise"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🤸 Exercise" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestExtreme"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🏄 Extreme" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestFitness"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💪 Fitness" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestGaming"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎮 Gaming" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestHandcraft"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🧵 Handcraft" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestKaraoke"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎤 Karaoke" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestLyricsMusic"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎵 Lyrics Music" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestMusic"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎶 Music" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestParty"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎉 Party" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestPets"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🐶 Pets" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestPhotography"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📷 Photography" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestPlanting"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🌱 Planting" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestReading"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📚 Reading" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestRunning"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🏃 Running" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestShopping"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🛍️ Shopping" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestSports"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⚽ Sports" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestSwimming"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🏊 Swimming" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestTelevision"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📺 Television" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestTennis"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎾 Tennis" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestTravelling"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✈️ Travelling" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestVideoGames"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🕹️ Video games" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestWriting"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✍️ Writing" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInterestYoga"
+                        style="@style/Widget.FlirtTime.FilterChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🧘 Yoga" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+
+            <!-- ============================================================== -->
+            <!-- CARD 6: Verified Only & Online Now Toggles                     -->
+            <!-- ============================================================== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_filter_white_card"
+                android:orientation="vertical"
+                android:paddingHorizontal="18dp"
+                android:paddingVertical="14dp">
+
+                <!-- Row 1: Verified only -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!-- Squircle Soft Blue Badge -->
+                    <FrameLayout
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:background="@drawable/bg_squircle_light_blue">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/verified_badge" />
+                    </FrameLayout>
+
+                    <!-- Title & Subtitle -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokasemibold"
+                            android:includeFontPadding="false"
+                            android:text="Verified only"
+                            android:textColor="#18181B"
+                            android:textSize="16.5sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:fontFamily="@font/fredokaregular"
+                            android:includeFontPadding="false"
+                            android:text="Photo-verified profiles"
+                            android:textColor="#71717A"
+                            android:textSize="13.5sp" />
+                    </LinearLayout>
+
+                    <!-- Toggle Switch -->
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switchVerifiedOnly"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:thumb="@drawable/bg_switch_thumb_ios"
+                        android:splitTrack="false"
+                        android:switchMinWidth="50dp"
+                        app:showText="false"
+                        app:track="@drawable/bg_switch_track_ios"
+                        app:useMaterialThemeColors="false" />
+
+                </LinearLayout>
+
+                <!-- 1dp Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="#F4F4F5" />
+
+                <!-- Row 2: Online now -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!-- Squircle Soft Green Badge -->
+                    <FrameLayout
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:background="@drawable/bg_squircle_light_green">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_filter_online_dot" />
+                    </FrameLayout>
+
+                    <!-- Title & Subtitle -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokasemibold"
+                            android:includeFontPadding="false"
+                            android:text="Online now"
+                            android:textColor="#18181B"
+                            android:textSize="16.5sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:fontFamily="@font/fredokaregular"
+                            android:includeFontPadding="false"
+                            android:text="People active right now"
+                            android:textColor="#71717A"
+                            android:textSize="13.5sp" />
+                    </LinearLayout>
+
+                    <!-- Toggle Switch -->
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switchOnlineNow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:thumb="@drawable/bg_switch_thumb_ios"
+                        android:splitTrack="false"
+                        android:switchMinWidth="50dp"
+                        app:showText="false"
+                        app:track="@drawable/bg_switch_track_ios"
+                        app:useMaterialThemeColors="false" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- ================================================================== -->
+    <!-- PINNED BOTTOM ACTION CONTAINER: Reset & Show Matches Button        -->
+    <!-- ================================================================== -->
+    <LinearLayout
+        android:id="@+id/layoutBottomActions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="24dp">
+
+        <!-- Reset Button Box -->
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_weight="3"
+            android:layout_marginEnd="6dp">
+
+            <TextView
+                android:id="@+id/btnReset"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokasemibold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="Reset"
+                android:textColor="#9E9E9E"
+                android:textSize="16sp" />
+        </FrameLayout>
+
+        <!-- Show Matches Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnShowMatches"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_weight="7"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_btn_pill_red"
+            android:elevation="4dp"
+            android:fontFamily="@font/fredokasemibold"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:outlineAmbientShadowColor="#26DE2D2D"
+            android:outlineSpotShadowColor="#33DE2D2D"
+            android:paddingHorizontal="18dp"
+            android:paddingVertical="8dp"
+            android:stateListAnimator="@null"
+            android:text="Show 44 matches"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16.5sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

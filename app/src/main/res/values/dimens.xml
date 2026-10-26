@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Standard fixed height for upload card & selected gallery in Add Moment screen -->
+    <dimen name="add_moment_media_card_height">400dp</dimen>
+</resources>

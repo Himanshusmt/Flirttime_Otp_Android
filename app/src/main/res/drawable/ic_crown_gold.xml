@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="28dp"
+    android:height="28dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Bottom base bar with rounded ends -->
+    <path
+        android:fillColor="#F5A623"
+        android:pathData="M5,19h14c0.55,0 1,-0.45 1,-1s-0.45,-1 -1,-1H5c-0.55,0 -1,0.45 -1,1S4.45,19 5,19z" />
+    <!-- Three round balls on top of peaks -->
+    <path
+        android:fillColor="#F5A623"
+        android:pathData="M4.5,6.5m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0" />
+    <path
+        android:fillColor="#F5A623"
+        android:pathData="M12,5m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0" />
+    <path
+        android:fillColor="#F5A623"
+        android:pathData="M19.5,6.5m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0" />
+    <!-- Main crown body -->
+    <path
+        android:fillColor="#F5A623"
+        android:pathData="M5,16h14l1.3,-7.5c0.08,-0.45 -0.25,-0.85 -0.7,-0.85c-0.2,0 -0.4,0.1 -0.5,0.3L15.8,12l-3.2,-6c-0.2,-0.4 -0.7,-0.4 -0.9,0L8.5,12L5.2,7.95c-0.12,-0.2 -0.32,-0.3 -0.52,-0.3c-0.45,0 -0.78,0.4 -0.7,0.85L5,16z" />
+</vector>

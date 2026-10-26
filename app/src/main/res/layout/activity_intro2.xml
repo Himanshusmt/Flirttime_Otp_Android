@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".feature.onboarding.presentation.Intro2Activity">
+
+    <!-- Screen-specific insets-aware content container -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Top App Title: Safely positioned below system bar and camera cutout -->
+        <ImageView
+            android:id="@+id/ivAppName"
+            android:layout_width="140dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/img_app_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Center Illustration: Proportional fit matching legacy UI -->
+        <ImageView
+            android:id="@+id/ivIntro"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="24dp"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/img_intro_2"
+            app:layout_constraintBottom_toTopOf="@+id/tvContent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivAppName" />
+
+        <!-- Headline Text -->
+        <TextView
+            android:id="@+id/tvContent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/fredokamedium"
+            android:letterSpacing="0"
+            android:lineHeight="34sp"
+            android:text="@string/be_with_whom_you_feel_comfortable"
+            android:textColor="@color/text_gry"
+            android:textSize="27sp"
+            app:layout_constraintBottom_toTopOf="@+id/llBottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Bottom Actions Container: Matches legacy @dimen/_5sdp margin -->
+        <LinearLayout
+            android:id="@+id/llBottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/tvContinue"
+                style="@style/common_style_button_new"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text="@string/continue_" />
+
+            <TextView
+                android:id="@+id/tvPrivacyPolicy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="25dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/fredokaregular"
+                android:gravity="center_horizontal"
+                android:letterSpacing="0"
+                android:lineHeight="20sp"
+                android:text="@string/by_continuing_i_accept_flirt_time_s_privacy_policy"
+                android:textColor="@color/btn_border"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

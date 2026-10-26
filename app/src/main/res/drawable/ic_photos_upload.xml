@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="44dp"
+    android:height="44dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Back photo frame -->
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M10,8h18c2.2,0 4,1.8 4,4v2H10c-2.2,0 -4,1.8 -4,4v14h-2c-2.2,0 -4,-1.8 -4,-4V12c0,-2.2 1.8,-4 4,-4h6z"
+        android:strokeAlpha="0.6" />
+
+    <!-- Front photo frame -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M14,14h22c2.2,0 4,1.8 4,4v18c0,2.2 -1.8,4 -4,4H14c-2.2,0 -4,-1.8 -4,-4V18c0,-2.2 1.8,-4 4,-4z"
+        android:strokeWidth="3"
+        android:strokeColor="#DE2D2D" />
+
+    <!-- Mountain landscape inside front photo -->
+    <path
+        android:fillColor="#DE2D2D"
+        android:pathData="M16,34l6.5,-8.5 4.5,5.5 5,-6.5 6,9.5H16z" />
+
+    <!-- Sun circle inside front photo -->
+    <path
+        android:fillColor="#DE2D2D"
+        android:pathData="M31,21a2.5,2.5 0 1,0 0,-5 2.5,2.5 0 0,0 0,5z" />
+
+    <!-- Plus badge circle at bottom-right -->
+    <path
+        android:fillColor="#DE2D2D"
+        android:pathData="M38,38m-7,0a7,7 0 1,0 14,0a7,7 0 1,0 -14,0"
+        android:strokeWidth="1.5"
+        android:strokeColor="#FFFFFF" />
+
+    <!-- White plus mark -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M38,34.5v7 M34.5,38h7"
+        android:strokeWidth="2"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round" />
+
+</vector>

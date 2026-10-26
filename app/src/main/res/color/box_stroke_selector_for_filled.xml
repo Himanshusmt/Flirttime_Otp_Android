@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <selector xmlns:android="http://schemas.android.com/apk/res/android">
+        <item android:color="@color/btn_border"
+            android:state_focused="true" />
+
+    <item android:color="@color/border_light_gry"
+        android:state_focused="false"
+        />
+
+    <item android:color="@color/border_light_gry"
+        android:state_enabled="false"
+        />
+
+    <item android:color="@color/border_light_gry"
+        android:state_enabled="true" />
+
+</selector>

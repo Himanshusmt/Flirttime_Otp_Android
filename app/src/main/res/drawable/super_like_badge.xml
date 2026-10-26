@@ -1,0 +1,74 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="84dp"
+    android:height="84dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <!-- Outer Soft Red Aura -->
+    <path
+        android:fillColor="#29ED242B"
+        android:pathData="M 11,64 a 53,53 0 1,0 106,0 a 53,53 0 1,0 -106,0 Z" />
+
+    <!-- White Outer Ring -->
+    <path
+        android:pathData="M 15,64 a 49,49 0 1,0 98,0 a 49,49 0 1,0 -98,0 Z"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.2" />
+
+    <!-- Red Gradient Circle Body -->
+    <path
+        android:pathData="M 21.5,64 a 42.5,42.5 0 1,0 85,0 a 42.5,42.5 0 1,0 -85,0 Z"
+        android:strokeColor="#FFF4F4"
+        android:strokeWidth="2">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="51.2"
+                android:centerY="46.08"
+                android:gradientRadius="72.25"
+                android:type="radial">
+                <item android:offset="0.0" android:color="#FF5C59" />
+                <item android:offset="0.65" android:color="#ED2028" />
+                <item android:offset="1.0" android:color="#B90816" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Inner Red Ring -->
+    <path
+        android:fillColor="#E91C27"
+        android:pathData="M 33,64 a 31,31 0 1,0 62,0 a 31,31 0 1,0 -62,0 Z"
+        android:strokeColor="#FFB7B7"
+        android:strokeWidth="1.5" />
+
+    <!-- Inner White Circular Shield -->
+    <path
+        android:fillColor="#FAFFFFFF"
+        android:pathData="M64,43 C52,43 43,52 43,64 C43,76 52,85 64,85 C76,85 85,76 85,64 C85,52 76,43 64,43 Z" />
+
+    <!-- Red Lightning Bolt -->
+    <path
+        android:fillColor="#D71920"
+        android:pathData="M66.5,51.5 L59.5,64.5 L65,64.5 L61.5,76.5 L71,61.5 L65.5,61.5 Z"
+        android:strokeColor="#C9141D"
+        android:strokeLineJoin="round"
+        android:strokeWidth="0.7" />
+
+    <!-- Top-Right Sparkle Star -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M93,10 L96.5,18.5 L105,22 L96.5,25.5 L93,34 L89.5,25.5 L81,22 L89.5,18.5 Z"
+        android:strokeColor="#FFE4E4"
+        android:strokeWidth="1" />
+
+    <!-- Bottom-Left Sparkle Star -->
+    <path
+        android:fillColor="#E6FFFFFF"
+        android:pathData="M20,93 L22,98 L27,100 L22,102 L20,107 L18,102 L13,100 L18,98 Z" />
+
+    <!-- Bottom-Right Sparkle Star -->
+    <path
+        android:fillColor="#D9FFFFFF"
+        android:pathData="M103,87 L105,91 L109,93 L105,95 L103,99 L101,95 L97,93 L101,91 Z" />
+
+</vector>

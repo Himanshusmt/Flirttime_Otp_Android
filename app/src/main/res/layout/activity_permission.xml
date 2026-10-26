@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true"
+    android:clipToPadding="false"
+    tools:context=".feature.onboarding.presentation.PermissionActivity">
+
+    <LinearLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <!-- Header Permission Shield Illustration -->
+        <ImageView
+            android:id="@+id/ivPermissionHeader"
+            android:layout_width="168dp"
+            android:layout_height="168dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@null"
+            android:src="@drawable/img_permission" />
+
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="22dp"
+            android:layout_marginTop="17dp"
+            android:fontFamily="@font/fredokamedium"
+            android:letterSpacing="0"
+            android:text="@string/your_safety_first_second_and_n_always"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:lineHeight="31sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="22dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/fredokaregular"
+            android:letterSpacing="0"
+            android:text="@string/to_unlock_your_dating_destiny_we_need_few_permissions_from_your_side"
+            android:textColor="@color/light_gry"
+            android:textSize="18sp"
+            app:lineHeight="22sp" />
+
+        <!-- Permissions List Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="24dp"
+            android:orientation="vertical">
+
+            <!-- 1. SMS & Calls Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_60sdp"
+                android:background="@drawable/bg_corner"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY"
+                        android:contentDescription="@null"
+                        android:src="@drawable/img_p4"
+                        app:tint="@color/permission_sms_blue" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@null"
+                        android:src="@drawable/img_msg_permission" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredokamedium"
+                        android:letterSpacing="0"
+                        android:text="@string/sms_amp_calls"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:fontFamily="@font/fredokaregular"
+                        android:text="@string/grant_access_for_a_better_dating_n_experience"
+                        android:textColor="@color/black"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 2. Location Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/bg_corner"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY"
+                        android:contentDescription="@null"
+                        android:src="@drawable/img_p4"
+                        app:tint="@color/permission_location_pink" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@null"
+                        android:src="@drawable/img_location_permission" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredokamedium"
+                        android:letterSpacing="0"
+                        android:text="@string/location"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:fontFamily="@font/fredokaregular"
+                        android:letterSpacing="0"
+                        android:text="@string/location_access_helps_find_nearby_n_matches"
+                        android:textColor="@color/black"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 3. Media & Gallery Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/bg_corner"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY"
+                        android:contentDescription="@null"
+                        android:src="@drawable/img_p4"
+                        app:tint="@color/permission_media_green" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@null"
+                        android:src="@drawable/img_media_permission" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredokamedium"
+                        android:letterSpacing="0"
+                        android:text="@string/media_and_gallery"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:fontFamily="@font/fredokaregular"
+                        android:letterSpacing="0"
+                        android:text="@string/media_access_unlocks_a_more_vibrant_n_profile"
+                        android:textColor="@color/black"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Bottom Spacer to Push Proceed Button to Bottom -->
+        <LinearLayout
+            android:id="@+id/llBottom"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:paddingBottom="0dp">
+
+            <Button
+                android:id="@+id/tvproceed"
+                style="@style/common_style_button_new"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:text="@string/proceed" />
+
+            <TextView
+                android:id="@+id/tv_privacy_policy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="22dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/fredokaregular"
+                android:gravity="center_horizontal"
+                android:text="@string/we_need_these_permissions_to_proceed"
+                android:textColor="@color/btn_border"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

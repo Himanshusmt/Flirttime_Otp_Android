@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootAddMoment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_bg">
+
+    <!-- Top Header Bar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Back Button -->
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:clickable="true"
+            android:contentDescription="Back"
+            android:focusable="true"
+            android:src="@drawable/img_backarrow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:fontFamily="@font/fredokasemibold"
+            android:includeFontPadding="false"
+            android:text="Add Moment"
+            android:textColor="@color/text_gry"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/btnBack"
+            app:layout_constraintStart_toEndOf="@+id/btnBack"
+            app:layout_constraintTop_toTopOf="@+id/btnBack" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Subtle Horizontal Divider below header -->
+    <View
+        android:id="@+id/headerDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EDE7E7"
+        app:layout_constraintTop_toBottomOf="@+id/layoutHeader" />
+
+    <!-- Scrollable Form Content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollViewContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toTopOf="@+id/layoutBottomActions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerDivider">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="18dp"
+            android:paddingBottom="24dp">
+
+            <!-- Top Form Content Container (Padded) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp">
+
+                <!-- User Info Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.facebook.drawee.view.SimpleDraweeView
+                        android:id="@+id/ivUserAvatar"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        app:roundAsCircle="true" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvUsername"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokasemibold"
+                            android:text="madupatel"
+                            android:textColor="@color/text_gry"
+                            android:textSize="16sp" />
+
+                        <LinearLayout
+                            android:id="@+id/layoutPrivacy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="13dp"
+                                android:layout_height="13dp"
+                                android:src="@drawable/ic_globe_gray" />
+
+                            <TextView
+                                android:id="@+id/tvPrivacy"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:fontFamily="@font/fredokaregular"
+                                android:text="Everyone"
+                                android:textColor="#808080"
+                                android:textSize="12.5sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Caption / Post Description Input -->
+                <EditText
+                    android:id="@+id/etCaption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@null"
+                    android:fontFamily="@font/fredokaregular"
+                    android:gravity="top|start"
+                    android:hint="Tell everyone what's your post is about."
+                    android:importantForAutofill="no"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:maxLength="500"
+                    android:textColor="@color/text_gry"
+                    android:textColorHint="#BDBDBD"
+                    android:textSize="15sp" />
+
+                <!-- Character Counter -->
+                <TextView
+                    android:id="@+id/tvCharCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:text="0/500"
+                    android:textColor="#9E9E9E"
+                    android:textSize="12sp" />
+
+                <!-- Add Location Pill (Default Unselected State) -->
+                <LinearLayout
+                    android:id="@+id/layoutAddLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_add_location_pill"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="18dp">
+
+                    <ImageView
+                        android:id="@+id/ivLocationIcon"
+                        android:layout_width="17dp"
+                        android:layout_height="17dp"
+                        android:src="@drawable/ic_location_pin_red" />
+
+                    <TextView
+                        android:id="@+id/tvLocationLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="@font/fredokamedium"
+                        android:includeFontPadding="false"
+                        android:text="Add location"
+                        android:textColor="@color/brand_red"
+                        android:textSize="14.5sp" />
+
+                </LinearLayout>
+
+                <!-- Selected Location Dual-Pill Row (Selected State) -->
+                <LinearLayout
+                    android:id="@+id/layoutSelectedLocationRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <!-- Red Selected Pill with Name and Remove 'X' -->
+                    <LinearLayout
+                        android:id="@+id/pillSelectedLocation"
+                        android:layout_width="0dp"
+                        android:layout_height="42dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_location_selected_pill"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="8dp">
+
+                        <!-- White circle with red pin inside -->
+                        <FrameLayout
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:background="@drawable/bg_circle_white_pin">
+
+                            <ImageView
+                                android:layout_width="12dp"
+                                android:layout_height="12dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_location_pin_red" />
+                        </FrameLayout>
+
+                        <!-- Location Name Text -->
+                        <TextView
+                            android:id="@+id/tvSelectedLocationName"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/fredokamedium"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/white"
+                            android:textSize="14sp" />
+
+                        <!-- Remove 'X' Button -->
+                        <FrameLayout
+                            android:id="@+id/btnRemoveLocation"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@drawable/bg_circle_remove_location"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <ImageView
+                                android:layout_width="10dp"
+                                android:layout_height="10dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_close_white" />
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+                    <!-- "Change" Pill Button -->
+                    <LinearLayout
+                        android:id="@+id/btnChangeLocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="42dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/bg_change_pill"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp">
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:src="@drawable/ic_refresh_sync" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:fontFamily="@font/fredokamedium"
+                            android:includeFontPadding="false"
+                            android:text="Change"
+                            android:textColor="#252525"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Dashed Upload Card (Empty State: No Photos Picked) -->
+            <FrameLayout
+                android:id="@+id/layoutUploadCard"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/add_moment_media_card_height"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_dashed_upload_card"
+                android:padding="24dp">
+
+                <LinearLayout
+                    android:id="@+id/layoutEmptyUpload"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <!-- White circle with photos icon -->
+                    <FrameLayout
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:background="@drawable/bg_circle_white_container"
+                        android:elevation="2dp">
+
+                        <ImageView
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_photos_upload" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:text="Add photos"
+                        android:textColor="@color/text_gry"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/fredokaregular"
+                        android:gravity="center"
+                        android:lineSpacingExtra="3dp"
+                        android:text="Share up to 5 photos from your\ncamera or gallery"
+                        android:textColor="#757575"
+                        android:textSize="14.5sp" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnSelectPhotos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="22dp"
+                        android:background="@drawable/bg_btn_pill_red"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:paddingHorizontal="32dp"
+                        android:text="+ Select photos"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <!-- Selected Photos Gallery Container (When Photos are Picked) -->
+            <LinearLayout
+                android:id="@+id/layoutSelectedGalleryContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- Custom Multi-Image Gallery with dynamic 1 to 5 rules (Edge-to-Edge Full Width) -->
+                <com.flirttime.core.ui.widget.MultiImageGalleryView
+                    android:id="@+id/gallerySelectedPhotos"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/add_moment_media_card_height" />
+
+                <!-- Photo Counter Row: X of 5 photos + Dashes on Left, + Add More / All Set on Right -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="20dp">
+
+                    <!-- Left Column: Counter Text + 5 Progress Dashes -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvPhotoCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokasemibold"
+                            android:includeFontPadding="false"
+                            android:text="2 of 5 photos"
+                            android:textColor="#18181B"
+                            android:textSize="15.5sp" />
+
+                        <!-- 5 Dash Progress Indicators -->
+                        <LinearLayout
+                            android:id="@+id/layoutPhotoDashes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <View
+                                android:id="@+id/dash1"
+                                android:layout_width="16dp"
+                                android:layout_height="4dp"
+                                android:layout_marginEnd="4dp"
+                                android:background="@drawable/bg_dash_indicator_active" />
+
+                            <View
+                                android:id="@+id/dash2"
+                                android:layout_width="16dp"
+                                android:layout_height="4dp"
+                                android:layout_marginEnd="4dp"
+                                android:background="@drawable/bg_dash_indicator_active" />
+
+                            <View
+                                android:id="@+id/dash3"
+                                android:layout_width="16dp"
+                                android:layout_height="4dp"
+                                android:layout_marginEnd="4dp"
+                                android:background="@drawable/bg_dash_indicator_inactive" />
+
+                            <View
+                                android:id="@+id/dash4"
+                                android:layout_width="16dp"
+                                android:layout_height="4dp"
+                                android:layout_marginEnd="4dp"
+                                android:background="@drawable/bg_dash_indicator_inactive" />
+
+                            <View
+                                android:id="@+id/dash5"
+                                android:layout_width="16dp"
+                                android:layout_height="4dp"
+                                android:background="@drawable/bg_dash_indicator_inactive" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Right Column: + Add more Pill Button -->
+                    <LinearLayout
+                        android:id="@+id/btnAddMorePhotos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:background="@drawable/bg_pill_add_more"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokamedium"
+                            android:includeFontPadding="false"
+                            android:text="+ Add more"
+                            android:textColor="@color/brand_red"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <!-- Right Column: ✓ All set Pill Button (Visible when 5 photos) -->
+                    <LinearLayout
+                        android:id="@+id/btnAllSet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:background="@drawable/bg_pill_all_set"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokamedium"
+                            android:includeFontPadding="false"
+                            android:text="✓ All set"
+                            android:textColor="#18181B"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Pinned Bottom Action Container -->
+    <LinearLayout
+        android:id="@+id/layoutBottomActions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Discard Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnDiscard"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_btn_pill_outline_red"
+            android:fontFamily="@font/fredokasemibold"
+            android:text="Discard"
+            android:textAllCaps="false"
+            android:textColor="@color/brand_red"
+            android:textSize="16sp" />
+
+        <!-- Share Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnShare"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_btn_pill_salmon_inactive"
+            android:enabled="false"
+            android:fontFamily="@font/fredokasemibold"
+            android:text="Share"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="left_overlay" type="id" />
+    <item name="right_overlay" type="id" />
+    <item name="top_overlay" type="id" />
+    <item name="bottom_overlay" type="id" />
+</resources>

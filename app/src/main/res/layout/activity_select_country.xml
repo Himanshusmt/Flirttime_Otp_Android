@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".feature.auth.presentation.country.SelectCountryActivity">
+
+    <LinearLayout
+        android:id="@+id/searchContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:background="@drawable/loginnumber_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/_5sdp">
+
+        <ImageView
+            android:layout_width="@dimen/_13sdp"
+            android:layout_height="@dimen/_13sdp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:contentDescription="@null"
+            android:src="@drawable/img_search" />
+
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:background="@color/transparent"
+            android:fontFamily="@font/fredokaregular"
+            android:hint="@string/search_or_select_your_country"
+            android:imeOptions="actionDone"
+            android:maxLines="1"
+            android:paddingVertical="@dimen/_7sdp"
+            android:singleLine="true"
+            android:textColor="@color/btn_border"
+            android:textColorHint="@color/text_gry"
+            android:textSize="@dimen/_12ssp" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_weight="1" />
+
+    <ImageView
+        android:id="@+id/placeHolder"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200sdp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:contentDescription="@null"
+        android:src="@drawable/img_country_code_placeholder"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/tvContinue"
+        style="@style/common_style_button_new"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        android:alpha="0.5"
+        android:enabled="false"
+        android:text="@string/continue_" />
+
+</LinearLayout>

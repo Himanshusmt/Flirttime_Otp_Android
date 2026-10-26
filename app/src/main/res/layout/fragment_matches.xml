@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootMatches"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_bg"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <!-- Top App Header -->
+    <LinearLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- FlirtTime Logo Image (slightly decreased) -->
+        <ImageView
+            android:id="@+id/ivAppLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="FlirtTime Logo"
+            android:src="@drawable/img_app_title" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Coin Balance Pill (Coin 40 +) - slightly increased with box shadow -->
+        <LinearLayout
+            android:id="@+id/btnCoins"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_coin_pill"
+            android:elevation="3.5dp"
+            android:outlineAmbientShadowColor="#1A000000"
+            android:outlineSpotShadowColor="#26000000"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:contentDescription="Coins Icon"
+                android:src="@drawable/ic_coin_gold" />
+
+            <TextView
+                android:id="@+id/tvCoinCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginEnd="9dp"
+                android:fontFamily="@font/fredokamedium"
+                android:text="40"
+                android:textColor="#1F1F1F"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <!-- Red Plus Icon -->
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="Add Coins"
+                android:src="@drawable/ic_plus_circle_red" />
+
+        </LinearLayout>
+
+        <!-- Notification Bell Button - slightly increased with box shadow -->
+        <FrameLayout
+            android:id="@+id/btnNotification"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_circle_icon_button"
+            android:elevation="3.5dp"
+            android:outlineAmbientShadowColor="#1A000000"
+            android:outlineSpotShadowColor="#26000000">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:contentDescription="Notifications"
+                android:src="@drawable/ic_notification" />
+
+        </FrameLayout>
+
+        <!-- Filter Sliders Button - slightly increased with box shadow -->
+        <FrameLayout
+            android:id="@+id/btnFilter"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_circle_icon_button"
+            android:elevation="3.5dp"
+            android:outlineAmbientShadowColor="#1A000000"
+            android:outlineSpotShadowColor="#26000000">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:contentDescription="Filters"
+                android:src="@drawable/ic_filter_red" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- Hardcoded Category Pills Row (People, Quick Moments, Interests) -->
+    <!-- Reduced marginTop to 4dp for tighter spacing with header -->
+    <LinearLayout
+        android:id="@+id/layoutPills"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutHeader">
+
+        <!-- Pill 1: People (Selected by default) -->
+        <TextView
+            android:id="@+id/pillPeople"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_tab_pill_selected"
+            android:fontFamily="@font/fredokamedium"
+            android:gravity="center"
+            android:text="People"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <!-- Pill 2: Quick Moments -->
+        <TextView
+            android:id="@+id/pillQuickMoments"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1.45"
+            android:background="@drawable/bg_tab_pill_unselected"
+            android:fontFamily="@font/fredokamedium"
+            android:gravity="center"
+            android:text="Quick Moments"
+            android:textColor="#262626"
+            android:textSize="14sp" />
+
+        <!-- Pill 3: Interests -->
+        <TextView
+            android:id="@+id/pillInterests"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1.05"
+            android:background="@drawable/bg_tab_pill_unselected"
+            android:fontFamily="@font/fredokamedium"
+            android:gravity="center"
+            android:text="Interests"
+            android:textColor="#262626"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <!-- ========================================================================= -->
+    <!-- PEOPLE TAB CONTAINER: Swipe cards & 3 Bottom Actions                      -->
+    <!-- ========================================================================= -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutPeopleContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutPills">
+
+        <!-- Card Stack Container: Modern 4-Direction SwipeCardStackView -->
+        <com.flirttime.feature.main.presentation.matches.SwipeCardStackView
+            android:id="@+id/cardStackView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:elevation="16dp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toTopOf="@id/layoutBottomActions"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Three Bottom Action Buttons: Not Interested, Connect, Like -->
+        <LinearLayout
+            android:id="@+id/layoutBottomActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="42dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:elevation="12dp"
+            android:gravity="bottom|center_horizontal"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!-- Action 1: Not Interested (Cross) with Rounded Circular Shadow -->
+            <LinearLayout
+                android:id="@+id/btnNotInterested"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:outlineAmbientShadowColor="@color/shadow_soft_black"
+                    android:outlineSpotShadowColor="@color/shadow_soft_black"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="28dp"
+                    app:cardElevation="6dp"
+                    app:cardPreventCornerOverlap="false"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Not Interested"
+                        android:src="@drawable/ic_action_cross" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/fredokamedium"
+                    android:text="Not interested"
+                    android:textColor="#555555"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+
+            <!-- Action 2: Connect (Center Red Star, Enlarged with Red Rounded Glow Shadow) -->
+            <LinearLayout
+                android:id="@+id/btnConnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="74dp"
+                    android:layout_height="74dp"
+                    android:outlineAmbientShadowColor="@color/shadow_connect_ambient"
+                    app:cardBackgroundColor="#DE2D2D"
+                    app:cardCornerRadius="37dp"
+                    app:cardElevation="14dp"
+                    app:cardPreventCornerOverlap="false"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Connect"
+                        android:src="@drawable/star" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/fredokamedium"
+                    android:text="Connect"
+                    android:textColor="@color/btn_border"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <!-- Action 3: Like (Heart) with Rounded Circular Shadow -->
+            <LinearLayout
+                android:id="@+id/btnLike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:outlineAmbientShadowColor="@color/shadow_like_pink"
+                    android:outlineSpotShadowColor="@color/shadow_like_pink"
+                    app:cardBackgroundColor="#FFF0F2"
+                    app:cardCornerRadius="28dp"
+                    app:cardElevation="6dp"
+                    app:cardPreventCornerOverlap="false"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Like"
+                        android:src="@drawable/ic_action_heart" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/fredokamedium"
+                    android:text="Like"
+                    android:textColor="#555555"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- ========================================================================= -->
+    <!-- INTERESTS TAB CONTAINER: Scrollable feed with Discover & People sections  -->
+    <!-- ========================================================================= -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/layoutInterestsContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingBottom="48dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutPills"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="14dp">
+
+            <!-- Section 1 Header: Discover by Interests -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvDiscoverTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="@font/fredokamedium"
+                    android:text="Discover by Interests"
+                    android:textColor="#1A1A1A"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btnSeeAllInterests"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/fredokamedium"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="4dp"
+                    android:text="See All"
+                    android:textColor="@color/brand_red"
+                    android:textSize="13sp" />
+
+            </RelativeLayout>
+
+            <!-- 3-Column Grid of Interests -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvInterests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                tools:itemCount="6"
+                tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                tools:listitem="@layout/item_interest_card"
+                tools:spanCount="3" />
+
+            <!-- Section 2 Header: People who love {Interest} -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp">
+
+                <TextView
+                    android:id="@+id/tvPeopleLoveTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="@font/fredokamedium"
+                    android:text="People who love Art"
+                    android:textColor="#1A1A1A"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btnSeeAllPeople"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/fredokamedium"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="4dp"
+                    android:text="See All"
+                    android:textColor="@color/brand_red"
+                    android:textSize="13sp" />
+
+            </RelativeLayout>
+
+            <!-- Horizontal Peeking List of Profiles -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPeopleWhoLove"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="4"
+                tools:listitem="@layout/item_interest_person" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

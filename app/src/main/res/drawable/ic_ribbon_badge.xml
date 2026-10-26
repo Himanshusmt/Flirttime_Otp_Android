@@ -1,0 +1,25 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Ribbon tails -->
+    <path
+        android:fillColor="#00B4D8"
+        android:pathData="M8,14l-2,8 5,-2.5 1,-7z" />
+    <path
+        android:fillColor="#0077B6"
+        android:pathData="M16,14l2,8 -5,-2.5 -1,-7z" />
+    <!-- Rosette outer circle -->
+    <path
+        android:fillColor="#FF4D6D"
+        android:pathData="M12,2A7,7 0 1,0 12,16A7,7 0 1,0 12,2Z" />
+    <!-- Rosette inner circle -->
+    <path
+        android:fillColor="#FF758F"
+        android:pathData="M12,4.5A4.5,4.5 0 1,0 12,13.5A4.5,4.5 0 1,0 12,4.5Z" />
+    <!-- Rosette center star/dot -->
+    <path
+        android:fillColor="#FFF0F3"
+        android:pathData="M12,7A2,2 0 1,0 12,11A2,2 0 1,0 12,7Z" />
+</vector>

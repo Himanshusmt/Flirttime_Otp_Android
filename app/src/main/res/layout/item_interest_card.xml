@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardInterest"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:minHeight="144dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@drawable/bg_interest_card_unselected"
+    android:elevation="2.5dp"
+    android:outlineProvider="background"
+    android:outlineAmbientShadowColor="#0D000000"
+    android:outlineSpotShadowColor="#1A000000">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingVertical="18dp"
+        android:paddingHorizontal="6dp">
+
+        <!-- Pastel Icon Squircle -->
+        <FrameLayout
+            android:id="@+id/layoutIconBg"
+            android:layout_width="52dp"
+            android:layout_height="52dp">
+
+            <TextView
+                android:id="@+id/tvInterestEmoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="24sp"
+                tools:text="🎨" />
+
+        </FrameLayout>
+
+        <!-- Interest Name -->
+        <TextView
+            android:id="@+id/tvInterestName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/fredokamedium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="#1F1F1F"
+            android:textSize="14sp"
+            tools:text="Art" />
+
+        <!-- Subtitle / Category -->
+        <TextView
+            android:id="@+id/tvInterestCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/fredokamedium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="#777777"
+            android:textSize="11.5sp"
+            tools:text="Creativity" />
+
+    </LinearLayout>
+
+</FrameLayout>

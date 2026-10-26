@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="@dimen/_12sdp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <include
+            android:id="@+id/view_popup_header"
+            layout="@layout/common_popup_header" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/view_popup_header"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:fontFamily="@font/fredokamedium"
+                android:text="@string/what_s_your_n_gender"
+                android:textAlignment="center"
+                android:textColor="@color/btn_border"
+                android:textSize="19sp" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/femaleBtn"
+                    android:layout_width="@dimen/_68sdp"
+                    android:layout_height="@dimen/_88sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="@dimen/_12sdp"
+                    android:background="@drawable/gender_bg"
+                    android:outlineAmbientShadowColor="@color/female"
+                    android:outlineSpotShadowColor="@color/female"
+                    android:padding="1.80dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/img_female"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/maleBtn"
+                    android:layout_width="@dimen/_68sdp"
+                    android:layout_height="@dimen/_88sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_marginVertical="@dimen/_12sdp"
+                    android:background="@drawable/gender_bg"
+                    android:outlineAmbientShadowColor="@color/male"
+                    android:outlineSpotShadowColor="@color/male"
+                    android:padding="1.80dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/img_male"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/othersBtn"
+                    android:layout_width="@dimen/_68sdp"
+                    android:layout_height="@dimen/_88sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="@dimen/_12sdp"
+                    android:background="@drawable/gender_bg"
+                    android:outlineAmbientShadowColor="@color/others"
+                    android:outlineSpotShadowColor="@color/others"
+                    android:padding="1.80dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/img_other"
+                    android:visibility="visible" />
+
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/tvContinue"
+                style="@style/common_style_button_new"
+                android:layout_below="@id/tv_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:alpha="0.5"
+                android:enabled="false"
+                android:text="@string/save" />
+
+
+        </LinearLayout>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

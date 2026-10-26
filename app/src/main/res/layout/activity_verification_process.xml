@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/img_verification_process_bg"
+    tools:context=".feature.profile.presentation.process.VerificationProcessActivity">
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomContainer"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/llContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/_20sdp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokaregular"
+                    android:letterSpacing="0"
+                    android:lineHeight="38sp"
+                    android:text="Going Great"
+                    android:textColor="@color/white"
+                    android:textSize="30sp" />
+
+                <ImageView
+                    android:layout_width="@dimen/_105sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_gravity="end"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Going Great Highlight"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/img_verification_process" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Verification Border"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/img_verification_process_border" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_gravity="center_horizontal"
+                        android:contentDescription="Verification Icon"
+                        android:src="@drawable/img_verification_process_verify" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:fontFamily="@font/fredokamedium"
+                        android:letterSpacing="0"
+                        android:lineHeight="20sp"
+                        android:text="@string/verification_in_process"
+                        android:textColor="@color/white"
+                        android:textSize="19sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:fontFamily="@font/fredokaregular"
+                        android:letterSpacing="0"
+                        android:lineHeight="27sp"
+                        android:text="@string/your_love_story_is_n_about_to_swipe_right_in"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:fontFamily="@font/fredokamedium"
+                android:letterSpacing="0"
+                android:lineHeight="22sp"
+                android:text="@string/we_ve_got_your_picture_give_us_a_while_to_n_verify_your_gesture"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="17sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/fredokaregular"
+                android:letterSpacing="0"
+                android:lineHeight="15sp"
+                android:text="@string/in_the_meantime_you_can_complete_onboarding_details_and_n_explore_the_flirt_time_app"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottomContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/tvContinue"
+            style="@style/common_style_button_new"
+            android:layout_marginHorizontal="@dimen/_15sdp"
+            android:background="@drawable/button_selector"
+            android:backgroundTint="@color/white"
+            android:text="@string/continue_"
+            android:textColor="@color/btn_border" />
+
+    </LinearLayout>
+
+</RelativeLayout>
