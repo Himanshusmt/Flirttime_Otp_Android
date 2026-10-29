@@ -36,6 +36,8 @@ data class UserSearchItemDto(
     @SerializedName("bio") val bio: String? = null,
     @SerializedName("interests") val interests: List<UserInterestDto>? = null,
     @SerializedName("sharedInterests") val sharedInterests: List<String>? = null,
+    @SerializedName("commonInterestsCount") val commonInterestsCount: Int? = null,
+    @SerializedName("profileMatchPercentage") val profileMatchPercentage: Int? = null,
     @SerializedName("momentCount") val momentCount: Int? = null,
     @SerializedName("photos") val photos: List<UserPhotoDto>? = null,
     @SerializedName("compatibility") val compatibility: UserCompatibilityDto? = null,

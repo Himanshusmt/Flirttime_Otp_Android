@@ -36,8 +36,11 @@ class OtherUserInterestsAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: UserInterestDto) {
-            binding.tvInterestIcon.text = item.icon ?: "✨"
-            binding.tvInterestName.text = item.name.orEmpty()
+            val name = item.name.orEmpty()
+            binding.tvInterestName.text = name
+
+            val icon = resolveInterestEmoji(name, item.emoji ?: item.icon)
+            binding.tvInterestIcon.text = icon
 
             val isCommon = item.isCommon == true
             val context = binding.root.context
@@ -47,6 +50,30 @@ class OtherUserInterestsAdapter(
             } else {
                 binding.rootInterestChip.setBackgroundResource(R.drawable.bg_interest_chip_pill)
                 binding.tvInterestName.setTextColor(0xFF333333.toInt())
+            }
+        }
+
+        private fun resolveInterestEmoji(name: String, provided: String?): String {
+            if (!provided.isNullOrBlank()) return provided
+            val lower = name.lowercase().trim()
+            return when {
+                lower.contains("exercise") -> "🏋️"
+                lower.contains("shop") -> "🛍️"
+                lower.contains("game") || lower.contains("gaming") -> "🎮"
+                lower.contains("fitness") || lower.contains("gym") -> "💪"
+                lower.contains("sport") -> "⚽"
+                lower.contains("music") -> "🎵"
+                lower.contains("travel") -> "✈️"
+                lower.contains("read") || lower.contains("book") -> "📚"
+                lower.contains("cook") || lower.contains("food") -> "🍳"
+                lower.contains("photo") -> "📸"
+                lower.contains("coffee") -> "☕"
+                lower.contains("movie") || lower.contains("cinema") -> "🎬"
+                lower.contains("art") || lower.contains("draw") -> "🎨"
+                lower.contains("dance") -> "💃"
+                lower.contains("nature") || lower.contains("hike") -> "🌿"
+                lower.contains("pet") || lower.contains("dog") || lower.contains("cat") -> "🐾"
+                else -> "✨"
             }
         }
     }

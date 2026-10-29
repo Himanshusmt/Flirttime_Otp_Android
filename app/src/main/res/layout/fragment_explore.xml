@@ -79,8 +79,10 @@
                 <!-- Likes Count Badge -->
                 <TextView
                     android:id="@+id/tvLikesBadge"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="wrap_content"
+                    android:minWidth="18dp"
+                    android:layout_height="18dp"
+                    android:paddingHorizontal="4dp"
                     android:layout_gravity="top|end"
                     android:layout_marginStart="14dp"
                     android:layout_marginTop="-4dp"
@@ -88,8 +90,8 @@
                     android:gravity="center"
                     android:includeFontPadding="false"
                     android:textColor="@color/white"
-                    android:textSize="9.5sp"
-                    android:textStyle="bold"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/fredokamedium"
                     android:visibility="gone" />
             </FrameLayout>
 
@@ -134,13 +136,15 @@
                     android:id="@+id/ivTabYouLikedIcon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_tab_you_liked" />
+                    android:src="@drawable/ic_tab_you_liked_active" />
 
                 <!-- Notification Count Badge -->
                 <TextView
                     android:id="@+id/tvYouLikedBadge"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="wrap_content"
+                    android:minWidth="18dp"
+                    android:layout_height="18dp"
+                    android:paddingHorizontal="4dp"
                     android:layout_gravity="top|end"
                     android:layout_marginStart="14dp"
                     android:layout_marginTop="-4dp"
@@ -148,8 +152,8 @@
                     android:gravity="center"
                     android:includeFontPadding="false"
                     android:textColor="@color/white"
-                    android:textSize="9.5sp"
-                    android:textStyle="bold"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/fredokamedium"
                     android:visibility="gone" />
             </FrameLayout>
 
@@ -199,8 +203,10 @@
                 <!-- Matches Count Badge -->
                 <TextView
                     android:id="@+id/tvMatchesBadge"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="wrap_content"
+                    android:minWidth="18dp"
+                    android:layout_height="18dp"
+                    android:paddingHorizontal="4dp"
                     android:layout_gravity="top|end"
                     android:layout_marginStart="14dp"
                     android:layout_marginTop="-4dp"
@@ -208,8 +214,8 @@
                     android:gravity="center"
                     android:includeFontPadding="false"
                     android:textColor="@color/white"
-                    android:textSize="9.5sp"
-                    android:textStyle="bold"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/fredokamedium"
                     android:visibility="gone" />
             </FrameLayout>
 
@@ -259,8 +265,10 @@
                 <!-- Compliments Count Badge -->
                 <TextView
                     android:id="@+id/tvComplimentsBadge"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="wrap_content"
+                    android:minWidth="18dp"
+                    android:layout_height="18dp"
+                    android:paddingHorizontal="4dp"
                     android:layout_gravity="top|end"
                     android:layout_marginStart="14dp"
                     android:layout_marginTop="-4dp"
@@ -268,8 +276,8 @@
                     android:gravity="center"
                     android:includeFontPadding="false"
                     android:textColor="@color/white"
-                    android:textSize="9.5sp"
-                    android:textStyle="bold"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/fredokamedium"
                     android:visibility="gone" />
             </FrameLayout>
 
@@ -303,6 +311,54 @@
         android:layout_height="1dp"
         android:background="#EDEDF0" />
 
+    <!-- iOS Upsell Banner (Shown when tab is locked) -->
+    <LinearLayout
+        android:id="@+id/layoutUpsellBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_upsell_banner"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="Locked feature"
+            android:src="@drawable/ic_lock_red" />
+
+        <TextView
+            android:id="@+id/tvUpsellMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/fredokamedium"
+            android:includeFontPadding="false"
+            android:textColor="#1A1A1A"
+            android:textSize="13sp"
+            tools:text="See everyone who likes you and match instantly" />
+
+        <TextView
+            android:id="@+id/btnUpsellUnlock"
+            android:layout_width="72dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_action_pill_red"
+            android:fontFamily="@font/fredokasemibold"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="Unlock"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
     <!-- Content Area: SwipeRefresh, Recycler, Loader & Empty State -->
     <FrameLayout
         android:layout_width="match_parent"
@@ -322,7 +378,7 @@
                 android:clipToPadding="false"
                 android:overScrollMode="never"
                 android:paddingHorizontal="14dp"
-                android:paddingTop="14dp"
+                android:paddingTop="12dp"
                 android:paddingBottom="84dp" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -336,56 +392,67 @@
             android:indeterminateTint="@color/brand_red"
             android:visibility="gone" />
 
-        <!-- Empty State -->
+        <!-- iOS Clean Circular Icon Empty State -->
         <LinearLayout
             android:id="@+id/layoutEmptyExplore"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="24dp"
-            android:visibility="gone">
+            android:paddingHorizontal="40dp"
+            android:visibility="gone"
+            tools:visibility="visible">
 
-            <TextView
-                android:id="@+id/tvEmptyExploreEmoji"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="✨"
-                android:textSize="40sp" />
+            <!-- Circular Icon Container (matches iOS 88dp circle with 10% red tint) -->
+            <FrameLayout
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:background="@drawable/bg_empty_circle_tint">
+
+                <ImageView
+                    android:id="@+id/ivEmptyExploreIcon"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="Empty Tab"
+                    android:src="@drawable/ic_tab_likes"
+                    app:tint="@color/brand_red" />
+
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/tvEmptyExploreTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:fontFamily="@font/fredokamedium"
+                android:layout_marginTop="18dp"
+                android:fontFamily="@font/fredokasemibold"
                 android:gravity="center"
-                android:text="No profiles to display yet"
-                android:textColor="#1F1F1F"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textColor="#1A1A1A"
+                android:textSize="19sp"
+                tools:text="No likes yet" />
 
             <TextView
                 android:id="@+id/tvEmptyExploreSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:fontFamily="@font/fredokamedium"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/fredokaregular"
                 android:gravity="center"
-                android:text="Check back soon to see your latest activity"
-                android:textColor="#777777"
-                android:textSize="13sp" />
+                android:lineSpacingExtra="2dp"
+                android:textColor="#8E8E93"
+                android:textSize="14sp"
+                tools:text="Keep your profile fresh. People who like you will show up here." />
 
             <TextView
                 android:id="@+id/btnRefreshExplore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_tab_pill_selected"
-                android:fontFamily="@font/fredokamedium"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_action_pill_red"
+                android:fontFamily="@font/fredokasemibold"
                 android:paddingHorizontal="24dp"
-                android:paddingVertical="10dp"
+                android:paddingVertical="9dp"
                 android:text="Refresh"
                 android:textColor="@color/white"
                 android:textSize="14sp" />

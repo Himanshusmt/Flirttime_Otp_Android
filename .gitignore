@@ -54,6 +54,12 @@ captures/
 .DS_Store
 Thumbs.db
 
+# Documentation
+*.md
+
+# Qoder IDE generated artifacts (Repo Wiki / knowledge cards)
+.qoder/
+
 # Misc
 *.hprof
 lint-results*.html
