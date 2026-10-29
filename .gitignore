@@ -58,3 +58,9 @@ Thumbs.db
 *.hprof
 lint-results*.html
 lint-results*.xml
+
+AGENT_INSTRUCTIONS.md
+FlirtTime_Postman_Collection.json
+agent/
+docs/
+
