@@ -67,6 +67,7 @@ sealed class Destination {
         val name: String? = null,
         val age: Int? = null,
         val profilePhotoUrl: String? = null,
+        val coverPhotoUrl: String? = null,
         val city: String? = null,
         val bio: String? = null
     ) : Destination()
@@ -89,6 +90,7 @@ object AppNavigator {
     const val EXTRA_NAME = "extra_name"
     const val EXTRA_AGE = "extra_age"
     const val EXTRA_PROFILE_PHOTO_URL = "extra_profile_photo_url"
+    const val EXTRA_COVER_PHOTO_URL = "extra_cover_photo_url"
     const val EXTRA_CITY = "extra_city"
     const val EXTRA_BIO = "extra_bio"
 
@@ -154,6 +156,7 @@ object AppNavigator {
                     destination.name?.let { putExtra(EXTRA_NAME, it) }
                     destination.age?.let { putExtra(EXTRA_AGE, it) }
                     destination.profilePhotoUrl?.let { putExtra(EXTRA_PROFILE_PHOTO_URL, it) }
+                    destination.coverPhotoUrl?.let { putExtra(EXTRA_COVER_PHOTO_URL, it) }
                     destination.city?.let { putExtra(EXTRA_CITY, it) }
                     destination.bio?.let { putExtra(EXTRA_BIO, it) }
                 }

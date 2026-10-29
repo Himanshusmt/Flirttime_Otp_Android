@@ -58,6 +58,24 @@ class MainRepositoryImpl(
         emit(result)
     }.flowOn(Dispatchers.IO)
 
+    override fun getInteractionCounts(): Flow<Resource<com.flirttime.feature.main.explore.InteractionCountsData>> = flow {
+        val result = safeApiCall {
+            mainApiService.getInteractionCounts()
+        }
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
+    override fun markInteractionRead(id: String): Flow<Resource<Unit>> = flow {
+        val result = safeApiCall {
+            mainApiService.markInteractionRead(id)
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(Unit))
+            is Resource.Error -> emit(Resource.Error(result.message, result.code))
+            is Resource.Loading -> emit(Resource.Loading)
+        }
+    }.flowOn(Dispatchers.IO)
+
 
     // ==========================================
     // 2. PROFILE DETAILS & MEDIA (ME)

@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <!-- Red circle background -->
+    <path
+        android:fillColor="#DE2D2D"
+        android:pathData="M32,32m-30,0a30,30 0,1 1,60 0a30,30 0,1 1,-60 0" />
+    <!-- White 5-pointed Star matching iOS Super Like badge -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M32.00,17.00L35.64,26.98L46.27,27.36L37.90,33.92L40.82,44.14L32.00,38.20L23.18,44.14L26.10,33.92L17.73,27.36L28.36,26.98Z" />
+</vector>

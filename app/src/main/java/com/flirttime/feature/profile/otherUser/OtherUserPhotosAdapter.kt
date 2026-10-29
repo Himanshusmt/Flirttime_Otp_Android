@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.flirttime.R
+import com.flirttime.core.common.FastImageHelper
 import com.flirttime.databinding.ItemOtherUserPhotoBinding
 
 class OtherUserPhotosAdapter(
@@ -35,11 +36,11 @@ class OtherUserPhotosAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(url: String, position: Int) {
-            if (url.isNotBlank()) {
-                binding.ivUserPhoto.setImageURI(url)
-            } else {
-                binding.ivUserPhoto.setActualImageResource(R.drawable.img_login)
-            }
+            FastImageHelper.loadDirect(
+                draweeView = binding.ivUserPhoto,
+                url = url,
+                fallbackRes = R.drawable.explore_placeholder
+            )
             binding.root.setOnClickListener {
                 onPhotoClick?.invoke(url, position)
             }

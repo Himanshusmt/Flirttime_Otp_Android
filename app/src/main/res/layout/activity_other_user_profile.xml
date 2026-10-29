@@ -5,7 +5,7 @@
     android:id="@+id/rootOtherUserProfile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="#F8F8FA">
 
     <!-- Scrollable Content -->
     <androidx.core.widget.NestedScrollView
@@ -18,13 +18,14 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="100dp">
+            android:paddingBottom="120dp">
 
             <!-- 1. Top Cover Photo Container -->
             <FrameLayout
                 android:id="@+id/coverContainer"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="260dp"
+                android:background="#222226"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.facebook.drawee.view.SimpleDraweeView
@@ -33,12 +34,12 @@
                     android:layout_height="match_parent"
                     android:contentDescription="Cover Photo"
                     app:actualImageScaleType="centerCrop"
-                    app:placeholderImage="@drawable/img_login" />
+                    app:placeholderImage="@drawable/bg_cover_placeholder" />
 
-                <!-- Bottom gradient fade into solid white -->
+                <!-- Bottom gradient fade into solid background -->
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="110dp"
+                    android:layout_height="120dp"
                     android:layout_gravity="bottom"
                     android:background="@drawable/bg_cover_gradient_fade" />
 
@@ -76,7 +77,7 @@
                         android:layout_height="1dp"
                         android:layout_weight="1" />
 
-                    <!-- More Options (Block / Report) -->
+                    <!-- More Options (Block / Report Action Sheet) -->
                     <FrameLayout
                         android:id="@+id/btnMore"
                         android:layout_width="38dp"
@@ -99,12 +100,12 @@
 
             </FrameLayout>
 
-            <!-- 2. Circular Avatar with Red Gradient Ring -->
+            <!-- 2. Circular Avatar with Red Ring Border -->
             <FrameLayout
                 android:id="@+id/avatarContainer"
-                android:layout_width="106dp"
-                android:layout_height="106dp"
-                android:layout_marginTop="-53dp"
+                android:layout_width="114dp"
+                android:layout_height="114dp"
+                android:layout_marginTop="-57dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/coverContainer">
@@ -116,10 +117,10 @@
 
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/ivAvatar"
-                    android:layout_width="98dp"
-                    android:layout_height="98dp"
+                    android:layout_width="106dp"
+                    android:layout_height="106dp"
                     android:layout_gravity="center"
-                    app:placeholderImage="@drawable/img_login"
+                    app:placeholderImage="@drawable/explore_placeholder"
                     app:roundAsCircle="true" />
 
             </FrameLayout>
@@ -140,23 +141,23 @@
                     android:id="@+id/tvNameAge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredokamedium"
+                    android:fontFamily="@font/fredokasemibold"
                     android:textColor="#1A1A1A"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    tools:text="dummy_cindy, 28" />
+                    android:textSize="22sp"
+                    tools:text="sarfe, 18" />
 
+                <!-- Red iOS Verified Checkmark Badge -->
                 <ImageView
                     android:id="@+id/ivVerifiedBadge"
-                    android:layout_width="19dp"
-                    android:layout_height="19dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:layout_marginStart="6dp"
                     android:contentDescription="Verified"
-                    android:src="@drawable/ic_verified_blue" />
+                    android:src="@drawable/ic_verified_badge" />
 
             </LinearLayout>
 
-            <!-- 4. Location & Distance -->
+            <!-- 4. Location Pin & City -->
             <LinearLayout
                 android:id="@+id/layoutLocation"
                 android:layout_width="wrap_content"
@@ -169,8 +170,8 @@
                 app:layout_constraintTop_toBottomOf="@id/layoutNameAge">
 
                 <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_location_pin_red" />
 
@@ -180,30 +181,105 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:fontFamily="@font/fredokaregular"
-                    android:textColor="#777777"
-                    android:textSize="13sp"
-                    tools:text="Indore, Madhya Pradesh · 1.0 km away" />
+                    android:textColor="#8E8E93"
+                    android:textSize="13.5sp"
+                    tools:text="Indore, MP · 2.0 km away" />
 
             </LinearLayout>
 
-            <!-- 5. Bio Quote -->
+            <!-- 5. Bio / Quote -->
             <TextView
                 android:id="@+id/tvBio"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:fontFamily="@font/fredokaregular"
                 android:gravity="center"
                 android:lineSpacingMultiplier="1.2"
                 android:paddingHorizontal="32dp"
-                android:textColor="#333333"
-                android:textSize="13.5sp"
+                android:textColor="#2C2C2E"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layoutLocation"
-                tools:text="“Sunday mood: coffee, playlist on shuffle and zero plans ☕🎶 Let us explore hidden cafes!”" />
+                tools:text="“I'm going on my walk with the”" />
 
-            <!-- 6. Photos Section Header -->
+            <!-- 6. Voice Intro Section (Matching iOS Image 1) -->
+            <LinearLayout
+                android:id="@+id/layoutVoiceIntroHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:paddingHorizontal="16dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/tvBio">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:text="Voice Intro"
+                    android:textColor="#1A1A1A"
+                    android:textSize="17sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/cardVoiceIntro"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_pill_voice_intro"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/layoutVoiceIntroHeader">
+
+                <!-- Red Play / Pause Button -->
+                <FrameLayout
+                    android:id="@+id/btnVoicePlay"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_voice_play_circle_red"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/ivVoicePlayIcon"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Play Voice Intro"
+                        android:src="@drawable/ic_voice_play_triangle"
+                        app:tint="@color/white" />
+
+                </FrameLayout>
+
+                <!-- Audio Waveform Bars -->
+                <com.flirttime.feature.main.profile.widget.AudioWaveformView
+                    android:id="@+id/waveformVoice"
+                    android:layout_width="0dp"
+                    android:layout_height="26dp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_weight="1" />
+
+                <!-- Voice Duration Label -->
+                <TextView
+                    android:id="@+id/tvVoiceDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:fontFamily="@font/fredokamedium"
+                    android:textColor="#8E8E93"
+                    android:textSize="12.5sp"
+                    tools:text="0:05" />
+
+            </LinearLayout>
+
+            <!-- 7. Photos Section Header -->
             <LinearLayout
                 android:id="@+id/layoutPhotosHeader"
                 android:layout_width="match_parent"
@@ -212,30 +288,29 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingHorizontal="16dp"
-                app:layout_constraintTop_toBottomOf="@id/tvBio">
+                app:layout_constraintTop_toBottomOf="@id/cardVoiceIntro">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredokamedium"
+                    android:fontFamily="@font/fredokasemibold"
                     android:text="Photos"
                     android:textColor="#1A1A1A"
-                    android:textSize="16.5sp"
-                    android:textStyle="bold" />
+                    android:textSize="17sp" />
 
+                <!-- Photos Count Pill Badge -->
                 <TextView
                     android:id="@+id/tvPhotosCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:background="@drawable/bg_red_pill_count"
-                    android:fontFamily="@font/fredokamedium"
+                    android:background="@drawable/bg_pill_count_badge_ios"
+                    android:fontFamily="@font/fredokasemibold"
                     android:paddingHorizontal="8dp"
-                    android:paddingVertical="1.5dp"
-                    android:textColor="@color/white"
+                    android:paddingVertical="2dp"
+                    android:textColor="#DE2D2D"
                     android:textSize="11sp"
-                    android:textStyle="bold"
-                    tools:text="3" />
+                    tools:text="4" />
 
             </LinearLayout>
 
@@ -252,7 +327,7 @@
                 app:layout_constraintTop_toBottomOf="@id/layoutPhotosHeader"
                 tools:listitem="@layout/item_other_user_photo" />
 
-            <!-- 7. Interests Section Header -->
+            <!-- 8. Interests Section Header -->
             <LinearLayout
                 android:id="@+id/layoutInterestsHeader"
                 android:layout_width="match_parent"
@@ -266,11 +341,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredokamedium"
+                    android:fontFamily="@font/fredokasemibold"
                     android:text="Interests"
                     android:textColor="#1A1A1A"
-                    android:textSize="16.5sp"
-                    android:textStyle="bold" />
+                    android:textSize="17sp" />
 
                 <View
                     android:layout_width="0dp"
@@ -283,54 +357,110 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_pill_pink_badge"
-                    android:fontFamily="@font/fredokamedium"
+                    android:fontFamily="@font/fredokasemibold"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="4dp"
-                    android:textColor="#E02B52"
+                    android:textColor="#DE2D2D"
                     android:textSize="11.5sp"
-                    tools:text="💎 2 in common" />
+                    android:visibility="gone"
+                    tools:text="💖 1 in common" />
 
             </LinearLayout>
 
-            <!-- Interests Chips RecyclerView -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvInterests"
+            <!-- Interests Wrapped ChipGroup (Matching iOS Image 2) -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cgInterests"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="8dp"
+                app:layout_constraintTop_toBottomOf="@id/layoutInterestsHeader"
+                app:singleLine="false" />
+
+            <!-- 9. More About Me Section Header -->
+            <LinearLayout
+                android:id="@+id/layoutMoreAboutMeHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingHorizontal="16dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/layoutInterestsHeader"
-                tools:listitem="@layout/item_other_user_interest" />
+                app:layout_constraintTop_toBottomOf="@id/cgInterests">
 
-            <!-- 8. Moments Section Header -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:text="More about me"
+                    android:textColor="#1A1A1A"
+                    android:textSize="17sp" />
+
+            </LinearLayout>
+
+            <!-- More About Me White Rounded Card Container (Matching iOS Image 2 & 3) -->
+            <LinearLayout
+                android:id="@+id/cardMoreAboutMe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_white_rounded_card"
+                android:orientation="vertical"
+                android:paddingVertical="4dp"
+                app:layout_constraintTop_toBottomOf="@id/layoutMoreAboutMeHeader">
+
+                <!-- Dynamic Rows Container -->
+                <LinearLayout
+                    android:id="@+id/layoutMoreAboutMeRows"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <!-- 10. Moments Section Header -->
             <LinearLayout
                 android:id="@+id/layoutMomentsHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
+                android:layout_marginTop="24dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingHorizontal="16dp"
-                app:layout_constraintTop_toBottomOf="@id/rvInterests">
+                app:layout_constraintTop_toBottomOf="@id/cardMoreAboutMe">
 
                 <TextView
                     android:id="@+id/tvMomentsTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredokamedium"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:text="Moments"
                     android:textColor="#1A1A1A"
-                    android:textSize="16.5sp"
-                    android:textStyle="bold"
-                    tools:text="Moments · 1" />
+                    android:textSize="17sp" />
+
+                <!-- Moments Count Pill Badge -->
+                <TextView
+                    android:id="@+id/tvMomentsCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_pill_count_badge_ios"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:textColor="#DE2D2D"
+                    android:textSize="11sp"
+                    tools:text="9" />
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_weight="1" />
 
+                <!-- See All Moments -->
                 <TextView
                     android:id="@+id/btnSeeAllMoments"
                     android:layout_width="wrap_content"
@@ -339,22 +469,24 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:fontFamily="@font/fredokamedium"
+                    android:padding="4dp"
                     android:text="See all"
-                    android:textColor="#8E8E93"
-                    android:textSize="13sp" />
+                    android:textColor="#DE2D2D"
+                    android:textSize="13.5sp" />
 
             </LinearLayout>
 
-            <!-- Moments Carousel -->
+            <!-- Moments 3-Column Grid (Matching iOS Image 3) -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMoments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:clipToPadding="false"
-                android:orientation="horizontal"
-                android:paddingHorizontal="16dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="12.5dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="3"
                 app:layout_constraintTop_toBottomOf="@id/layoutMomentsHeader"
                 tools:listitem="@layout/item_other_user_moment" />
 
@@ -374,7 +506,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 9. Floating Bottom Action Bar -->
+    <!-- 11. Floating Bottom Action Bar (Pass 'X' & Chat Bubble) -->
     <LinearLayout
         android:id="@+id/layoutBottomActions"
         android:layout_width="wrap_content"
@@ -386,7 +518,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- Action: Nope / Cross -->
+        <!-- Action: Pass / Cross -->
         <FrameLayout
             android:id="@+id/btnNope"
             android:layout_width="54dp"
@@ -397,35 +529,20 @@
             android:focusable="true">
 
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_gravity="center"
-                android:contentDescription="Dislike"
+                android:contentDescription="Pass"
                 android:src="@drawable/ic_action_cross" />
 
         </FrameLayout>
 
-        <!-- Action: Like / Heart (Large Center Button) -->
-        <FrameLayout
-            android:id="@+id/btnLike"
-            android:layout_width="66dp"
-            android:layout_height="66dp"
-            android:layout_marginHorizontal="16dp"
-            android:background="@drawable/bg_floating_action_red"
-            android:clickable="true"
-            android:elevation="8dp"
-            android:focusable="true">
+        <!-- Gap between action buttons -->
+        <View
+            android:layout_width="18dp"
+            android:layout_height="1dp" />
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:contentDescription="Like"
-                android:src="@drawable/ic_heart_action_white" />
-
-        </FrameLayout>
-
-        <!-- Action: Chat / Message -->
+        <!-- Action: Chat / Message Bubble -->
         <FrameLayout
             android:id="@+id/btnChat"
             android:layout_width="54dp"

@@ -140,6 +140,14 @@ interface MainApiService {
         @Query("cursor") cursor: String? = null
     ): ApiResponse<InteractionsResponseData>
 
+    @GET("api/v1/interactions/counts")
+    suspend fun getInteractionCounts(): ApiResponse<com.flirttime.feature.main.explore.InteractionCountsData>
+
+    @POST("api/v1/interactions/{id}/read")
+    suspend fun markInteractionRead(
+        @Path("id") id: String
+    ): ApiResponse<Any>
+
 
     // ==========================================
     // 3. MOMENTS SCREEN (Permanent Feed Posts)

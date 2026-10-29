@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingHorizontal="14dp">
+
+        <!-- Circular Soft Icon Container (32dp) -->
+        <FrameLayout
+            android:id="@+id/layoutIconContainer"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_soft_circle_icon">
+
+            <!-- Real S3 iOS Icon Image -->
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/ivRowIcon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                app:actualImageScaleType="fitCenter" />
+
+            <!-- Fallback Emoji if icon not available -->
+            <TextView
+                android:id="@+id/tvRowEmoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:visibility="gone"
+                tools:text="🍷" />
+
+        </FrameLayout>
+
+        <!-- Label (e.g. Sexuality, Height, Smoking Habit) -->
+        <TextView
+            android:id="@+id/tvRowLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:layout_toEndOf="@+id/layoutIconContainer"
+            android:fontFamily="@font/fredokamedium"
+            android:textColor="#1C1C1E"
+            android:textSize="14.5sp"
+            tools:text="Drinking Habit" />
+
+        <!-- Value (e.g. Non-Drinker, Straight, 5.10 Feet) -->
+        <TextView
+            android:id="@+id/tvRowValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/fredokaregular"
+            android:textColor="#8E8E93"
+            android:textSize="14sp"
+            tools:text="Non-Drinker" />
+
+    </RelativeLayout>
+
+    <!-- Subtle Inset Divider -->
+    <View
+        android:id="@+id/viewDivider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginStart="58dp"
+        android:layout_marginEnd="14dp"
+        android:background="#EFEFF2" />
+
+</LinearLayout>

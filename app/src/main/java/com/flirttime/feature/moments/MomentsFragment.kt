@@ -47,7 +47,7 @@ class MomentsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupFilters()
+        setupHeaderActions()
         setupSwipeRefresh()
         setupFeed()
         setupScrollListener()
@@ -61,48 +61,14 @@ class MomentsFragment : Fragment() {
         }
     }
 
-    private var activeFilter: String? = null
-
-    private fun setupFilters() {
-        binding.btnAddNewMoment.setOnClickListener {
+    private fun setupHeaderActions() {
+        binding.btnAddMoment.setOnClickListener {
             AppNavigator.navigateTo(requireContext(), Destination.AddMoment)
-        }
-
-        binding.btnNearby.setOnClickListener {
-            toggleFilter("nearby")
-        }
-
-        binding.btnDistance.setOnClickListener {
-            toggleFilter("distance")
         }
 
         binding.btnNotification.setOnClickListener {
             AppNavigator.navigateTo(requireContext(), Destination.Notification)
         }
-    }
-
-    private fun toggleFilter(filter: String) {
-        activeFilter = if (activeFilter == filter) null else filter
-        updateFilterPillsUi()
-    }
-
-    private fun updateFilterPillsUi() {
-        val isNearbyActive = activeFilter == "nearby"
-        val isDistanceActive = activeFilter == "distance"
-
-        binding.btnNearby.setBackgroundResource(
-            if (isNearbyActive) R.drawable.bg_action_pill_red else R.drawable.bg_action_pill_white
-        )
-        binding.tvNearby.setTextColor(
-            if (isNearbyActive) Color.WHITE else Color.parseColor("#555555")
-        )
-
-        binding.btnDistance.setBackgroundResource(
-            if (isDistanceActive) R.drawable.bg_action_pill_red else R.drawable.bg_action_pill_white
-        )
-        binding.tvDistance.setTextColor(
-            if (isDistanceActive) Color.WHITE else Color.parseColor("#555555")
-        )
     }
 
     private fun setupSwipeRefresh() {
