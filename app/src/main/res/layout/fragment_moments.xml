@@ -18,7 +18,7 @@
         android:orientation="horizontal"
         android:paddingHorizontal="16dp"
         android:paddingTop="12dp"
-        android:paddingBottom="6dp"
+        android:paddingBottom="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -37,122 +37,30 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
+        <!-- Add Moment Button (+) -->
+        <ImageView
+            android:id="@+id/btnAddMoment"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Add Moment"
+            android:focusable="true"
+            android:padding="3dp"
+            android:src="@drawable/ic_header_add_moment" />
+
         <!-- Notification Bell Icon -->
         <ImageView
             android:id="@+id/btnNotification"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="Notifications"
             android:focusable="true"
+            android:padding="2dp"
             android:src="@drawable/ic_notification" />
-
-    </LinearLayout>
-
-    <!-- Action Filter Bar with Comfortable Breathing Space -->
-    <LinearLayout
-        android:id="@+id/layoutFilterBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="0dp"
-        android:paddingBottom="6dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutHeader">
-
-        <!-- 1. Add New Moment (Red Pill) -->
-        <LinearLayout
-            android:id="@+id/btnAddNewMoment"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_weight="1.35"
-            android:background="@drawable/bg_action_pill_red"
-            android:clickable="true"
-            android:elevation="1dp"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingHorizontal="6dp">
-
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_plus_white" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:ellipsize="end"
-                android:fontFamily="@font/fredokamedium"
-                android:maxLines="1"
-                android:text="Add new moment"
-                android:textColor="@color/white"
-                android:textSize="13sp" />
-
-        </LinearLayout>
-
-        <!-- 2. Near by (White Pill) -->
-        <LinearLayout
-            android:id="@+id/btnNearby"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_marginStart="8dp"
-            android:layout_weight="0.85"
-            android:background="@drawable/bg_action_pill_white"
-            android:clickable="true"
-            android:elevation="0.5dp"
-            android:focusable="true"
-            android:gravity="center"
-            android:paddingHorizontal="6dp">
-
-            <TextView
-                android:id="@+id/tvNearby"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fontFamily="@font/fredokamedium"
-                android:maxLines="1"
-                android:text="Near by"
-                android:textColor="#555555"
-                android:textSize="13sp" />
-
-        </LinearLayout>
-
-        <!-- 3. Less than 25km (White Pill) -->
-        <LinearLayout
-            android:id="@+id/btnDistance"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1.15"
-            android:background="@drawable/bg_action_pill_white"
-            android:clickable="true"
-            android:elevation="0.5dp"
-            android:focusable="true"
-            android:gravity="center"
-            android:paddingHorizontal="6dp">
-
-            <TextView
-                android:id="@+id/tvDistance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fontFamily="@font/fredokamedium"
-                android:maxLines="1"
-                android:text="Less than 25km"
-                android:textColor="#555555"
-                android:textSize="13sp" />
-
-        </LinearLayout>
 
     </LinearLayout>
 
@@ -164,7 +72,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutFilterBar">
+        app:layout_constraintTop_toBottomOf="@id/layoutHeader">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvMoments"
@@ -188,7 +96,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutFilterBar" />
+        app:layout_constraintTop_toBottomOf="@id/layoutHeader" />
 
     <!-- Empty Moments State (Centered in the feed area) -->
     <LinearLayout
@@ -202,7 +110,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutFilterBar"
+        app:layout_constraintTop_toBottomOf="@id/layoutHeader"
         tools:visibility="visible">
 
         <TextView
