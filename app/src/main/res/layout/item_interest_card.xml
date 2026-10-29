@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="24sp"
-                tools:text="🎨" />
+                tools:text="" />
 
         </FrameLayout>
 
@@ -50,7 +50,7 @@
             android:maxLines="1"
             android:textColor="#1F1F1F"
             android:textSize="14sp"
-            tools:text="Art" />
+            tools:text="" />
 
         <!-- Subtitle / Category -->
         <TextView
@@ -64,7 +64,7 @@
             android:maxLines="1"
             android:textColor="#777777"
             android:textSize="11.5sp"
-            tools:text="Creativity" />
+            tools:text="" />
 
     </LinearLayout>
 

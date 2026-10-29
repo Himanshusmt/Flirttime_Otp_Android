@@ -57,7 +57,7 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:contentDescription="Coins Icon"
-                android:src="@drawable/ic_coin_gold" />
+                android:src="@drawable/ic_coin_profile" />
 
             <TextView
                 android:id="@+id/tvCoinCount"
@@ -235,7 +235,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="✨"
+                android:text="&#8226;"
                 android:textSize="40sp" />
 
             <TextView
@@ -418,6 +418,77 @@
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- ========================================================================= -->
+    <!-- QUICK MOMENTS TAB CONTAINER: Cards deck with Add New & Stories            -->
+    <!-- ========================================================================= -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshQuickMoments"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutPills"
+        tools:visibility="gone">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/layoutQuickMomentsContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingBottom="48dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="18dp">
+
+                <!-- Title: Quick Moments (Matches Screenshot: Bold Dark Header) -->
+                <TextView
+                    android:id="@+id/tvQuickMomentsTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/fredokamedium"
+                    android:text="Quick Moments"
+                    android:textColor="#1A1A1A"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <!-- 3-Column Grid Cards (3 per row, 3x3 if more than 3) -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvQuickMomentsCards"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    android:paddingHorizontal="10dp"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="3"
+                    tools:itemCount="6"
+                    tools:listitem="@layout/item_quick_moment_add_card" />
+
+                <!-- Loader for Quick Moments Cards -->
+                <ProgressBar
+                    android:id="@+id/progressBarQuickMoments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="32dp"
+                    android:indeterminateTint="@color/brand_red"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!-- ========================================================================= -->
     <!-- INTERESTS TAB CONTAINER: Scrollable feed with Discover & People sections  -->

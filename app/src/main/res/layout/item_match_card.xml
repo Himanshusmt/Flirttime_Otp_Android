@@ -53,7 +53,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="📸"
+                    android:text="&#8226;"
                     android:textSize="12sp" />
 
                 <TextView
@@ -64,7 +64,7 @@
                     android:fontFamily="@font/fredokamedium"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    tools:text="61 Moments" />
+                    tools:text="" />
 
             </LinearLayout>
 
@@ -87,7 +87,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🔥"
+                    android:text="&#8226;"
                     android:textSize="12sp" />
 
                 <TextView
@@ -98,7 +98,7 @@
                     android:fontFamily="@font/fredokamedium"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    tools:text="83% Match" />
+                    tools:text="" />
 
             </LinearLayout>
 
@@ -296,7 +296,7 @@
                     android:maxLines="1"
                     android:textColor="@color/white"
                     android:textSize="26sp"
-                    tools:text="Nisha, 28" />
+                    tools:text="" />
 
                 <ImageView
                     android:id="@+id/ivVerifiedBadge"
@@ -332,7 +332,7 @@
                     android:maxLines="1"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    tools:text="Hyderabad" />
+                    tools:text="" />
 
             </LinearLayout>
 
@@ -358,7 +358,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="💍"
+                        android:text="&#8226;"
                         android:textSize="13sp" />
 
                     <TextView
@@ -371,7 +371,7 @@
                         android:maxLines="1"
                         android:textColor="@color/white"
                         android:textSize="12sp"
-                        tools:text="Long-term" />
+                        tools:text="" />
 
                 </LinearLayout>
 
@@ -390,7 +390,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="💕"
+                        android:text="&#8226;"
                         android:textSize="13sp" />
 
                     <TextView
@@ -403,7 +403,7 @@
                         android:maxLines="1"
                         android:textColor="@color/white"
                         android:textSize="12sp"
-                        tools:text="2 Shared Interests" />
+                        tools:text="" />
 
                 </LinearLayout>
 
@@ -435,7 +435,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="13sp"
-                        tools:text="💪" />
+                        tools:text="" />
 
                     <TextView
                         android:id="@+id/tvChipText1"
@@ -447,7 +447,7 @@
                         android:maxLines="1"
                         android:textColor="@color/btn_border"
                         android:textSize="12sp"
-                        tools:text="Fitness" />
+                        tools:text="" />
 
                 </LinearLayout>
 
@@ -469,7 +469,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="13sp"
-                        tools:text="🐾" />
+                        tools:text="" />
 
                     <TextView
                         android:id="@+id/tvChipText2"
@@ -481,7 +481,7 @@
                         android:maxLines="1"
                         android:textColor="@color/btn_border"
                         android:textSize="12sp"
-                        tools:text="Pets" />
+                        tools:text="" />
 
                 </LinearLayout>
 
@@ -503,7 +503,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="13sp"
-                        tools:text="💃" />
+                        tools:text="" />
 
                     <TextView
                         android:id="@+id/tvChipText3"
@@ -515,7 +515,7 @@
                         android:maxLines="1"
                         android:textColor="#333333"
                         android:textSize="12sp"
-                        tools:text="Dance" />
+                        tools:text="" />
 
                 </LinearLayout>
 

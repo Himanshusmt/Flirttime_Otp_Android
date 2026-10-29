@@ -35,7 +35,7 @@ data class UserSearchItemDto(
     @SerializedName("about") val about: String? = null,
     @SerializedName("bio") val bio: String? = null,
     @SerializedName("interests") val interests: List<UserInterestDto>? = null,
-    @SerializedName("sharedInterests") val sharedInterests: List<UserInterestDto>? = null,
+    @SerializedName("sharedInterests") val sharedInterests: List<String>? = null,
     @SerializedName("momentCount") val momentCount: Int? = null,
     @SerializedName("photos") val photos: List<UserPhotoDto>? = null,
     @SerializedName("compatibility") val compatibility: UserCompatibilityDto? = null,

@@ -41,8 +41,8 @@ class QuickMomentsTrayAdapter(
             val label = item.relativeAge ?: item.caption?.take(10) ?: "Story"
             binding.tvQuickMomentLabel.text = label
 
-            val reactionCount = item.reactionCount ?: 0
-            val viewCount = item.viewCount ?: 0
+            val reactionCount = item.reactionsCount ?: 0
+            val viewCount = item.viewsCount ?: 0
             if (reactionCount > 0) {
                 binding.layoutBadge.visibility = View.VISIBLE
                 binding.tvBadgeText.text = "❤️ $reactionCount"

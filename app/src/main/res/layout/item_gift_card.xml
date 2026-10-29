@@ -25,7 +25,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="🌹" />
+        tools:text="" />
 
     <!-- Gift Name -->
     <TextView
@@ -42,7 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvGiftEmoji"
-        tools:text="Rose" />
+        tools:text="" />
 
     <!-- Coin Price Row -->
     <LinearLayout
@@ -62,7 +62,7 @@
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:contentDescription="Coin"
-            android:src="@drawable/ic_coin_gold" />
+            android:src="@drawable/ic_coin_profile" />
 
         <TextView
             android:id="@+id/tvGiftPrice"
@@ -72,7 +72,7 @@
             android:fontFamily="@font/fredokasemibold"
             android:textColor="@color/text_primary"
             android:textSize="12sp"
-            tools:text="1" />
+            tools:text="" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

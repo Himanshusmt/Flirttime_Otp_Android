@@ -193,6 +193,19 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="TransparentBottomSheetDialogTheme" parent="FlirtTimeBottomSheetDialogTheme" />
+
+    <!-- Full-Screen Immersive Quick Moments Story Dialog Theme -->
+    <style name="FullScreenQuickMomentDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/FlirtTimeBottomSheetModal</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="enableEdgeToEdge">true</item>
+    </style>
+
+
     <style name="Theme.FlirtTime" parent="Base.Theme.FlirtTime" />
 
     <!-- Splash Screen Theme: 100% immersive edge-to-edge without any nav/status bar tint -->

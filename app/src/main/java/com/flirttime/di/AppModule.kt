@@ -78,7 +78,7 @@ val appModule = module {
     single<MomentsRepository> { MomentsRepositoryImpl(get()) }
     viewModelOf(::MomentsViewModel)
     viewModelOf(::AddMomentViewModel)
-    single { UserProfileViewModel(get(), get(), get(), get()) }
+    single { UserProfileViewModel(get(), get(), get(), get(), get()) }
 
     // Notification Feature
     single<NotificationRepository> { NotificationRepositoryImpl(get()) }

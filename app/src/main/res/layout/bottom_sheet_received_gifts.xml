@@ -28,7 +28,7 @@
         android:textSize="18.5sp"
         android:textStyle="bold" />
 
-    <!-- Subtitle: 1 gift · 1 coins -->
+    <!-- Subtitle: 1 gift   1 coins -->
     <TextView
         android:id="@+id/tvGiftsSummary"
         android:layout_width="wrap_content"
@@ -39,7 +39,7 @@
         android:fontFamily="@font/fredokamedium"
         android:textColor="#888888"
         android:textSize="13.5sp"
-        tools:text="1 gift · 1 coins" />
+        tools:text="" />
 
     <!-- Thin Divider -->
     <View
