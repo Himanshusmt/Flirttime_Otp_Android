@@ -1,0 +1,8 @@
+schema_version: 1
+module_path: app_module/profile_feature/profile_dialogs
+title: Profile Dialogs (DOB & Gender Selection)
+scope:
+    - app/src/main/java/com/flirttime/feature/profile/presentation/dialog/
+source_files: []
+depends_on: []
+related_to: []

@@ -1,0 +1,9 @@
+The module is organized as a flat set of feature-agnostic sub-packages under `com.flirttime.core`, consumed by `feature.*` modules:
+- `network/`: Retrofit + OkHttp setup via `NetworkModuleProvider` (auth interceptor reading from `SessionManager`, offline cache via `NetworkUtils`, logging gated on `BuildConfig.DEBUG`), plus `SafeApiCall`/`safeRawApiCall` coroutines that wrap API calls into a `Resource<T>` result type.
+- `database/SessionManager.kt`: DataStore-backed key/value store exposing typed `Flow<T>` properties per field plus synchronous `getXxx()`/`setXxx()` suspend methods; also maintains an in-memory cached token read by the network auth interceptor.
+- `navigation/AppNavigator.kt`: Centralized router using a sealed `Destination` hierarchy with data classes carrying strongly-typed extras, mapping each destination to a concrete Activity class and serializing extras via `EXTRA_*` constants.
+- `image/`: Lifecycle-safe `ImageCropperHelper` wrapping three `ActivityResultLauncher`s (crop, gallery pick, camera capture) registered through `register(Activity)` / `register(Fragment)` overloads, delegating to `CropActivity` via `FlirtTimeCropContract`.
+- `ui/otpview/` and `ui/widget/MultiImageGalleryView.kt`: Custom ViewGroups (`OtpTextView`, `MultiImageGalleryView`) exposing styled attributes and listener interfaces (`OTPListener`).
+- `common/`: Stateless helpers (`EdgeToEdgeHelper`, `MultipartHelper`, `ShimmerHelper`, `NetworkConnectivityObserver`, `NetworkUtils`).
+
+Dependency direction is one-way: this core module depends only on Android SDK, Jetpack libraries, Retrofit/OkHttp/Gson/DataStore, and the app's own `Resource` / `BuildConfig`; it does not depend on any `feature.*` package except for the Activity class names resolved inside `AppNavigator`.

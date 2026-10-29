@@ -1,0 +1,6 @@
+Single-fragment presentation layer under `com.flirttime.feature.main.presentation.explore`:
+- `ExploreFragment.kt` is the screen entry point: owns the header actions (notification/search via `AppNavigator`), the four-tab state machine (`ExploreTab` enum), and a 2-column `GridLayoutManager` RecyclerView with custom item spacing.
+- `ExploreProfileAdapter.kt` extends `ListAdapter` with a `DiffUtil.ItemCallback` keyed on `id`, binds each `ExploreProfileItem` to `ItemExploreProfileCardBinding`, and renders placeholder vs. real photo states using `ShimmerHelper.loadWithShimmer`.
+- `MockExploreDataProvider.kt` is an in-memory object supplying sample `ExploreProfileItem` lists; it is the sole data source for this feature.
+- `model/ExploreProfileItem.kt` is a plain Kotlin data class describing the card payload.
+Dependency direction is one-way: fragment → adapter → model; navigation leaves the module via `core.navigation.AppNavigator/Destination`. There is no ViewModel or repository — business logic and data are co-located in the presentation layer.

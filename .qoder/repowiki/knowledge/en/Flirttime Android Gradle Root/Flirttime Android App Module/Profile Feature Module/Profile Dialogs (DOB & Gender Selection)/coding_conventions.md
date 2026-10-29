@@ -1,0 +1,3 @@
+- Each dialog class owns a private `Dialog` instance created in `init`, configured with `setCancelable(true)`, `setCanceledOnTouchOutside(true)`, a transparent window background, and a width of 85% of screen pixels before inflating its layout via View Binding.
+- User selections are returned through a single-method functional interface passed into the constructor (`OnGenderSelectedListener`, `OnDateSelectedListener`) rather than via events or LiveData, keeping dialogs stateless from the caller's perspective.
+- Age enforcement uses a hard 18-year minimum: both `DobPickerDialog` and `DobDialogNew` clamp the selectable date range to at most 18 years ago and compute age by subtracting birth year from current year with a day-of-year adjustment.

@@ -1,0 +1,1 @@
+Kotlin AndroidX AppCompat activities with ViewBinding; Koin for DI (`org.koin.android.ext.android.inject`); Edge-to-edge handling via `androidx.core.view.WindowInsetsCompat`; SDP dimensions from `com.intuit.sdp`.

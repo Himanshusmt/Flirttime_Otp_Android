@@ -1,0 +1,1 @@
+Retrofit + OkHttp `MultipartBody.Part` for file uploads; Gson `@SerializedName` annotations for JSON mapping; Kotlin coroutines `Flow<Resource<T>>` for reactive state; `safeApiCall` wrapper from `core.network` for error handling.

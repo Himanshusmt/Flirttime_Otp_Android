@@ -1,0 +1,6 @@
+- Bottom sheet dialogs are implemented as `BottomSheetDialogFragment` subclasses that override `onCreateDialog` to set `BottomSheetBehavior.STATE_EXPANDED` and `skipCollapsed = true`, then adjust height based on display metrics.
+- Each bottom sheet exposes an `on*` lambda callback property (e.g. `onGiftSent`, `onSpotSelected`, `onCitySelected`) for one-way event propagation back to the host fragment instead of using shared view models.
+- UI state is exposed as immutable `StateFlow`/`SharedFlow` properties backed by private `Mutable*` counterparts, with the public side exposed via `.asStateFlow()` / `.asSharedFlow()`.
+- Network/domain responses are modeled with a sealed `Resource<T>` (`Loading`/`Success`/`Error`) and observed inside `repeatOnLifecycle(Lifecycle.State.STARTED)` blocks launched from `viewLifecycleOwner.lifecycleScope`.
+- Sub-sheets receive their inputs through a static `newInstance(...)` factory that populates a `Bundle` with typed arguments, keeping construction type-safe.
+- RecyclerView lists use `submitList` with a mutable backing list (`mutableListOf`) updated before submission, and empty states are toggled by switching visibility between the RecyclerView and an explicit empty layout.

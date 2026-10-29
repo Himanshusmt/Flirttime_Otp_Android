@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".feature.onboarding.presentation.Intro3Activity">
+    tools:context=".feature.onboarding.Intro3Activity">
 
     <!-- Screen-specific insets-aware content container -->
     <androidx.constraintlayout.widget.ConstraintLayout

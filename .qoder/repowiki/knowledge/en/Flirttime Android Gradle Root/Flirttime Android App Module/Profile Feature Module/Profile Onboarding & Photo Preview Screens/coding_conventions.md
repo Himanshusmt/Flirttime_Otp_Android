@@ -1,0 +1,5 @@
+- Each screen follows an MVVM split: an `AppCompatActivity` owns UI/dialogs and a co-located `ViewModel` holds `MutableStateFlow<Resource<T>>` state exposed as immutable `StateFlow` via `asStateFlow()`.
+- Asynchronous operations are launched in `viewModelScope` and their results are emitted through `Resource.Loading/Success/Error` StateFlows observed in the Activity with `repeatOnLifecycle(Lifecycle.State.STARTED)`.
+- Navigation between screens goes exclusively through `AppNavigator.navigateTo(context, destination = Destination.Xxx, finishCurrent = false)` rather than direct `startActivity` calls.
+- Edge-to-edge layout is applied uniformly via `EdgeToEdgeHelper.setupEdgeToEdge(this, isLightStatusBars = true, isLightNavigationBars = true)` followed by manual `WindowInsetsCompat` handling for header/bottom padding.
+- UI state transitions reset the corresponding `Resource` back to `null` after consumption (e.g. `resetUpdateProfileState`, `resetUploadState`) so the same event isn't re-emitted on configuration change.

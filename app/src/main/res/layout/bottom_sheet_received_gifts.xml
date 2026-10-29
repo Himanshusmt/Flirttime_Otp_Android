@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_comments"
+    android:orientation="vertical">
+
+    <!-- Top Drag Handle -->
+    <View
+        android:layout_width="38dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_bottom_sheet_handle" />
+
+    <!-- Title: Gifts received -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/fredokabold"
+        android:text="Gifts received"
+        android:textColor="#1A1A1A"
+        android:textSize="18.5sp"
+        android:textStyle="bold" />
+
+    <!-- Subtitle: 1 gift · 1 coins -->
+    <TextView
+        android:id="@+id/tvGiftsSummary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="14dp"
+        android:fontFamily="@font/fredokamedium"
+        android:textColor="#888888"
+        android:textSize="13.5sp"
+        tools:text="1 gift · 1 coins" />
+
+    <!-- Thin Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F0F0F0" />
+
+    <!-- Content Frame -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="180dp">
+
+        <!-- Received Gifts List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvReceivedGifts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:maxHeight="420dp"
+            android:nestedScrollingEnabled="true"
+            android:overScrollMode="never"
+            android:paddingTop="10dp"
+            android:paddingBottom="24dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="1"
+            tools:listitem="@layout/item_received_gift" />
+
+        <!-- Loading Progress -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/brand_red"
+            android:visibility="gone" />
+
+        <!-- Empty State -->
+        <LinearLayout
+            android:id="@+id/layoutEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokabold"
+                android:text="No gifts received yet"
+                android:textColor="#222222"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/fredokaregular"
+                android:gravity="center"
+                android:text="Gifts sent by matches to your moment will appear here."
+                android:textColor="#999999"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

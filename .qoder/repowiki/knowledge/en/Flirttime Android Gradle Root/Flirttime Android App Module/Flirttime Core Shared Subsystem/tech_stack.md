@@ -1,0 +1,1 @@
+Retrofit + Gson converter for HTTP, OkHttp interceptors for auth/offline-cache/logging, Kotlinx Coroutines + Flow for reactive state, AndroidX DataStore Preferences for persistence, Activity Result Contracts for media/crop flows, and AndroidX Edge-to-Edge APIs.

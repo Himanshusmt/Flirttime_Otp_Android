@@ -1,0 +1,4 @@
+- Repository methods wrap network calls in `flow { emit(Resource.Loading); val result = safeApiCall { ... }; emit(result) }` and run on `Dispatchers.IO` via `.flowOn(Dispatchers.IO)`.
+- Domain interfaces live under `feature/<feature>/domain/repository` and expose only pure-Kotlin signatures; Android types (Context, Uri) are confined to the data layer implementation.
+- Network endpoints are declared as Retrofit interfaces under `data/network` using `suspend` functions returning `ApiResponse<T>`, with `@Multipart` / `@Part` for file uploads.
+- DTOs use Gson `@SerializedName` annotations to map Kotlin properties to backend JSON field names.

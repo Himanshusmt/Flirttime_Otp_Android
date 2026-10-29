@@ -62,9 +62,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:fontFamily="@font/fredokamedium"
-                    android:text="61 Moments"
                     android:textColor="@color/white"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:text="61 Moments" />
 
             </LinearLayout>
 
@@ -96,9 +96,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:fontFamily="@font/fredokamedium"
-                    android:text="83% Match"
                     android:textColor="@color/white"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:text="83% Match" />
 
             </LinearLayout>
 
@@ -434,8 +434,8 @@
                         android:id="@+id/tvChipEmoji1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="💪"
-                        android:textSize="13sp" />
+                        android:textSize="13sp"
+                        tools:text="💪" />
 
                     <TextView
                         android:id="@+id/tvChipText1"
@@ -468,8 +468,8 @@
                         android:id="@+id/tvChipEmoji2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🐾"
-                        android:textSize="13sp" />
+                        android:textSize="13sp"
+                        tools:text="🐾" />
 
                     <TextView
                         android:id="@+id/tvChipText2"
@@ -502,8 +502,8 @@
                         android:id="@+id/tvChipEmoji3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="💃"
-                        android:textSize="13sp" />
+                        android:textSize="13sp"
+                        tools:text="💃" />
 
                     <TextView
                         android:id="@+id/tvChipText3"

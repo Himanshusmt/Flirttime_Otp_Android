@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefreshProfile"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:fillViewport="true"
-    android:scrollbars="none">
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollProfile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:fillViewport="true"
+        android:scrollbars="none">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,15 +24,19 @@
             android:id="@+id/coverContainer"
             android:layout_width="match_parent"
             android:layout_height="260dp"
+            android:clickable="false"
+            android:focusable="false"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
+            <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/ivCoverPhoto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:clickable="false"
                 android:contentDescription="Cover Photo"
-                android:scaleType="centerCrop"
-                android:src="@drawable/img_login" />
+                android:focusable="false"
+                app:actualImageScaleType="centerCrop"
+                app:placeholderImage="@drawable/img_login" />
 
             <!-- Soft bottom gradient blending cover image into solid white -->
             <View
@@ -95,24 +105,24 @@
             app:layout_constraintTop_toBottomOf="@+id/coverContainer">
 
             <!-- Circular Progress Ring (Red arc for completion %) -->
-            <com.flirttime.feature.main.presentation.profile.widget.ProfileProgressRingView
+            <com.flirttime.feature.main.profile.widget.ProfileProgressRingView
                 android:id="@+id/profileProgressRing"
                 android:layout_width="130dp"
                 android:layout_height="130dp"
                 android:layout_gravity="center" />
 
             <!-- User Avatar with White Border Separation -->
-            <com.google.android.material.imageview.ShapeableImageView
+            <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/ivAvatar"
                 android:layout_width="114dp"
                 android:layout_height="114dp"
                 android:layout_gravity="center"
                 android:contentDescription="User Avatar"
-                android:scaleType="centerCrop"
-                android:src="@drawable/img_login"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-                app:strokeColor="@color/white"
-                app:strokeWidth="4dp" />
+                app:actualImageScaleType="centerCrop"
+                app:placeholderImage="@drawable/img_login"
+                app:roundAsCircle="true"
+                app:roundingBorderColor="@color/white"
+                app:roundingBorderWidth="4dp" />
 
         </FrameLayout>
 
@@ -157,12 +167,13 @@
             android:id="@+id/layoutNameAge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/badgeComplete">
+            app:layout_constraintTop_toBottomOf="@+id/badgeComplete"
+            app:layout_goneMarginTop="24dp">
 
             <TextView
                 android:id="@+id/tvNameAge"
@@ -175,9 +186,10 @@
                 tools:text="tushar, 19" />
 
             <ImageView
+                android:id="@+id/ivVerifiedBadge"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:contentDescription="Location Pin"
+                android:contentDescription="Verified"
                 android:src="@drawable/achievement_badge" />
 
         </LinearLayout>
@@ -226,6 +238,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layoutLocation"
+            app:layout_goneMarginTop="10dp"
             tools:text="“Def a. SCD kasndklat and you will never get a chance for this one day you are not going anywhere with your life in it you will be a legend and you are”" />
 
         <!-- 7. Action CTAs (Edit Profile & Add Moment) -->
@@ -238,13 +251,14 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvBio">
+            app:layout_constraintTop_toBottomOf="@+id/tvBio"
+            app:layout_goneMarginTop="16dp">
 
             <!-- Edit Profile Button -->
             <LinearLayout
                 android:id="@+id/btnEditProfile"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="54dp"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_btn_edit_profile"
@@ -252,11 +266,12 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingHorizontal="14dp">
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp">
 
                 <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_edit_pencil_red" />
 
@@ -267,7 +282,7 @@
                     android:fontFamily="@font/fredokasemibold"
                     android:text="Edit Profile"
                     android:textColor="#EA3355"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -276,7 +291,7 @@
             <LinearLayout
                 android:id="@+id/btnAddMoment"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="54dp"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_btn_add_moment"
@@ -285,11 +300,12 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingHorizontal="14dp">
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp">
 
                 <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_plus_white" />
 
@@ -300,7 +316,7 @@
                     android:fontFamily="@font/fredokasemibold"
                     android:text="Add Moment"
                     android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -343,21 +359,23 @@
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="12dp">
+                android:paddingHorizontal="18dp"
+                android:paddingVertical="16dp"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <!-- Circular Red Mic Button -->
                 <FrameLayout
                     android:id="@+id/btnRecordMic"
-                    android:layout_width="46dp"
-                    android:layout_height="46dp"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
                     android:background="@drawable/bg_btn_play_circle"
                     android:clickable="true"
                     android:focusable="true">
 
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_gravity="center"
                         android:contentDescription="Record Voice"
                         android:src="@drawable/ic_mic_white" />
@@ -368,7 +386,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
+                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -379,25 +397,25 @@
                         android:fontFamily="@font/fredokabold"
                         android:text="Record your voice intro"
                         android:textColor="#1A1A1A"
-                        android:textSize="15.5sp"
+                        android:textSize="16.5sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
+                        android:layout_marginTop="3dp"
                         android:fontFamily="@font/fredokaregular"
                         android:lineSpacingExtra="2dp"
                         android:text="Let matches hear your vibe. Up to 30 seconds."
                         android:textColor="#757575"
-                        android:textSize="12.5sp" />
+                        android:textSize="13sp" />
 
                 </LinearLayout>
 
                 <!-- Red Right Chevron Arrow -->
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_chevron_right_red" />
 
@@ -407,29 +425,29 @@
             <LinearLayout
                 android:id="@+id/cardVoicePlayer"
                 android:layout_width="match_parent"
-                android:layout_height="62dp"
+                android:layout_height="70dp"
                 android:background="@drawable/bg_voice_note_card"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingHorizontal="10dp"
+                android:paddingHorizontal="14dp"
                 android:visibility="gone"
                 tools:visibility="visible">
 
                 <!-- Circular Play Button -->
                 <FrameLayout
                     android:id="@+id/btnPlayVoice"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="@drawable/bg_btn_play_circle"
                     android:clickable="true"
                     android:focusable="true">
 
                     <ImageView
                         android:id="@+id/ivPlayIcon"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_gravity="center"
                         android:contentDescription="Play Voice"
                         android:src="@drawable/ic_play_white" />
@@ -437,10 +455,10 @@
                 </FrameLayout>
 
                 <!-- Audio Waveform Amplitude Bars -->
-                <com.flirttime.feature.main.presentation.profile.widget.AudioWaveformView
+                <com.flirttime.feature.main.profile.widget.AudioWaveformView
                     android:id="@+id/audioWaveformView"
                     android:layout_width="0dp"
-                    android:layout_height="28dp"
+                    android:layout_height="32dp"
                     android:layout_marginHorizontal="12dp"
                     android:layout_weight="1" />
 
@@ -452,23 +470,127 @@
                     android:fontFamily="@font/fredokamedium"
                     android:text="0:05"
                     android:textColor="#666666"
-                    android:textSize="13.5sp" />
+                    android:textSize="14sp" />
 
                 <!-- Edit Voice Pencil Icon -->
                 <ImageView
                     android:id="@+id/btnEditVoice"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="6dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:contentDescription="Edit Voice Note"
                     android:focusable="true"
-                    android:padding="5dp"
+                    android:padding="6dp"
                     android:src="@drawable/ic_edit_pencil_red" />
 
             </LinearLayout>
+
+            <!-- State C: Loading Skeleton Shimmer UI (1:1 silhouette of Voice Card) -->
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/cardVoiceShimmer"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:background="@drawable/bg_voice_note_card"
+                android:visibility="gone"
+                app:shimmer_auto_start="false"
+                app:shimmer_base_color="#ECECEC"
+                app:shimmer_highlight_color="#F8F8F8"
+                app:shimmer_duration="1200"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <!-- Circular Play Button Skeleton -->
+                    <View
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_skeleton_circle" />
+
+                    <!-- Waveform Bars Skeleton Container -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="32dp"
+                        android:layout_marginHorizontal="12dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="18dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/bg_skeleton_rounded_bar" />
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="26dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/bg_skeleton_rounded_bar" />
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="14dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/bg_skeleton_rounded_bar" />
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="30dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/bg_skeleton_rounded_bar" />
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/bg_skeleton_rounded_bar" />
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="28dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/bg_skeleton_rounded_bar" />
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="16dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/bg_skeleton_rounded_bar" />
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/bg_skeleton_rounded_bar" />
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="14dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/bg_skeleton_rounded_bar" />
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="22dp"
+                            android:background="@drawable/bg_skeleton_rounded_bar" />
+
+                    </LinearLayout>
+
+                    <!-- Duration Text Pill Skeleton -->
+                    <View
+                        android:layout_width="38dp"
+                        android:layout_height="14dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/bg_skeleton_pill" />
+
+                    <!-- Pencil Icon Skeleton -->
+                    <View
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@drawable/bg_skeleton_circle" />
+
+                </LinearLayout>
+
+            </com.facebook.shimmer.ShimmerFrameLayout>
 
         </FrameLayout>
 
@@ -539,17 +661,17 @@
                     android:layout_width="68dp"
                     android:layout_height="68dp">
 
-                    <com.google.android.material.imageview.ShapeableImageView
+                    <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/ivAddNewThumb"
                         android:layout_width="62dp"
                         android:layout_height="62dp"
                         android:layout_gravity="center"
                         android:contentDescription="Add New Moment"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/img_login"
-                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-                        app:strokeColor="#FFE5EA"
-                        app:strokeWidth="2dp" />
+                        app:actualImageScaleType="centerCrop"
+                        app:placeholderImage="@drawable/img_login"
+                        app:roundAsCircle="true"
+                        app:roundingBorderColor="#FFE5EA"
+                        app:roundingBorderWidth="2dp" />
 
                     <!-- Floating Plus Badge at Bottom-Right -->
                     <FrameLayout
@@ -580,91 +702,18 @@
 
             </LinearLayout>
 
-            <!-- Item 2: Active Moment ("Hellow all") -->
-            <LinearLayout
-                android:id="@+id/itemActiveMoment"
-                android:layout_width="wrap_content"
+            <!-- Active Quick Moments List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvQuickMoments"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
-
-                <FrameLayout
-                    android:layout_width="68dp"
-                    android:layout_height="68dp">
-
-                    <!-- Outer Story Ring -->
-                    <View
-                        android:layout_width="66dp"
-                        android:layout_height="66dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/bg_story_ring_red" />
-
-                    <!-- Inner Coral Gradient Circle with text -->
-                    <FrameLayout
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/bg_moment_coral_gradient">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/fredokamedium"
-                            android:gravity="center"
-                            android:paddingHorizontal="4dp"
-                            android:text="Hellow all"
-                            android:textColor="@color/white"
-                            android:textSize="10.5sp"
-                            android:textStyle="bold" />
-
-                    </FrameLayout>
-
-                    <!-- Floating Reaction Pill Badge at Bottom-Center -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|center_horizontal"
-                        android:background="@drawable/bg_reaction_badge_dark"
-                        android:elevation="2dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="6dp"
-                        android:paddingVertical="2dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="😲"
-                            android:textSize="9.5sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:fontFamily="@font/fredokamedium"
-                            android:text="3"
-                            android:textColor="@color/white"
-                            android:textSize="10sp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:fontFamily="@font/fredokaregular"
-                    android:text="22h"
-                    android:textColor="#757575"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_profile_quick_moment" />
 
         </LinearLayout>
 
@@ -675,7 +724,6 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="24dp"
-            android:layout_marginBottom="95dp"
             android:background="@drawable/bg_card_premium_banner"
             android:clickable="true"
             android:elevation="4dp"
@@ -683,7 +731,6 @@
             android:orientation="horizontal"
             android:paddingHorizontal="18dp"
             android:paddingVertical="18dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layoutQuickMomentsList">
@@ -763,6 +810,264 @@
 
         </LinearLayout>
 
+        <!-- 11. Component: "My Interests" Header Row -->
+        <LinearLayout
+            android:id="@+id/layoutMyInterestsHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="28dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardPremiumBanner">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/fredokabold"
+                android:text="My Interests"
+                android:textColor="#1A1A1A"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnEditInterests"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokabold"
+                android:paddingVertical="4dp"
+                android:paddingStart="8dp"
+                android:text="Edit"
+                android:textColor="#EA3355"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- My Interests Container (Dynamic ChipGroup & Empty State) -->
+        <FrameLayout
+            android:id="@+id/containerInterests"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layoutMyInterestsHeader">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cgMyInterests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="8dp" />
+
+            <TextView
+                android:id="@+id/tvNoInterests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokaregular"
+                android:paddingVertical="8dp"
+                android:text="No interests added yet. Tap Edit to add."
+                android:textColor="#8E8E93"
+                android:textSize="13.5sp"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+        <!-- 12. Component: "My Moments" Header Row -->
+        <LinearLayout
+            android:id="@+id/layoutMyMomentsHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="28dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/containerInterests">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/fredokabold"
+                android:text="My Moments"
+                android:textColor="#1A1A1A"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnSeeAllMoments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokabold"
+                android:paddingVertical="4dp"
+                android:paddingStart="8dp"
+                android:text="See all (10)"
+                android:textColor="#EA3355"
+                android:textSize="14.5sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- 13. Component: My Moments Container (Grid vs Empty State) -->
+        <FrameLayout
+            android:id="@+id/containerMyMoments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layoutMyMomentsHeader">
+
+            <!-- My Moments 2x2 Grid RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMyMoments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                tools:itemCount="4"
+                tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                tools:listitem="@layout/item_profile_moment"
+                tools:spanCount="2" />
+
+            <!-- Empty State for My Moments (Shown if user has 0 moments) -->
+            <LinearLayout
+                android:id="@+id/layoutMomentsEmptyState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:background="@drawable/bg_voice_record_card"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="26dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_moments_empty_red" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/fredokabold"
+                    android:text="No Moments yet!"
+                    android:textColor="#1A1A1A"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:gravity="center"
+                    android:maxWidth="280dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Share photos from your day so your matches get to know you."
+                    android:textColor="#757575"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/btnEmptyAddMoment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="46dp"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_btn_pill_red"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:gravity="center"
+                    android:paddingHorizontal="32dp"
+                    android:text="+ Add Moment"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <!-- 14. Component: "My Photos" Header Row -->
+        <LinearLayout
+            android:id="@+id/layoutMyPhotosHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="28dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/containerMyMoments">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/fredokabold"
+                android:text="My Photos"
+                android:textColor="#1A1A1A"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnEditPhotos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokabold"
+                android:paddingVertical="4dp"
+                android:paddingStart="8dp"
+                android:text="Edit"
+                android:textColor="#EA3355"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- 15. Component: My Photos Horizontal Scrollable Row (Cards with increased size) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMyPhotos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="95dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            android:paddingHorizontal="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layoutMyPhotosHeader"
+            tools:itemCount="5"
+            tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_profile_photo"
+            tools:orientation="horizontal" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

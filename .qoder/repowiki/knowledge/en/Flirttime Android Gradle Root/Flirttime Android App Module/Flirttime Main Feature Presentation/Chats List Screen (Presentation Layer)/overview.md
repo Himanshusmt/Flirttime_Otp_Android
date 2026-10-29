@@ -1,0 +1,1 @@
+Android Fragment presenting a searchable, pinned-then-regular list of chat conversations with avatars, unread badges, story rings, and verified badges.

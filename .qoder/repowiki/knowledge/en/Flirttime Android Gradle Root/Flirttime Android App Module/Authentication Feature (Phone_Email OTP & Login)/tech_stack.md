@@ -1,0 +1,1 @@
+Kotlin coroutines + Flow for async streams, Retrofit for HTTP, Gson `@SerializedName` for JSON mapping, AndroidX Activity with view binding, and a shared `Resource` sealed type from `com.flirttime` wrapping Loading/Success/Error states.

@@ -1,0 +1,1 @@
+Three independent feature screens — a sectioned notifications list, a profile search grid, and the app's splash entry point — each with minimal data fixtures.

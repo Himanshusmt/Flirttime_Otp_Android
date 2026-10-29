@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingVertical="10dp">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/ivReportAvatar"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        app:roundAsCircle="true"
+        app:placeholderImage="@drawable/img_login"
+        app:placeholderImageScaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvReportName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredokasemibold"
+            android:text="Target Name"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvReportReason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/fredokaregular"
+            android:text="Reason for report"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvReportStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="26dp"
+        android:background="@drawable/bg_personal_icon_coral"
+        android:fontFamily="@font/fredokamedium"
+        android:gravity="center"
+        android:paddingHorizontal="10dp"
+        android:text="Pending"
+        android:textColor="@color/brand_primary"
+        android:textSize="11sp" />
+
+</LinearLayout>

@@ -1,0 +1,1 @@
+Android Jetpack Fragment + View Binding; custom Views drawn with `android.graphics.Canvas`/`Paint`; navigation through shared `AppNavigator`/`Destination` from `core.navigation`.

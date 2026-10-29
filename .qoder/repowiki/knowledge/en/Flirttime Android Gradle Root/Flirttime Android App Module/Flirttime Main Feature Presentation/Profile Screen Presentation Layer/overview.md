@@ -1,0 +1,1 @@
+Android presentation layer for the user profile screen, rendering profile header with completion ring, voice note section, quick moments, and premium banner.

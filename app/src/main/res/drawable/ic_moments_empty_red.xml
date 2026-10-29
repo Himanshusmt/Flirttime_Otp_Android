@@ -1,0 +1,23 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="56dp"
+    android:height="56dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Back card tilted/offset -->
+    <path
+        android:fillColor="#E53935"
+        android:fillAlpha="0.45"
+        android:pathData="M16,6 C13.8,6 12,7.8 12,10 L12,13 L36,13 C38.2,13 40,14.8 40,17 L40,31 L42,31 C44.2,31 46,29.2 46,27 L46,11 C46,8.8 44.2,7 42,7 L16,7 Z" />
+    <!-- Front card -->
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M8,13 C5.8,13 4,14.8 4,17 L4,39 C4,41.2 5.8,43 8,43 L34,43 C36.2,43 38,41.2 38,39 L38,17 C38,14.8 36.2,13 34,13 L8,13 Z" />
+    <!-- Sun inside front card -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15,24 A3.5,3.5 0 1,0 15,17 A3.5,3.5 0 1,0 15,24 Z" />
+    <!-- Mountains inside front card -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8,39 L8,34 L16,26 L23,33 L26,30 L34,38 L34,39 Z" />
+</vector>

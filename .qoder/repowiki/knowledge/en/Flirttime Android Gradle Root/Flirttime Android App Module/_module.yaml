@@ -1,0 +1,8 @@
+schema_version: 1
+module_path: app_module
+title: Flirttime Android App Module
+scope:
+    - app/
+source_files: []
+depends_on: []
+related_to: []

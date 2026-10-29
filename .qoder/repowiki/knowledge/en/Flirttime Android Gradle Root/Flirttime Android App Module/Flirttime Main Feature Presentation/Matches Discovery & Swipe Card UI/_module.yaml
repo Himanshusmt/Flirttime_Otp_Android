@@ -1,0 +1,8 @@
+schema_version: 1
+module_path: app_module/main_feature/matches
+title: Matches Discovery & Swipe Card UI
+scope:
+    - app/src/main/java/com/flirttime/feature/main/presentation/matches/
+source_files: []
+depends_on: []
+related_to: []

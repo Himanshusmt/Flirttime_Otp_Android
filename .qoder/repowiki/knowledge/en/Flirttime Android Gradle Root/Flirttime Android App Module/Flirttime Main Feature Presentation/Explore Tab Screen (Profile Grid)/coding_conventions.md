@@ -1,0 +1,3 @@
+- UI state changes go through a single `updateTabSelection(tab)` method that rebinds all four tabs via a shared `bindTabState` helper rather than mutating each view inline.
+- RecyclerView items are bound through a `ListAdapter` with a companion-object `DiffUtil.ItemCallback` comparing items by `id` and full equality for content.
+- Placeholders and real images are toggled by checking `isPlaceholder` / `imageUrl.isNullOrBlank()` and switching visibility of `ivProfilePhoto`, `viewPlaceholderBg`, and `viewScrim` together.

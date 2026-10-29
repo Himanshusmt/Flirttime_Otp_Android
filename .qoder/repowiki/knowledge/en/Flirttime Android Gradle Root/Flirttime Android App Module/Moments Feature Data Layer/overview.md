@@ -1,0 +1,1 @@
+Data layer for the Moments feature, providing a Retrofit-backed repository that fetches and mutates user moments (feed, like toggle, create) and maps API DTOs to UI models.

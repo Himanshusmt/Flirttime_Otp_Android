@@ -1,0 +1,5 @@
+- Activities set up edge-to-edge insets by listening to `ViewCompat.setOnApplyWindowInsetsListener` and adjusting header/content padding with `com.intuit.sdp.R.dimen_*sdp` base paddings.
+- Camera access follows a check-then-request pattern: first check `ContextCompat.checkSelfPermission(CAMERA)`, otherwise launch `ActivityResultContracts.RequestPermission` and handle denial via an AlertDialog pointing to system settings.
+- Cross-screen navigation is performed exclusively through `AppNavigator.navigateTo(context, destination = Destination.Xxx(...))`, never via explicit `Intent` construction.
+- Per-screen state is exposed as a `StateFlow<Resource<T>>` collected in `repeatOnLifecycle(Lifecycle.State.STARTED)` blocks inside `lifecycleScope.launch`.
+- Dependencies are resolved at the class level using Koin delegation (`by inject()` for services, `by viewModel()` for ViewModels).

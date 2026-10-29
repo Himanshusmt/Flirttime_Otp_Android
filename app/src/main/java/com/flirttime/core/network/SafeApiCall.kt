@@ -1,7 +1,6 @@
 package com.flirttime.core.network
 
 import com.flirttime.Resource
-import com.flirttime.core.network.model.ApiResponse
 import com.google.gson.JsonParser
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -24,16 +23,19 @@ suspend fun <T> safeApiCall(
                 @Suppress("UNCHECKED_CAST")
                 Resource.Success(Unit as T)
             } else {
-                val errorMsg = response.message ?: response.error ?: "Operation failed"
+                val errorStr = response.error?.toString()
+                val errorMsg = response.message ?: errorStr ?: "Operation failed"
+                android.util.Log.e("SafeApiCall", "API call returned failure: $errorMsg")
                 Resource.Error(
                     message = errorMsg,
-                    errorBody = response.error
+                    errorBody = errorStr
                 )
             }
         } catch (e: HttpException) {
             val code = e.code()
             val errorBodyString = e.response()?.errorBody()?.string()
             val parsedMessage = parseErrorMessage(errorBodyString) ?: "Server error ($code): ${e.message()}"
+            android.util.Log.e("SafeApiCall", "HTTP $code failure: $parsedMessage | Body: $errorBodyString", e)
             Resource.Error(
                 message = parsedMessage,
                 code = code,
@@ -41,21 +43,25 @@ suspend fun <T> safeApiCall(
                 errorBody = errorBodyString
             )
         } catch (e: SocketTimeoutException) {
+            android.util.Log.e("SafeApiCall", "SocketTimeoutException: Connection timed out", e)
             Resource.Error(
                 message = "Connection timed out. Please try again.",
                 cause = e
             )
         } catch (e: UnknownHostException) {
+            android.util.Log.e("SafeApiCall", "UnknownHostException: Unable to reach server (No internet/DNS)", e)
             Resource.Error(
                 message = "Unable to reach server. Please check your internet connection.",
                 cause = e
             )
         } catch (e: IOException) {
+            android.util.Log.e("SafeApiCall", "IOException: Network/IO error: ${e.message}", e)
             Resource.Error(
                 message = "Network error. Please check your internet connection.",
                 cause = e
             )
         } catch (e: Exception) {
+            android.util.Log.e("SafeApiCall", "Unexpected Exception during API call: ${e.localizedMessage}", e)
             Resource.Error(
                 message = e.localizedMessage ?: "An unexpected error occurred",
                 cause = e
@@ -76,6 +82,7 @@ suspend fun <T> safeRawApiCall(
             val code = e.code()
             val errorBodyString = e.response()?.errorBody()?.string()
             val parsedMessage = parseErrorMessage(errorBodyString) ?: "Server error ($code): ${e.message()}"
+            android.util.Log.e("SafeApiCall", "Raw HTTP $code failure: $parsedMessage | Body: $errorBodyString", e)
             Resource.Error(
                 message = parsedMessage,
                 code = code,
@@ -83,21 +90,25 @@ suspend fun <T> safeRawApiCall(
                 errorBody = errorBodyString
             )
         } catch (e: SocketTimeoutException) {
+            android.util.Log.e("SafeApiCall", "Raw SocketTimeoutException: Connection timed out", e)
             Resource.Error(
                 message = "Connection timed out. Please try again.",
                 cause = e
             )
         } catch (e: UnknownHostException) {
+            android.util.Log.e("SafeApiCall", "Raw UnknownHostException: Unable to reach server (No internet/DNS)", e)
             Resource.Error(
                 message = "Unable to reach server. Please check your internet connection.",
                 cause = e
             )
         } catch (e: IOException) {
+            android.util.Log.e("SafeApiCall", "Raw IOException: Network/IO error: ${e.message}", e)
             Resource.Error(
                 message = "Network error. Please check your internet connection.",
                 cause = e
             )
         } catch (e: Exception) {
+            android.util.Log.e("SafeApiCall", "Raw Unexpected Exception during API call: ${e.localizedMessage}", e)
             Resource.Error(
                 message = e.localizedMessage ?: "An unexpected error occurred",
                 cause = e

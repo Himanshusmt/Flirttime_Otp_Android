@@ -1,0 +1,4 @@
+- Repository methods return `Flow<Resource<T>>` and wrap every network call inside `safeApiCall`, emitting `Resource.Loading` / `Resource.Success` / `Resource.Error` variants explicitly.
+- API surface is defined as a Retrofit interface in `data/network/` with `suspend` functions returning `ApiResponse<T>`, keeping HTTP verbs and paths declarative.
+- DTO classes in `data/model/` use `@SerializedName` with nullable default properties, and are converted to presentation models via top-level extension functions (e.g. `toUiItem()`).
+- Long-running IO work in repository implementations is isolated with `.flowOn(Dispatchers.IO)` so callers stay on the main dispatcher.

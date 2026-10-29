@@ -1,0 +1,1 @@
+Android application module that wires Koin DI, Retrofit networking, and shared core infrastructure to the feature packages (auth, main, moments, profile, onboarding, misc) into a single APK.

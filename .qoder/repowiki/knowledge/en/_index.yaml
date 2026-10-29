@@ -1,0 +1,210 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: en-US
+branch: main
+nodes_managed: true
+exported_at: "2026-10-26T10:06:28Z"
+modules:
+    "":
+        dir_name: Flirttime Android Gradle Root
+        title: Flirttime Android Gradle Root
+        scope:
+            - build.gradle.kts
+            - settings.gradle.kts
+            - gradle.properties
+            - local.properties
+            - gradlew.bat
+            - gradle/
+            - gradlew
+        source_files: []
+        children:
+            - app_module
+        depends_on: []
+        related_to: []
+    app_module:
+        dir_name: Flirttime Android App Module
+        title: Flirttime Android App Module
+        scope:
+            - app/
+        source_files: []
+        children:
+            - app_module/auth_feature
+            - app_module/core_subsystem
+            - app_module/main_feature
+            - app_module/misc_features
+            - app_module/moments_feature
+            - app_module/onboarding_feature
+            - app_module/profile_feature
+        depends_on: []
+        related_to: []
+    app_module/auth_feature:
+        dir_name: Authentication Feature (Phone_Email OTP & Login)
+        title: Authentication Feature (Phone/Email OTP & Login)
+        scope:
+            - app/src/main/java/com/flirttime/feature/auth/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app_module/core_subsystem
+            - path: app_module/onboarding_feature
+    app_module/core_subsystem:
+        dir_name: Flirttime Core Shared Subsystem
+        title: Flirttime Core Shared Subsystem
+        scope:
+            - app/src/main/java/com/flirttime/core/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app_module/auth_feature
+            - path: app_module/onboarding_feature
+    app_module/main_feature:
+        dir_name: Flirttime Main Feature Presentation
+        title: Flirttime Main Feature Presentation
+        scope:
+            - app/src/main/java/com/flirttime/feature/main/
+        source_files: []
+        children:
+            - app_module/main_feature/chat
+            - app_module/main_feature/explore
+            - app_module/main_feature/matches
+            - app_module/main_feature/moments
+            - app_module/main_feature/profile
+        depends_on: []
+        related_to: []
+    app_module/main_feature/chat:
+        dir_name: Chats List Screen (Presentation Layer)
+        title: Chats List Screen (Presentation Layer)
+        scope:
+            - app/src/main/java/com/flirttime/feature/main/presentation/chat/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app_module/main_feature/explore
+    app_module/main_feature/explore:
+        dir_name: Explore Tab Screen (Profile Grid)
+        title: Explore Tab Screen (Profile Grid)
+        scope:
+            - app/src/main/java/com/flirttime/feature/main/presentation/explore/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app_module/main_feature/chat
+            - path: app_module/main_feature/profile
+    app_module/main_feature/matches:
+        dir_name: Matches Discovery & Swipe Card UI
+        title: Matches Discovery & Swipe Card UI
+        scope:
+            - app/src/main/java/com/flirttime/feature/main/presentation/matches/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    app_module/main_feature/moments:
+        dir_name: Moments Feed & Post Creation UI
+        title: Moments Feed & Post Creation UI
+        scope:
+            - app/src/main/java/com/flirttime/feature/main/presentation/moments/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app_module/moments_feature
+    app_module/main_feature/profile:
+        dir_name: Profile Screen Presentation Layer
+        title: Profile Screen Presentation Layer
+        scope:
+            - app/src/main/java/com/flirttime/feature/main/presentation/profile/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app_module/main_feature/explore
+    app_module/misc_features:
+        dir_name: Notification, Search & Splash Feature Screens
+        title: Notification, Search & Splash Feature Screens
+        scope:
+            - app/src/main/java/com/flirttime/feature/notification/
+            - app/src/main/java/com/flirttime/feature/search/
+            - app/src/main/java/com/flirttime/feature/splash/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    app_module/moments_feature:
+        dir_name: Moments Feature Data Layer
+        title: Moments Feature Data Layer
+        scope:
+            - app/src/main/java/com/flirttime/feature/moments/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app_module/main_feature/moments
+    app_module/onboarding_feature:
+        dir_name: Onboarding & Intro Screens
+        title: Onboarding & Intro Screens
+        scope:
+            - app/src/main/java/com/flirttime/feature/onboarding/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app_module/auth_feature
+            - path: app_module/core_subsystem
+    app_module/profile_feature:
+        dir_name: Profile Feature Module
+        title: Profile Feature Module
+        scope:
+            - app/src/main/java/com/flirttime/feature/profile/
+        source_files: []
+        children:
+            - app_module/profile_feature/profile_data_domain
+            - app_module/profile_feature/profile_dialogs
+            - app_module/profile_feature/profile_onboarding
+            - app_module/profile_feature/profile_verification
+        depends_on: []
+        related_to: []
+    app_module/profile_feature/profile_data_domain:
+        dir_name: Profile Feature Data & Domain Layer
+        title: Profile Feature Data & Domain Layer
+        scope:
+            - app/src/main/java/com/flirttime/feature/profile/data/
+            - app/src/main/java/com/flirttime/feature/profile/domain/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    app_module/profile_feature/profile_dialogs:
+        dir_name: Profile Dialogs (DOB & Gender Selection)
+        title: Profile Dialogs (DOB & Gender Selection)
+        scope:
+            - app/src/main/java/com/flirttime/feature/profile/presentation/dialog/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    app_module/profile_feature/profile_onboarding:
+        dir_name: Profile Onboarding & Photo Preview Screens
+        title: Profile Onboarding & Photo Preview Screens
+        scope:
+            - app/src/main/java/com/flirttime/feature/profile/presentation/intro/
+            - app/src/main/java/com/flirttime/feature/profile/presentation/preview/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    app_module/profile_feature/profile_verification:
+        dir_name: Profile Verification & Gesture Capture Flows
+        title: Profile Verification & Gesture Capture Flows
+        scope:
+            - app/src/main/java/com/flirttime/feature/profile/presentation/gesture/
+            - app/src/main/java/com/flirttime/feature/profile/presentation/process/
+            - app/src/main/java/com/flirttime/feature/profile/presentation/verification/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []

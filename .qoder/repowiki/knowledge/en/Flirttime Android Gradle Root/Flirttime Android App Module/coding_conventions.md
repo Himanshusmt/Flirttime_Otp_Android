@@ -1,0 +1,4 @@
+- Feature modules expose domain/repository interfaces and register their implementations against those interfaces in `di/AppModule.kt`, keeping presentation layers agnostic of concrete data sources.
+- ViewModels are registered with Koin via `viewModelOf(::Class)` rather than manual construction, so fragments/activities obtain them through `by viewModel()`.
+- Network clients are created once from a shared Retrofit instance in `AppModule` and injected by interface type (`ApiService`, `AuthApiService`, `UserApiService`, `MomentsApiService`).
+- Shared infrastructure (network, session, connectivity, image crop, navigation) is placed under `core/` and consumed by features only through abstractions, not concrete classes.

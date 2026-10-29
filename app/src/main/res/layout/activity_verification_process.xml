@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/img_verification_process_bg"
-    tools:context=".feature.profile.presentation.process.VerificationProcessActivity">
+    tools:context=".feature.onboarding.VerificationProcessActivity">
 
     <ScrollView
         android:id="@+id/scrollView"

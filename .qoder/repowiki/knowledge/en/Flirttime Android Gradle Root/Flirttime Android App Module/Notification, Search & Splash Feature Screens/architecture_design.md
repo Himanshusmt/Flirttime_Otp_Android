@@ -1,0 +1,6 @@
+Each sub-package under `feature/` is an isolated screen following a thin presentation layer pattern:
+- `notification/`: layered into `data/model` (sealed `NotificationListItem` + enums), `data/repository` (`NotificationRepository` interface + in-memory `NotificationRepositoryImpl` using `MutableStateFlow`), and `presentation` (`NotificationActivity` + `NotificationViewModel` + `NotificationsAdapter`). The ViewModel exposes a `StateFlow` consumed by the Activity via `repeatOnLifecycle`, and the adapter handles two view types (header / item) with a custom `DiffUtil.ItemCallback`.
+- `search/`: single `SearchActivity` that directly consumes `MockSearchDataProvider` and reuses `ExploreProfileAdapter` from the explore feature; no ViewModel or repository layer.
+- `splash/`: `SplashActivity` acts as the app launcher — it configures transparent system bars, plays a Lottie animation for 1400ms, reads auth state via Koin-injected `SessionManager`, resolves a `Destination` enum, and delegates navigation to `AppNavigator.navigateTo(...)` with `clearBackStack = true`.
+
+Dependency direction is one-way: presentation depends on data abstractions; the splash screen depends on `core.database.SessionManager` and `core.navigation.AppNavigator`. There is no cross-feature coupling except `SearchActivity` reusing `ExploreProfileAdapter` from `feature.main.presentation.explore`.

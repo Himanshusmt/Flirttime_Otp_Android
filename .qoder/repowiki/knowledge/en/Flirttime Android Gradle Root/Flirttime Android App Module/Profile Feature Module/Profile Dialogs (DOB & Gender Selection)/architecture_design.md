@@ -1,0 +1,6 @@
+Four Kotlin files form a flat presentation-only layer with no internal sub-packages:
+- `GenderSelectionDialog.kt` is a self-contained dialog backed by `PopupGenderBinding`, exposing an `OnGenderSelectedListener` interface and a `GenderSelection` enum (Male/Female/Other) as its contract.
+- `DobPickerDialog.kt` wraps Android's native `DatePickerDialog` with min/max bounds (100–18 years ago) and delegates the result via `OnDateSelectedListener(formattedDate, age)`.
+- `DobDialogNew.kt` is a custom calendar picker using `com.calendarview.CompactCalendarView` plus a grid year picker (`RecyclerView` + `GridLayoutManager(5)`), toggling between calendar and year-grid views; it computes age locally and drives UI state (enable/disable Continue, alpha, error text) based on the 18+ rule.
+- `DobDialogYearAdapter.kt` is a small `RecyclerView.Adapter` bound to `RvYearsBinding` used only by `DobDialogNew`.
+Dependency direction is one-way: adapters are consumed by dialogs; dialogs expose listener interfaces upward. There is no ViewModel or use-case layer inside this scope — all business logic (age calculation, date formatting, year range generation) lives inline in the dialog classes.

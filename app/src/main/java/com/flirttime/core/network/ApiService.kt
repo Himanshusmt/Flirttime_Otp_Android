@@ -1,7 +1,7 @@
 package com.flirttime.core.network
 
-import com.flirttime.feature.auth.data.model.CountryDataResponse
-import com.flirttime.feature.auth.data.model.LoginByPhoneResponse
+import com.flirttime.feature.auth.CountryDataResponse
+import com.flirttime.feature.auth.LoginByPhoneResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

@@ -1,0 +1,1 @@
+Android Jetpack Data Binding (`FragmentExploreBinding`, `ItemExploreProfileCardBinding`), RecyclerView `ListAdapter` + `DiffUtil`, `GridLayoutManager` for a 2x2 profile grid, and `ShimmerHelper` from `core.common` for image loading.

@@ -1,0 +1,1 @@
+Cross-feature shared infrastructure providing navigation, networking, session storage, image cropping, UI widgets, and common utilities for the Flirttime Android app.

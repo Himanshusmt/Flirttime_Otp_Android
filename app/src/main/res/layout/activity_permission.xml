@@ -8,7 +8,7 @@
     android:background="@color/white"
     android:fillViewport="true"
     android:clipToPadding="false"
-    tools:context=".feature.onboarding.presentation.PermissionActivity">
+    tools:context=".feature.onboarding.PermissionActivity">
 
     <LinearLayout
         android:id="@+id/main"

@@ -1,0 +1,1 @@
+AndroidX Activity Result API (`ActivityResultContracts`), Koin for DI (`org.koin.androidx.viewmodel.ext.android.viewModel`), Kotlin coroutines `StateFlow`/`MutableStateFlow`, ViewBinding, EdgeToEdgeHelper from `core.common`.

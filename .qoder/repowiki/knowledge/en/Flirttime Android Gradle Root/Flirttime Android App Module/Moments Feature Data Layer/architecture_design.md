@@ -1,0 +1,5 @@
+Follows a clean two-package split: `domain.repository` declares the `MomentsRepository` interface (the only contract exposed upward), while `data.*` implements it.
+- `data/network/MomentsApiService.kt` is a Retrofit interface defining three endpoints (`GET api/v1/moments`, `POST .../like`, `POST ...` with multipart images).
+- `data/model/MomentsModels.kt` holds Gson-annotated DTOs (`MomentDto`, `MomentCreatorDto`, `MomentMediaDto`, etc.) plus the presentation-facing `MomentsFeedResult` and a `toUiItem()` extension that maps DTOs into `MomentPost` (from `com.flirttime.feature.main.presentation.moments`).
+- `data/repository/MomentsRepositoryImpl.kt` wires everything together: calls the API via `safeApiCall`, wraps results in `Resource<...>` Flow states, dispatches work on `Dispatchers.IO`, and converts DTOs to UI models before emitting.
+Dependency direction is strictly data → domain (implementation depends on interface); the domain package has no dependency back on data. Multipart image upload is delegated to `MultipartHelper` from `core.common`.

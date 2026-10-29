@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAF8F8"
+    android:orientation="vertical">
+
+    <!-- Top App Bar -->
+    <RelativeLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_settings_back_btn"
+            android:contentDescription="Back"
+            android:scaleType="center"
+            android:src="@drawable/ic_chevron_left_orange" />
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/btnBack"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="14dp"
+            android:fontFamily="@font/fredokasemibold"
+            android:text="Blocked &amp; reported"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+    <!-- Segmented Tabs (Matching Screenshot) -->
+    <LinearLayout
+        android:id="@+id/layoutTabs"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_segmented_container"
+        android:orientation="horizontal"
+        android:padding="4dp">
+
+        <TextView
+            android:id="@+id/tvTabBlocked"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_segmented_active_tab"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/fredokasemibold"
+            android:gravity="center"
+            android:text="Blocked (0)"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvTabReported"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/fredokamedium"
+            android:gravity="center"
+            android:text="Reported (0)"
+            android:textColor="#8E8E93"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/layoutContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- TAB 1: BLOCKED USERS CONTENT -->
+        <FrameLayout
+            android:id="@+id/layoutBlockedContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvBlockedUsers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="24dp"
+                android:visibility="gone" />
+
+            <!-- Empty State (Matching Screenshot) -->
+            <LinearLayout
+                android:id="@+id/layoutBlockedEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp">
+
+                <FrameLayout
+                    android:layout_width="104dp"
+                    android:layout_height="104dp"
+                    android:background="@drawable/bg_empty_circle_pink">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Blocked icon"
+                        android:src="@drawable/ic_hand_stop_red" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:text="No blocked profiles"
+                    android:textColor="@color/text_primary"
+                    android:textSize="19sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:gravity="center"
+                    android:paddingHorizontal="20dp"
+                    android:text="People you block won't see your profile or be able to message you."
+                    android:textColor="#8E8E93"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <!-- TAB 2: REPORTED USERS CONTENT -->
+        <FrameLayout
+            android:id="@+id/layoutReportedContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvReportedUsers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="24dp"
+                android:visibility="gone" />
+
+            <!-- Empty State for Reported -->
+            <LinearLayout
+                android:id="@+id/layoutReportedEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp">
+
+                <FrameLayout
+                    android:layout_width="104dp"
+                    android:layout_height="104dp"
+                    android:background="@drawable/bg_empty_circle_pink">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Reported icon"
+                        android:src="@drawable/ic_report_flag_red" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:text="No reported profiles"
+                    android:textColor="@color/text_primary"
+                    android:textSize="19sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:gravity="center"
+                    android:paddingHorizontal="20dp"
+                    android:text="Reports you submit will appear here along with their review status."
+                    android:textColor="#8E8E93"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <ProgressBar
+            android:id="@+id/pbLoading"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/brand_primary"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+</LinearLayout>

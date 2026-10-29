@@ -22,6 +22,9 @@
     <!-- Notification Permission (Android 13+) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Audio Recording Permission -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <!-- Storage / Media Permissions -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission
@@ -58,7 +61,7 @@
 
         <!-- True Application Launcher: SplashActivity evaluates session & routes type-safely -->
         <activity
-            android:name=".feature.splash.presentation.SplashActivity"
+            android:name=".feature.splash.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.FlirtTime.Splash"
             android:windowSoftInputMode="adjustResize">
@@ -70,45 +73,45 @@
 
         <!-- Onboarding Intro Flow -->
         <activity
-            android:name=".feature.onboarding.presentation.Intro1Activity"
+            android:name=".feature.onboarding.Intro1Activity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".feature.onboarding.presentation.Intro2Activity"
+            android:name=".feature.onboarding.Intro2Activity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".feature.onboarding.presentation.Intro3Activity"
+            android:name=".feature.onboarding.Intro3Activity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- Runtime Permission Primer -->
         <activity
-            android:name=".feature.onboarding.presentation.PermissionActivity"
+            android:name=".feature.onboarding.PermissionActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- Authentication Flow -->
         <activity
-            android:name=".feature.auth.presentation.login.LoginActivity"
+            android:name=".feature.auth.login.LoginActivity"
             android:exported="false"
             android:theme="@style/Theme.FlirtTime.Login"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".feature.auth.presentation.phone.PhoneInputActivity"
+            android:name=".feature.auth.phone.PhoneInputActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".feature.auth.presentation.country.SelectCountryActivity"
+            android:name=".feature.auth.selectCountry.SelectCountryActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".feature.auth.presentation.otp.OtpActivity"
+            android:name=".feature.auth.otp.OtpActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
@@ -118,33 +121,33 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".feature.auth.presentation.email.EmailVerifyActivity"
+            android:name=".feature.auth.email.EmailVerifyActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- Profile Onboarding & Verification Flow -->
         <activity
-            android:name=".feature.profile.presentation.intro.ProfileActivity"
+            android:name=".feature.onboarding.ProfileActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".feature.profile.presentation.verification.ProfileVerificationActivity"
+            android:name=".feature.onboarding.ProfileVerificationActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".feature.profile.presentation.preview.PicturePreviewActivity"
+            android:name=".feature.onboarding.PicturePreviewActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".feature.profile.presentation.gesture.GestureVerificationActivity"
+            android:name=".feature.onboarding.GestureVerificationActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".feature.profile.presentation.process.VerificationProcessActivity"
+            android:name=".feature.onboarding.VerificationProcessActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
@@ -154,16 +157,21 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Diagnostic / Testing Activity (accessible for component isolation if needed) -->
         <!-- Notifications Screen -->
         <activity
-            android:name=".feature.notification.presentation.NotificationActivity"
+            android:name=".feature.notification.NotificationActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- Add Moment Screen -->
         <activity
-            android:name=".feature.main.presentation.moments.add.AddMomentActivity"
+            android:name=".feature.moments.add.AddMomentActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- User My Moments (See All) Screen -->
+        <activity
+            android:name=".feature.main.profile.MyMomentsActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
@@ -174,9 +182,39 @@
             android:theme="@style/Theme.FlirtTime"
             android:windowSoftInputMode="adjustNothing" />
 
-        <!-- Search Screen -->
+        <!-- Other User Profile Screen -->
         <activity
-            android:name=".feature.search.presentation.SearchActivity"
+            android:name=".feature.profile.otherUser.OtherUserProfileActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustNothing" />
+
+        <!-- Settings Screen -->
+        <activity
+            android:name=".feature.profile.settings.SettingsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Personal Details Screen -->
+        <activity
+            android:name=".feature.profile.settings.PersonalDetailsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Notification Settings Screen -->
+        <activity
+            android:name=".feature.profile.settings.NotificationSettingsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Blocked and Reported Screen -->
+        <activity
+            android:name=".feature.profile.settings.BlockedReportedActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Edit Profile Screen -->
+        <activity
+            android:name=".feature.profile.edit.EditProfileActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 

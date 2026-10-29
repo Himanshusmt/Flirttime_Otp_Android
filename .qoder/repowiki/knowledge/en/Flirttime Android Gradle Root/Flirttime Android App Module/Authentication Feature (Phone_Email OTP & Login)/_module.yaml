@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: app_module/auth_feature
+title: Authentication Feature (Phone/Email OTP & Login)
+scope:
+    - app/src/main/java/com/flirttime/feature/auth/
+source_files: []
+depends_on: []
+related_to:
+    - path: app_module/core_subsystem
+    - path: app_module/onboarding_feature

@@ -46,6 +46,8 @@ object NetworkModuleProvider {
                 requestBuilder.header("Authorization", bearerToken)
             }
             requestBuilder.header("Accept", "application/json")
+            requestBuilder.header("Accept-Language", "en")
+            requestBuilder.header("Device", "android")
             chain.proceed(requestBuilder.build())
         }
 

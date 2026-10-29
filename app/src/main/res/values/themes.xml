@@ -163,6 +163,22 @@
         <item name="chipEndPadding">12dp</item>
     </style>
 
+    <style name="Widget.FlirtTime.ProfileInterestChip" parent="Widget.Material3.Chip.Assist">
+        <item name="chipCornerRadius">50dp</item>
+        <item name="chipMinHeight">36dp</item>
+        <item name="ensureMinTouchTargetSize">false</item>
+        <item name="chipBackgroundColor">#F4F5F7</item>
+        <item name="chipStrokeColor">@android:color/transparent</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="android:textColor">#262626</item>
+        <item name="android:fontFamily">@font/fredokamedium</item>
+        <item name="fontFamily">@font/fredokamedium</item>
+        <item name="android:textSize">13.5sp</item>
+        <item name="chipStartPadding">12dp</item>
+        <item name="chipEndPadding">12dp</item>
+        <item name="rippleColor">#20000000</item>
+    </style>
+
     <!-- Edge-to-Edge Bottom Sheet Theme (Removes system nav bar gray scrim) -->
     <style name="FlirtTimeBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/FlirtTimeBottomSheetModal</item>

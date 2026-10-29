@@ -1,0 +1,4 @@
+- UI state is represented by simple Kotlin data classes (e.g. `ChatItem`) with default values for optional fields.
+- RecyclerView adapters expose a `submitList` method that replaces the internal list and calls `notifyDataSetChanged` rather than using DiffUtil.
+- Avatar images are loaded through the shared `ShimmerHelper.loadWithShimmer` helper instead of direct image-loading libraries.
+- Optional UI elements (story ring, verified badge, message preview, unread badge) are toggled by setting `View.VISIBLE` / `View.GONE` based on boolean/int fields on the model.

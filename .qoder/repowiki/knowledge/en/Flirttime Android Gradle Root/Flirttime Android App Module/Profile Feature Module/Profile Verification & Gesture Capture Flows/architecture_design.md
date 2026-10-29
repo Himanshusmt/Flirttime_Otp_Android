@@ -1,0 +1,6 @@
+Three sibling presentation packages form a linear user flow:
+- `verification/` — `ProfileVerificationActivity` lets users pick or snap a profile picture, stores the resulting URI via `SessionManager`, then navigates to `Destination.PicturePreview`.
+- `gesture/` — `GestureVerificationActivity` handles camera permission, captures a gesture selfie via `ActivityResultContracts.TakePicture`, delegates the upload to `GestureVerificationViewModel` (which calls `UserRepository.uploadGesturePhoto`), and on success sets page redirect to `gesture` and moves to `Destination.VerificationProcess`.
+- `process/` — `VerificationProcessActivity` is the terminal confirmation screen; tapping Continue marks the user verified (`sessionManager.setVerified(true)`), redirects to `home`, and clears the back stack to `Destination.Main()`.
+
+Navigation between screens is centralized through `AppNavigator` with typed `Destination` values. State observation uses `lifecycleScope.launch + repeatOnLifecycle(STARTED)` over `StateFlow<Resource<T>>`. Dependencies are injected via Koin (`viewModel()`, `inject()`). UI binding uses ViewBinding generated from layout XMLs, and edge-to-edge insets are applied consistently across all three Activities.

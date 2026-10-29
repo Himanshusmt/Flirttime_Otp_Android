@@ -1,0 +1,1 @@
+Kotlin Android with ViewBinding, Kotlin Coroutines + Flow (`MutableStateFlow`/`StateFlow` wrapped as `Resource<T>`), Koin for ViewModel injection, and the shared `com.flirttime.core.navigation.AppNavigator`/`Destination` routing abstraction.

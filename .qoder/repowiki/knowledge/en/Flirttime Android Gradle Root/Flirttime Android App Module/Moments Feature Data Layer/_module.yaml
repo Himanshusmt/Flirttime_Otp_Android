@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: app_module/moments_feature
+title: Moments Feature Data Layer
+scope:
+    - app/src/main/java/com/flirttime/feature/moments/
+source_files: []
+depends_on: []
+related_to:
+    - path: app_module/main_feature/moments

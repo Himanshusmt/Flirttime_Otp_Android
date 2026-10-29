@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAF8F8"
+    android:orientation="vertical">
+
+    <!-- Top App Bar -->
+    <RelativeLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_settings_back_btn"
+            android:contentDescription="Back"
+            android:scaleType="center"
+            android:src="@drawable/ic_chevron_left_orange" />
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/btnBack"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="14dp"
+            android:fontFamily="@font/fredokasemibold"
+            android:text="Settings"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:overScrollMode="never">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="32dp">
+
+                <!-- TOP PROFILE OVERVIEW CARD -->
+                <LinearLayout
+                    android:id="@+id/cardProfileOverview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_settings_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <FrameLayout
+                        android:layout_width="66dp"
+                        android:layout_height="66dp"
+                        android:background="@drawable/bg_settings_avatar_ring">
+
+                        <com.facebook.drawee.view.SimpleDraweeView
+                            android:id="@+id/ivAvatar"
+                            android:layout_width="58dp"
+                            android:layout_height="58dp"
+                            android:layout_gravity="center"
+                            app:placeholderImage="@drawable/img_login"
+                            app:placeholderImageScaleType="centerCrop"
+                            app:roundAsCircle="true" />
+
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvUsername"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/fredokasemibold"
+                                android:maxLines="1"
+                                android:text="Tushar1234"
+                                android:textColor="@color/text_primary"
+                                android:textSize="18sp" />
+
+                            <ImageView
+                                android:id="@+id/ivVerifiedBadge"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginStart="6dp"
+                                android:contentDescription="Verified"
+                                android:src="@drawable/ic_verified_red"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvEmail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/fredokaregular"
+                            android:maxLines="1"
+                            android:text="tushar1234@yopmail.com"
+                            android:textColor="#8E8E93"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/btnEditProfile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_settings_pill_edit"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:fontFamily="@font/fredokamedium"
+                            android:gravity="center"
+                            android:paddingHorizontal="14dp"
+                            android:text="Edit profile"
+                            android:textColor="#EA3355"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- SECTION: ACCOUNT -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:letterSpacing="0.04"
+                    android:text="ACCOUNT"
+                    android:textColor="#8E8E93"
+                    android:textSize="12sp" />
+
+                <!-- MAIN ACCOUNT CARD -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_settings_card"
+                    android:orientation="vertical">
+
+                    <!-- Personal details -->
+                    <LinearLayout
+                        android:id="@+id/rowPersonalDetails"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_settings_icon_pink"
+                            android:contentDescription="Personal Details"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_settings_person" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredokamedium"
+                                android:text="Personal details"
+                                android:textColor="@color/text_primary"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:fontFamily="@font/fredokaregular"
+                                android:text="Name, email, phone and birthday"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:contentDescription="Go"
+                            android:src="@drawable/ic_chevron_right_thin" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.6dp"
+                        android:layout_marginStart="70dp"
+                        android:background="@color/border_subtle" />
+
+                    <!-- Notifications -->
+                    <LinearLayout
+                        android:id="@+id/rowNotifications"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_settings_icon_amber"
+                            android:contentDescription="Notifications"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_settings_bell" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredokamedium"
+                                android:text="Notifications"
+                                android:textColor="@color/text_primary"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:fontFamily="@font/fredokaregular"
+                                android:text="Choose what you want to hear about"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:contentDescription="Go"
+                            android:src="@drawable/ic_chevron_right_thin" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.6dp"
+                        android:layout_marginStart="70dp"
+                        android:background="@color/border_subtle" />
+
+                    <!-- Blocked & reported -->
+                    <LinearLayout
+                        android:id="@+id/rowBlockedReported"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_settings_icon_slate"
+                            android:contentDescription="Blocked and Reported"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_settings_hand_block" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredokamedium"
+                                android:text="Blocked &amp; reported"
+                                android:textColor="@color/text_primary"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:fontFamily="@font/fredokaregular"
+                                android:text="People you've filtered out"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:contentDescription="Go"
+                            android:src="@drawable/ic_chevron_right_thin" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- SECTION: SUPPORT -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginTop="22dp"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:letterSpacing="0.04"
+                    android:text="SUPPORT"
+                    android:textColor="#8E8E93"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_settings_card"
+                    android:orientation="vertical">
+
+                    <!-- Help & support -->
+                    <LinearLayout
+                        android:id="@+id/rowHelpSupport"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_settings_icon_blue"
+                            android:contentDescription="Help and Support"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_settings_support" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredokamedium"
+                                android:text="Help &amp; support"
+                                android:textColor="@color/text_primary"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:fontFamily="@font/fredokaregular"
+                                android:text="FAQs and contact our team"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:contentDescription="Go"
+                            android:src="@drawable/ic_chevron_right_thin" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.6dp"
+                        android:layout_marginStart="70dp"
+                        android:background="@color/border_subtle" />
+
+                    <!-- Share Flirt Time -->
+                    <LinearLayout
+                        android:id="@+id/rowShareApp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_settings_icon_green"
+                            android:contentDescription="Share"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_settings_share" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredokamedium"
+                                android:text="Share Flirt Time"
+                                android:textColor="@color/text_primary"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:fontFamily="@font/fredokaregular"
+                                android:text="Invite friends to find their match"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:contentDescription="Go"
+                            android:src="@drawable/ic_chevron_right_thin" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- SECTION: LEGAL -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginTop="22dp"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:letterSpacing="0.04"
+                    android:text="LEGAL"
+                    android:textColor="#8E8E93"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_settings_card"
+                    android:orientation="vertical">
+
+                    <!-- Terms & Conditions -->
+                    <LinearLayout
+                        android:id="@+id/rowTerms"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="15dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_settings_icon_grey"
+                            android:contentDescription="Terms"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_settings_terms" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/fredokamedium"
+                            android:text="Terms &amp; Conditions"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:contentDescription="Go"
+                            android:src="@drawable/ic_chevron_right_thin" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.6dp"
+                        android:layout_marginStart="70dp"
+                        android:background="@color/border_subtle" />
+
+                    <!-- Privacy Policy -->
+                    <LinearLayout
+                        android:id="@+id/rowPrivacyPolicy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="15dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_settings_icon_grey"
+                            android:contentDescription="Privacy"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_settings_privacy" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/fredokamedium"
+                            android:text="Privacy Policy"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:contentDescription="Go"
+                            android:src="@drawable/ic_chevron_right_thin" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- LOG OUT BUTTON (MATCHING SCREENSHOT) -->
+                <LinearLayout
+                    android:id="@+id/btnLogOut"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="28dp"
+                    android:background="@drawable/bg_logout_pill"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="Log out icon"
+                        android:src="@drawable/ic_logout_red" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:text="Log out"
+                        android:textColor="#FF3B5C"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+                <!-- FOOTER -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:gravity="center"
+                    android:text="❤️ Made with love for real connections"
+                    android:textColor="#8E8E93"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvAppVersion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:gravity="center"
+                    android:text="Flirt Time v1.0 (1)"
+                    android:textColor="#AEAEB2"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- Loading overlay -->
+        <FrameLayout
+            android:id="@+id/layoutLoading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#66000000"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/brand_primary" />
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

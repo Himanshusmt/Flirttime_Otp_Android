@@ -77,6 +77,18 @@ data class CropConfig(
         )
 
         /**
+         * Preset for Cover Photo (16:9 landscape aspect ratio).
+         */
+        fun coverPhoto(title: String = "Crop Cover Photo"): CropConfig = CropConfig(
+            shape = CropShape.RECTANGLE,
+            aspectRatio = CropAspectRatio.Landscape16_9,
+            title = title,
+            maxOutputWidth = 1920,
+            maxOutputHeight = 1080,
+            compressionQuality = 90
+        )
+
+        /**
          * Freeform unconstrained crop.
          */
         fun freeform(title: String = "Crop Image"): CropConfig = CropConfig(

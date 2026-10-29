@@ -1,0 +1,1 @@
+Android `Dialog` + View Binding (`PopupDobBinding`, `PopupGenderBinding`, `RvYearsBinding`); third-party `com.calendarview.CompactCalendarView` for the custom DOB calendar; `RecyclerView` with `GridLayoutManager` for the year picker grid.

@@ -1,0 +1,1 @@
+Gradle root that declares the FlirtTime project, centralizes plugin and dependency versions via a catalog, and includes the single :app Android module.

@@ -1,0 +1,5 @@
+- Feature screens are organized as flat packages split into `data/` and `presentation/` sub-packages, with model and repository classes colocated under `data/`.
+- UI state is exposed to the Activity through a `StateFlow` produced by a `ViewModel` and observed via `lifecycleScope.launch { repeatOnLifecycle(Lifecycle.State.STARTED) { ... } }`.
+- RecyclerView lists use `ListAdapter` with a custom anonymous `DiffUtil.ItemCallback` defined inside the adapter's companion object rather than a separate class.
+- Multi-type list items are modeled as a sealed class hierarchy (e.g. `NotificationListItem.Header` / `Item`) and dispatched via `when` in both `getItemViewType` and `onBindViewHolder`.
+- Mock/in-memory data sources are provided via dedicated objects (e.g. `NotificationRepositoryImpl.getInitialMockNotifications`, `MockSearchDataProvider`) instead of real network calls.

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="215dp"
+    android:layout_margin="5dp"
+    app:cardBackgroundColor="#EFEFEF"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="0dp"
+    app:cardPreventCornerOverlap="false"
+    app:strokeWidth="0dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Moment Media DraweeView -->
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ivMomentMedia"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:actualImageScaleType="centerCrop" />
+
+        <!-- Top-Right Multi-Media Indicator Icon -->
+        <ImageView
+            android:id="@+id/ivMultiMedia"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="10dp"
+            android:contentDescription="Multiple Media"
+            android:src="@drawable/ic_multi_media"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!-- Bottom Gradient Scrim -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bg_moment_scrim_bottom" />
+
+        <!-- Bottom Caption & Engagement Stats Overlay -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:paddingHorizontal="12dp"
+            android:paddingBottom="10dp">
+
+            <!-- Caption (if available) -->
+            <TextView
+                android:id="@+id/tvCaption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/fredokamedium"
+                android:maxLines="1"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:visibility="gone"
+                tools:text="Hii"
+                tools:visibility="visible" />
+
+            <!-- Stats Row: Like count and Comment count -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Red Heart Icon -->
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:contentDescription="Likes"
+                    android:src="@drawable/ic_thread_heart_filled" />
+
+                <!-- Like Count Text -->
+                <TextView
+                    android:id="@+id/tvLikeCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/fredokamedium"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    tools:text="0" />
+
+                <!-- Speech Bubble Comment Icon -->
+                <ImageView
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
+                    android:layout_marginStart="9dp"
+                    android:contentDescription="Comments"
+                    android:src="@drawable/ic_thread_comment" />
+
+                <!-- Comment Count Text -->
+                <TextView
+                    android:id="@+id/tvCommentCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/fredokamedium"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    tools:text="2" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</com.google.android.material.card.MaterialCardView>

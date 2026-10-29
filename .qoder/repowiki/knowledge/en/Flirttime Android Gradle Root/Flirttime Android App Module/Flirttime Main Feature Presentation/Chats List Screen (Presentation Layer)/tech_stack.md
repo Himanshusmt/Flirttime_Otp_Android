@@ -1,0 +1,1 @@
+AndroidX Fragment + RecyclerView + ViewBinding; uses `com.flirttime.core.common.ShimmerHelper` for avatar shimmer loading and custom fonts via `ResourcesCompat.getFont`.

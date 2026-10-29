@@ -8,7 +8,7 @@
     android:background="@color/white"
     android:fillViewport="true"
     android:clipToPadding="false"
-    tools:context=".feature.auth.presentation.phone.PhoneInputActivity">
+    tools:context=".feature.auth.phone.PhoneInputActivity">
 
     <LinearLayout
         android:id="@+id/main"

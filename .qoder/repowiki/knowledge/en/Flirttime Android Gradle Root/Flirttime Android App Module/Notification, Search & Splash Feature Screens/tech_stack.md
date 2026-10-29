@@ -1,0 +1,1 @@
+AndroidX AppCompat Activities with ViewBinding, Kotlin Coroutines Flow (`StateFlow`, `repeatOnLifecycle`), RecyclerView with `ListAdapter` + `DiffUtil`, Koin DI (`inject()` used in SplashActivity), and Lottie animations for the splash sequence.

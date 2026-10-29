@@ -1,0 +1,1 @@
+AndroidX Fragment + ViewBinding + Material Components BottomSheetDialogFragment; Koin for ViewModel injection (`org.koin.androidx.viewmodel.ext.android.viewModel`); Coroutines Flow (`StateFlow`/`SharedFlow`) for reactive state; `ActivityResultContracts` for media pick/camera; custom `FlirtTimeCropContract` for image cropping.

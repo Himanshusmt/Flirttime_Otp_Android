@@ -1,0 +1,5 @@
+- Repository methods return `Flow<Resource<T>>` and emit `Resource.Loading` first, then the actual result, with `.flowOn(Dispatchers.IO)` at the end of each flow builder.
+- Successful auth responses are followed by persisting token, user id, profile fields, and page redirect into `SessionManager` before emitting the result.
+- ViewModels wrap mutable `MutableStateFlow` properties behind immutable `StateFlow` exposed via `asStateFlow()` and collect repository flows inside `viewModelScope.launch { ... }`.
+- Retrofit endpoints are grouped by channel (phone vs email) with parallel request/verify/resend method pairs under the same `AuthApiService` interface.
+- Navigation between auth screens uses the shared `AppNavigator.navigateTo(context, Destination.X(...))` pattern rather than direct `Intent` construction.

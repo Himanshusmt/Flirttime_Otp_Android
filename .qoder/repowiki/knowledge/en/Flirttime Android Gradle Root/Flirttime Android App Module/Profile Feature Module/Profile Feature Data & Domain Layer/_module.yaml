@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: app_module/profile_feature/profile_data_domain
+title: Profile Feature Data & Domain Layer
+scope:
+    - app/src/main/java/com/flirttime/feature/profile/data/
+    - app/src/main/java/com/flirttime/feature/profile/domain/
+source_files: []
+depends_on: []
+related_to: []

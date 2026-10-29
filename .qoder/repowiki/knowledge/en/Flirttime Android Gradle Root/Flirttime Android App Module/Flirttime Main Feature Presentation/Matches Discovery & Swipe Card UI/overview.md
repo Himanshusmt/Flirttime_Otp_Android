@@ -1,0 +1,1 @@
+Presentation layer for the Matches screen, providing a four-direction swipeable card stack, interest-based discovery pills, and a bottom-sheet filter dialog driven by mock data.

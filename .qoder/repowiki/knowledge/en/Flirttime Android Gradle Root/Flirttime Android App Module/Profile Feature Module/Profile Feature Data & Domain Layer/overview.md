@@ -1,0 +1,1 @@
+Defines the profile feature's domain repository interface and its Retrofit-backed data implementation for updating user profiles, checking username availability, and uploading photos.

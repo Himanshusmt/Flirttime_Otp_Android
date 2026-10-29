@@ -1,0 +1,8 @@
+schema_version: 1
+module_path: app_module/profile_feature
+title: Profile Feature Module
+scope:
+    - app/src/main/java/com/flirttime/feature/profile/
+source_files: []
+depends_on: []
+related_to: []

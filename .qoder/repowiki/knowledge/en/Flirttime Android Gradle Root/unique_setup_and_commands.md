@@ -1,0 +1,1 @@
+Standard Gradle wrapper usage (`./gradlew`, `./gradlew.bat`) from the repo root; the project name is `FlirtTime` and only the `:app` module is included.

@@ -1,0 +1,5 @@
+- Network layer wraps every API call through `safeApiCall` / `safeRawApiCall`, converting exceptions and `ApiResponse` payloads into a single `Resource<T>` success/error representation.
+- Persistent user state is exposed as `Flow<T>` properties derived from `dataStore.data.map { ... }`, with `catch { IOException -> emit(emptyPreferences()) }` so missing keys resolve to safe defaults.
+- Navigation arguments are declared as data-class subclasses of a sealed `Destination` hierarchy and serialized into Intent extras via `EXTRA_*` constants in `AppNavigator`, replacing ad-hoc string extras.
+- Lifecycle-aware helpers expose paired `register(Activity, ...)` / `register(Fragment, ...)` companion functions that register `ActivityResultLauncher`s and return a configured helper instance.
+- Reusable UI components are implemented as custom `FrameLayout`/`ViewGroup` subclasses with multiple constructors delegating to a private `init(attrs)` that reads values from a generated `R.styleable.*` attribute set.

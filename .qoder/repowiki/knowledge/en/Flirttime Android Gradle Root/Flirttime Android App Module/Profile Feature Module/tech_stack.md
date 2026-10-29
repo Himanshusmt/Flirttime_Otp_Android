@@ -1,0 +1,1 @@
+Kotlin Android with Retrofit for network calls; MVVM across all presentation subpackages.

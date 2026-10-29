@@ -1,0 +1,2 @@
+- Plugin and library versions are declared centrally in `gradle/libs.versions.toml` and consumed via `alias(libs.plugins.*)` / `alias(libs.*))` rather than inline strings.
+- Child modules are not allowed to declare their own repositories — all artifact resolution flows through the root's `dependencyResolutionManagement` block.

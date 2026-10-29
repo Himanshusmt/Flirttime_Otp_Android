@@ -1,0 +1,1 @@
+Android presentation layer for the profile onboarding flow: an 'Introduce Yourself' form with live username availability and a picture preview screen that uploads the selected photo.

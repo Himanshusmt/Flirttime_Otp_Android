@@ -1,0 +1,1 @@
+Builds as a standard Android application module (`com.flirttime.test` namespace, minSdk 24, targetSdk 36); the base API URL is injected at build time via `buildConfigField("BASE_URL", ...)` in `defaultConfig`.

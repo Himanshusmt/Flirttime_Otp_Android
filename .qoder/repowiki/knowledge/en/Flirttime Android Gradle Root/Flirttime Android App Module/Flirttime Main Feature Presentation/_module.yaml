@@ -1,0 +1,8 @@
+schema_version: 1
+module_path: app_module/main_feature
+title: Flirttime Main Feature Presentation
+scope:
+    - app/src/main/java/com/flirttime/feature/main/
+source_files: []
+depends_on: []
+related_to: []

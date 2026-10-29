@@ -1,0 +1,26 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <!-- Rounded silhouette container -->
+    <path
+        android:pathData="M20,6C16.13,6 13,9.13 13,13C13,16.87 16.13,20 20,20C23.87,20 27,16.87 27,13C27,9.13 23.87,6 20,6Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#D0D0D8"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M10,32C10,26.48 14.48,22 20,22C23.03,22 25.75,23.35 27.59,25.48"
+        android:strokeWidth="1.5"
+        android:strokeColor="#D0D0D8"
+        android:fillColor="#00000000" />
+    <!-- Red circle badge with plus -->
+    <path
+        android:pathData="M30,30m-7,0a7,7 0 1,0 14,0a7,7 0 1,0 -14,0"
+        android:fillColor="#EA3355" />
+    <path
+        android:pathData="M30,26.5L30,33.5M26.5,30L33.5,30"
+        android:strokeWidth="1.6"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round" />
+</vector>

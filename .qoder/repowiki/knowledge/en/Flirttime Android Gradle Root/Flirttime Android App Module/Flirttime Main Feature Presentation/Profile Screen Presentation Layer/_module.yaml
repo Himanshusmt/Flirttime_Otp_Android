@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: app_module/main_feature/profile
+title: Profile Screen Presentation Layer
+scope:
+    - app/src/main/java/com/flirttime/feature/main/presentation/profile/
+source_files: []
+depends_on: []
+related_to:
+    - path: app_module/main_feature/explore

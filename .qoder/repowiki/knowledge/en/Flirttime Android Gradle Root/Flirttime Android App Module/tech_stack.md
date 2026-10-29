@@ -1,0 +1,1 @@
+Kotlin + Android Application module using Koin for dependency injection, Retrofit + OkHttp for networking, DataStore Preferences for session storage, Lottie for animations, Fresco for image loading, and Jetpack Navigation Component for screen routing.

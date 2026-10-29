@@ -1,0 +1,1 @@
+Android Jetpack Fragment with View Binding; Material Components BottomSheetDialogFragment; Fresco image loading via shared `ShimmerHelper`; custom gesture handling using `VelocityTracker` and raw `MotionEvent` (no ViewPager2 or library swipe deck).

@@ -1,0 +1,1 @@
+Retrofit + OkHttp multipart for HTTP, Gson for JSON serialization/deserialization, kotlinx.coroutines Flow for reactive streams, and a shared `Resource` sealed type plus `safeApiCall` helper from `core.network`.

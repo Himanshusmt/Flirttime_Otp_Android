@@ -553,13 +553,14 @@
                     android:layout_marginTop="14dp"
                     app:chipSpacingHorizontal="8dp"
                     app:chipSpacingVertical="8dp"
-                    app:singleSelection="true">
+                    app:singleSelection="false">
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipLookingForLongTerm"
                         style="@style/Widget.FlirtTime.FilterChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:tag="long_term"
                         android:text="💍 Long-term" />
 
                     <com.google.android.material.chip.Chip
@@ -567,6 +568,7 @@
                         style="@style/Widget.FlirtTime.FilterChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:tag="casual"
                         android:text="🥂 Something casual" />
 
                     <com.google.android.material.chip.Chip
@@ -574,6 +576,7 @@
                         style="@style/Widget.FlirtTime.FilterChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:tag="not_sure"
                         android:text="🤔 Not sure yet" />
 
                 </com.google.android.material.chip.ChipGroup>
@@ -652,212 +655,7 @@
                     android:layout_marginTop="14dp"
                     app:chipSpacingHorizontal="8dp"
                     app:chipSpacingVertical="8dp"
-                    app:singleSelection="false">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestArt"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎨 Art" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestCinema"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎬 Cinema" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestCooking"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🍳 Cooking" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestDance"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="💃 Dance" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestDrawing"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎨 Drawing" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestDrinks"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🍹 Drinks" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestExercise"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🤸 Exercise" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestExtreme"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🏄 Extreme" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestFitness"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="💪 Fitness" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestGaming"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎮 Gaming" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestHandcraft"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🧵 Handcraft" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestKaraoke"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎤 Karaoke" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestLyricsMusic"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎵 Lyrics Music" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestMusic"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎶 Music" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestParty"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎉 Party" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestPets"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🐶 Pets" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestPhotography"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📷 Photography" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestPlanting"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🌱 Planting" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestReading"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📚 Reading" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestRunning"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🏃 Running" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestShopping"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🛍️ Shopping" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestSports"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⚽ Sports" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestSwimming"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🏊 Swimming" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestTelevision"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📺 Television" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestTennis"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎾 Tennis" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestTravelling"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="✈️ Travelling" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestVideoGames"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🕹️ Video games" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestWriting"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="✍️ Writing" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipInterestYoga"
-                        style="@style/Widget.FlirtTime.FilterChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🧘 Yoga" />
-
-                </com.google.android.material.chip.ChipGroup>
+                    app:singleSelection="false" />
 
             </LinearLayout>
 
@@ -1068,7 +866,7 @@
             android:paddingHorizontal="18dp"
             android:paddingVertical="8dp"
             android:stateListAnimator="@null"
-            android:text="Show 44 matches"
+            android:text="Show Matches"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16.5sp" />

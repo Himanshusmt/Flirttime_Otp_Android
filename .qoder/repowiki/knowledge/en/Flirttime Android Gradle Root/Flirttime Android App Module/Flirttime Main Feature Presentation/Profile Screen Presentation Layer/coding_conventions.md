@@ -1,0 +1,4 @@
+- Custom drawing widgets extend `android.view.View` with a `@JvmOverloads` constructor taking `(Context, AttributeSet?, defStyleAttr)` and render via overridden `onDraw(Canvas)`.
+- Mutable view properties that affect drawing (e.g. `progress`, `strokeWidthPx`) are declared with setters that call `invalidate()` to trigger redraw.
+- Click handling in the fragment is centralized in a single `setupClickListeners()` method where each bound view's listener delegates to a named private handler.
+- Navigation out of the fragment goes through `AppNavigator.navigateTo(requireContext(), Destination.X)` rather than direct Activity launches.

@@ -7,31 +7,31 @@
 
     <fragment
         android:id="@+id/navigation_moments"
-        android:name="com.flirttime.feature.main.presentation.moments.MomentsFragment"
+        android:name="com.flirttime.feature.moments.MomentsFragment"
         android:label="Moments"
         tools:layout="@layout/fragment_moments" />
 
     <fragment
         android:id="@+id/navigation_explore"
-        android:name="com.flirttime.feature.main.presentation.explore.ExploreFragment"
+        android:name="com.flirttime.feature.main.explore.ExploreFragment"
         android:label="Explore"
         tools:layout="@layout/fragment_explore" />
 
     <fragment
         android:id="@+id/navigation_matches"
-        android:name="com.flirttime.feature.main.presentation.matches.MatchesFragment"
+        android:name="com.flirttime.feature.main.matches.MatchesFragment"
         android:label="Matches"
         tools:layout="@layout/fragment_matches" />
 
     <fragment
         android:id="@+id/navigation_chat"
-        android:name="com.flirttime.feature.main.presentation.chat.ChatFragment"
+        android:name="com.flirttime.feature.main.chat.ChatFragment"
         android:label="Messages"
         tools:layout="@layout/fragment_chat" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.flirttime.feature.main.presentation.profile.ProfileFragment"
+        android:name="com.flirttime.feature.main.profile.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />
 

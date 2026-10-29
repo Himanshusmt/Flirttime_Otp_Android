@@ -1,0 +1,1 @@
+Gradle Kotlin DSL with Version Catalog (`libs.versions.toml`), Android Gradle Plugin, and the `org.gradle.toolchains.foojay-resolver-convention` plugin for JDK provisioning.

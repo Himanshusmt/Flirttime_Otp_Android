@@ -1,0 +1,4 @@
+- Each Activity sets up edge-to-edge by calling `com.flirttime.core.common.EdgeToEdgeHelper.setupEdgeToEdge(this, isLightStatusBars = true, isLightNavigationBars = true)` in `onCreate` before inflating the binding.
+- Screen-specific inset padding is applied through a private `setupScreenSpecificEdgeToEdge()` method that uses `ViewCompat.setOnApplyWindowInsetsListener` on `binding.root` and adjusts top/bottom paddings of content containers.
+- Navigation between onboarding steps and into the rest of the app goes through `AppNavigator.navigateTo(context, Destination.Xxx)` rather than explicit `Intent`/`startActivity` calls.
+- User state transitions (e.g. marking intro as complete) are persisted via `SessionManager` obtained through Koin injection and written inside a `lifecycleScope.launch` block before navigating.

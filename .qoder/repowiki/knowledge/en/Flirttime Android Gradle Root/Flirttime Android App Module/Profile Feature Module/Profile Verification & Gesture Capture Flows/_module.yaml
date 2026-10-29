@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: app_module/profile_feature/profile_verification
+title: Profile Verification & Gesture Capture Flows
+scope:
+    - app/src/main/java/com/flirttime/feature/profile/presentation/gesture/
+    - app/src/main/java/com/flirttime/feature/profile/presentation/process/
+    - app/src/main/java/com/flirttime/feature/profile/presentation/verification/
+source_files: []
+depends_on: []
+related_to: []

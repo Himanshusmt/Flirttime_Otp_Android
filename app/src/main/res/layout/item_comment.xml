@@ -9,14 +9,13 @@
     android:paddingVertical="9dp">
 
     <!-- Commenter Avatar -->
-    <com.google.android.material.imageview.ShapeableImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/ivCommentAvatar"
         android:layout_width="38dp"
         android:layout_height="38dp"
         android:layout_marginTop="2dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/img_gallery_demo_girl"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
+        app:roundAsCircle="true"
+        app:placeholderImage="@drawable/img_gallery_demo_girl" />
 
     <!-- Comment Details Column -->
     <LinearLayout

@@ -56,6 +56,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp"
@@ -113,6 +115,7 @@
             android:paddingHorizontal="6dp">
 
             <TextView
+                android:id="@+id/tvNearby"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -139,6 +142,7 @@
             android:paddingHorizontal="6dp">
 
             <TextView
+                android:id="@+id/tvDistance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -152,20 +156,27 @@
 
     </LinearLayout>
 
-    <!-- Moments Thread Feed -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvMoments"
+    <!-- Moments Thread Feed wrapped in SwipeRefreshLayout -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshMoments"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:overScrollMode="never"
-        android:paddingBottom="44dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutFilterBar"
-        tools:listitem="@layout/item_moment_post" />
+        app:layout_constraintTop_toBottomOf="@id/layoutFilterBar">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMoments"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingBottom="44dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_moment_post" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!-- Loading Indicator -->
     <ProgressBar

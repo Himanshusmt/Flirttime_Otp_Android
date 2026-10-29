@@ -1,0 +1,1 @@
+Orchestrates the user profile setup flow by combining domain/data abstractions with onboarding screens, dialog pickers, photo preview, and verification/gesture capture activities.

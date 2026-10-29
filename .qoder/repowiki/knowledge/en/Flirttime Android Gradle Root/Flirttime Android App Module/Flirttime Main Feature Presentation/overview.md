@@ -1,0 +1,1 @@
+Top-level presentation package grouping the five main-tab screens (chat, explore, matches, moments, profile) as independent Fragments backed by mock data providers.

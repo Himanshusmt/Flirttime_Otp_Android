@@ -1,0 +1,1 @@
+Presentation-layer activities that guide users through profile photo capture, gesture verification upload, and the final verification confirmation screen.

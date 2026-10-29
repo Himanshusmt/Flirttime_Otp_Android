@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAF8F8"
+    android:orientation="vertical">
+
+    <!-- Top App Bar -->
+    <RelativeLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_settings_back_btn"
+            android:contentDescription="Back"
+            android:scaleType="center"
+            android:src="@drawable/ic_chevron_left_orange" />
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/btnBack"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="14dp"
+            android:fontFamily="@font/fredokasemibold"
+            android:text="Notifications"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="36dp">
+
+            <!-- SECTION: ACTIVITY -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/fredokasemibold"
+                android:letterSpacing="0.04"
+                android:text="ACTVITY"
+                android:textColor="#8E8E93"
+                android:textSize="12sp" />
+
+            <!-- CARD 1: ACTIVITY SETTINGS -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_settings_card"
+                android:orientation="vertical">
+
+                <!-- 1. New messages -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="13dp">
+
+                    <ImageView
+                        android:id="@+id/ivIconMessages"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/bg_settings_icon_pink"
+                        android:contentDescription="Messages"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_notif_chat_red" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_toStartOf="@+id/switchNewMessages"
+                        android:layout_toEndOf="@+id/ivIconMessages"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokamedium"
+                            android:text="New messages"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/fredokaregular"
+                            android:text="When someone sends you a message"
+                            android:textColor="#8E8E93"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchNewMessages"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        app:thumbTint="@color/white"
+                        app:trackDecorationTint="@android:color/transparent"
+                        app:trackTint="@color/sel_switch_track" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.6dp"
+                    android:layout_marginStart="70dp"
+                    android:background="@color/border_subtle" />
+
+                <!-- 2. New matches -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="13dp">
+
+                    <ImageView
+                        android:id="@+id/ivIconMatches"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/bg_settings_icon_pink"
+                        android:contentDescription="Matches"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_notif_heart_red" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_toStartOf="@+id/switchNewMatches"
+                        android:layout_toEndOf="@+id/ivIconMatches"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokamedium"
+                            android:text="New matches"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/fredokaregular"
+                            android:text="When you match with someone"
+                            android:textColor="#8E8E93"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchNewMatches"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        app:thumbTint="@color/white"
+                        app:trackDecorationTint="@android:color/transparent"
+                        app:trackTint="@color/sel_switch_track" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.6dp"
+                    android:layout_marginStart="70dp"
+                    android:background="@color/border_subtle" />
+
+                <!-- 3. Likes & comments -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="13dp">
+
+                    <ImageView
+                        android:id="@+id/ivIconLikes"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/bg_personal_icon_amber"
+                        android:contentDescription="Likes"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_notif_thumbs_amber" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_toStartOf="@+id/switchLikeComments"
+                        android:layout_toEndOf="@+id/ivIconLikes"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokamedium"
+                            android:text="Likes &amp; comments"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/fredokaregular"
+                            android:text="Reactions on your moments"
+                            android:textColor="#8E8E93"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchLikeComments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        app:thumbTint="@color/white"
+                        app:trackDecorationTint="@android:color/transparent"
+                        app:trackTint="@color/sel_switch_track" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.6dp"
+                    android:layout_marginStart="70dp"
+                    android:background="@color/border_subtle" />
+
+                <!-- 4. Profile visits -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="13dp">
+
+                    <ImageView
+                        android:id="@+id/ivIconVisits"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/bg_personal_icon_purple"
+                        android:contentDescription="Profile visits"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_notif_eye_purple" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_toStartOf="@+id/switchProfileVisits"
+                        android:layout_toEndOf="@+id/ivIconVisits"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokamedium"
+                            android:text="Profile visits"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/fredokaregular"
+                            android:text="When someone checks out your profile"
+                            android:textColor="#8E8E93"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchProfileVisits"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        app:thumbTint="@color/white"
+                        app:trackDecorationTint="@android:color/transparent"
+                        app:trackTint="@color/sel_switch_track" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.6dp"
+                    android:layout_marginStart="70dp"
+                    android:background="@color/border_subtle" />
+
+                <!-- 5. Dating tips -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="13dp">
+
+                    <ImageView
+                        android:id="@+id/ivIconTips"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/bg_personal_icon_amber"
+                        android:contentDescription="Dating tips"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_notif_bulb_yellow" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_toStartOf="@+id/switchDatingTips"
+                        android:layout_toEndOf="@+id/ivIconTips"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokamedium"
+                            android:text="Dating tips"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/fredokaregular"
+                            android:text="Advice for better first dates"
+                            android:textColor="#8E8E93"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchDatingTips"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        app:thumbTint="@color/white"
+                        app:trackDecorationTint="@android:color/transparent"
+                        app:trackTint="@color/sel_switch_track" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <!-- SECTION: HOW WE REACH YOU -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/fredokasemibold"
+                android:letterSpacing="0.04"
+                android:text="HOW WE REACH YOU"
+                android:textColor="#8E8E93"
+                android:textSize="12sp" />
+
+            <!-- CARD 2: HOW WE REACH YOU -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_settings_card"
+                android:orientation="vertical">
+
+                <!-- Push notifications -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="13dp">
+
+                    <ImageView
+                        android:id="@+id/ivIconPush"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/bg_personal_icon_blue"
+                        android:contentDescription="Push notifications"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_notif_bell_blue" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_toStartOf="@+id/switchPushNotifications"
+                        android:layout_toEndOf="@+id/ivIconPush"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokamedium"
+                            android:text="Push notifications"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/fredokaregular"
+                            android:text="Alerts on this device"
+                            android:textColor="#8E8E93"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchPushNotifications"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        app:thumbTint="@color/white"
+                        app:trackDecorationTint="@android:color/transparent"
+                        app:trackTint="@color/sel_switch_track" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

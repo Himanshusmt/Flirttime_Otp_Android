@@ -1,0 +1,1 @@
+Android Activities that walk new users through the intro screens and app-permission flow, then hand off to login via a centralized navigator.

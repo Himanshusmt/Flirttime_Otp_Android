@@ -193,7 +193,7 @@
         app:layout_constraintTop_toBottomOf="@id/layoutPills">
 
         <!-- Card Stack Container: Modern 4-Direction SwipeCardStackView -->
-        <com.flirttime.feature.main.presentation.matches.SwipeCardStackView
+        <com.flirttime.feature.main.matches.SwipeCardStackView
             android:id="@+id/cardStackView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -205,6 +205,76 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Loader for people cards -->
+        <ProgressBar
+            android:id="@+id/progressBarPeople"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/brand_red"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/layoutBottomActions"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Empty state when no cards or swiped all -->
+        <LinearLayout
+            android:id="@+id/layoutEmptyPeople"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/layoutBottomActions"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✨"
+                android:textSize="40sp" />
+
+            <TextView
+                android:id="@+id/tvEmptyTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center"
+                android:text="You've seen everyone nearby!"
+                android:textColor="#1F1F1F"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvEmptySubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center"
+                android:text="Check back later for new discovery matches"
+                android:textColor="#777777"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/btnRefreshPeople"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_tab_pill_selected"
+                android:fontFamily="@font/fredokamedium"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="10dp"
+                android:text="Refresh"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+        </LinearLayout>
 
         <!-- Three Bottom Action Buttons: Not Interested, Connect, Like -->
         <LinearLayout
@@ -469,6 +539,27 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="4"
                 tools:listitem="@layout/item_interest_person" />
+
+            <ProgressBar
+                android:id="@+id/progressBarInterestPeople"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:indeterminateTint="@color/brand_red"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvEmptyInterestPeople"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center"
+                android:text="No profiles found for this interest yet"
+                android:textColor="#888888"
+                android:textSize="13sp"
+                android:visibility="gone" />
 
         </LinearLayout>
 

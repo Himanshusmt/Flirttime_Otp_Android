@@ -40,19 +40,29 @@ object ShimmerHelper {
         fallbackRes: Int? = null,
         scaleType: ScalingUtils.ScaleType = ScalingUtils.ScaleType.CENTER_CROP
     ) {
-        val shimmerDrawable = createShimmerDrawable()
-        draweeView.hierarchy.setPlaceholderImage(shimmerDrawable, scaleType)
-
-        if (url.isNullOrEmpty()) {
+        val resolvedUrl = MediaUrlHelper.resolveMediaUrl(url)
+        if (resolvedUrl.isNullOrBlank()) {
+            draweeView.tag = null
             if (fallbackRes != null && fallbackRes != 0) {
                 draweeView.setActualImageResource(fallbackRes)
+            } else {
+                draweeView.setImageURI(null as String?)
             }
-            shimmerDrawable.stopShimmer()
             return
         }
 
+        // Avoid re-triggering shimmer if this exact URL is already loaded and active on this view!
+        val activeUrl = draweeView.tag as? String
+        if (activeUrl == resolvedUrl && draweeView.controller != null) {
+            return
+        }
+        draweeView.tag = resolvedUrl
+
+        val shimmerDrawable = createShimmerDrawable()
+        draweeView.hierarchy.setPlaceholderImage(shimmerDrawable, scaleType)
+
         val controller = Fresco.newDraweeControllerBuilder()
-            .setUri(Uri.parse(url))
+            .setUri(Uri.parse(resolvedUrl))
             .setOldController(draweeView.controller)
             .setControllerListener(object : BaseControllerListener<ImageInfo>() {
                 override fun onFinalImageSet(id: String?, imageInfo: ImageInfo?, animatable: Animatable?) {

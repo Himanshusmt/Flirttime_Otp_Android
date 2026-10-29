@@ -1,0 +1,6 @@
+Clean Architecture split between `domain/` (pure Kotlin) and `data/` (Android + networking):
+- `domain/repository/UserRepository.kt` declares a pure-Kotlin contract (`updateProfile`, `checkUsernameAvailability`, `uploadProfilePhoto`, `uploadGesturePhoto`) returning `Flow<Resource<T>>` — no Android or Retrofit types leak into domain.
+- `data/network/UserApiService.kt` is a Retrofit interface mapping HTTP endpoints (`PATCH api/v1/users/profile`, `GET api/v1/auth/username/availability`, multipart POSTs) to `ApiResponse<T>` responses.
+- `data/model/ProfileModels.kt` holds DTOs such as `UpdateProfileRequest` with Gson `@SerializedName` annotations.
+- `data/repository/UserRepositoryImpl` implements the domain interface, composes `UserApiService` and `SessionManager`, wraps calls in `safeApiCall`, emits `Resource.Loading` then the result via `flow { ... }.flowOn(Dispatchers.IO)`, and persists side effects (profile fields, image URI, verification flag, page redirect) through `SessionManager` on success.
+- Dependency direction: `data` depends on `domain`; `domain` has no dependency on `data`. The flexible JSON parsing in `parseAvailability` handles both bare booleans and objects with multiple possible field names (`available`/`isAvailable`/`taken`/`exists`).

@@ -1,0 +1,2 @@
+- Each presentation screen owns a co-located Activity and ViewModel pair under a dedicated subpackage.
+- Domain logic is accessed through the shared `UserRepository` interface rather than direct Retrofit usage in UI code.

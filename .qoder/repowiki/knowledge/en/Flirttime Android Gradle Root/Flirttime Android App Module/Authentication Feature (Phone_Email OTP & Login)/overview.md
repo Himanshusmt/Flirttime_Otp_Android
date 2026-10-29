@@ -1,0 +1,1 @@
+Android feature module implementing phone and email OTP-based authentication, country selection, and legacy login flows via a clean architecture with repository, network, and presentation layers.

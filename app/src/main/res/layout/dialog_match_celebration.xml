@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_rounded_white"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="32dp"
+    android:paddingBottom="28dp">
+
+    <!-- Celebration Header Icon -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🎉"
+        android:textSize="40sp" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tvMatchTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/fredokabold"
+        android:text="It's a Match!"
+        android:textColor="@color/brand_red"
+        android:textSize="24sp" />
+
+    <!-- Subtitle / Description -->
+    <TextView
+        android:id="@+id/tvMatchSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/fredokamedium"
+        android:gravity="center"
+        android:text="You and Jane liked each other"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp" />
+
+    <!-- Avatar View -->
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ivMatchedAvatar"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            fresco:actualImageScaleType="centerCrop"
+            fresco:failureImage="@drawable/img_login"
+            fresco:placeholderImage="@drawable/img_login"
+            fresco:roundAsCircle="true"
+            fresco:roundingBorderColor="@color/brand_red"
+            fresco:roundingBorderWidth="3dp" />
+
+    </FrameLayout>
+
+    <!-- Send a Message Button -->
+    <TextView
+        android:id="@+id/btnSendMessage"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/bg_btn_dialog_filled_red"
+        android:fontFamily="@font/fredokasemibold"
+        android:gravity="center"
+        android:text="Send a Message"
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+
+    <!-- Keep Swiping Button -->
+    <TextView
+        android:id="@+id/btnKeepSwiping"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_btn_dialog_outline_red"
+        android:fontFamily="@font/fredokasemibold"
+        android:gravity="center"
+        android:text="Keep Swiping"
+        android:textColor="@color/brand_red"
+        android:textSize="15sp" />
+
+</LinearLayout>

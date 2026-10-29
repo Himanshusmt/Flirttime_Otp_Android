@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: app_module/profile_feature/profile_onboarding
+title: Profile Onboarding & Photo Preview Screens
+scope:
+    - app/src/main/java/com/flirttime/feature/profile/presentation/intro/
+    - app/src/main/java/com/flirttime/feature/profile/presentation/preview/
+source_files: []
+depends_on: []
+related_to: []

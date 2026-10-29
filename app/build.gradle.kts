@@ -9,7 +9,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.flirttime.test"
+        applicationId = "com.flirttime"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.swiperefreshlayout)
 
     // Navigation Component
     implementation(libs.androidx.navigation.fragment.ktx)

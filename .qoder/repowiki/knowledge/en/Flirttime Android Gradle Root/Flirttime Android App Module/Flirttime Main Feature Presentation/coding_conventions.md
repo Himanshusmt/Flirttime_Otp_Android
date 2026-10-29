@@ -1,0 +1,2 @@
+- Each feature sub-package owns its Fragment plus matching `*Adapter` classes and a `Mock*Provider` for test data.
+- Secondary UIs such as filters, comments, gift selection, and location pickers are implemented as BottomSheetDialogFragments nested under the owning feature.

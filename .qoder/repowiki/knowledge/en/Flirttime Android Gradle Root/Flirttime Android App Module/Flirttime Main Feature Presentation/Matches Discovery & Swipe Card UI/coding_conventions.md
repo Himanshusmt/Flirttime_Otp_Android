@@ -1,0 +1,4 @@
+- UI state is bound through Android View Binding fields accessed via a non-null delegated property pattern (`private var _binding: ...? = null; private val binding get() = _binding!!`) with `_binding = null` in `onDestroyView`.
+- Custom views expose behavior through Kotlin interfaces and function-type callbacks (e.g. `OnCardSwipeListener`, `onCardClickListener`, `onApplyFilters`) rather than listeners or event buses.
+- Mock data is injected via dedicated provider classes (`MockMatchProfileProvider`, `MockInterestsProvider`, `MockInterestPeopleProvider`) instead of hard-coded lists inside the fragment.
+- Swipe directions are modeled as a single `SwipeDirection` enum on the custom view and dispatched uniformly from both touch gestures and programmatic button clicks via `swipe(direction)`.
