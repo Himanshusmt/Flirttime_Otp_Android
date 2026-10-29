@@ -1,19 +1,14 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="32dp"
     android:height="32dp"
-    android:viewportWidth="60"
-    android:viewportHeight="60">
+    android:viewportWidth="64"
+    android:viewportHeight="64">
     <!-- Red circle background -->
     <path
-        android:fillColor="#D92B2B"
-        android:pathData="M30,30m-30,0a30,30 0,1 1,60 0a30,30 0,1 1,-60 0" />
-    <!-- White Heart -->
+        android:fillColor="#DE2D2D"
+        android:pathData="M32,32m-30,0a30,30 0,1 1,60 0a30,30 0,1 1,-60 0" />
+    <!-- White 5-pointed Star matching iOS Super Like badge -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M30,46.2C29.6,46.2 29.2,46.05 28.9,45.75C23.1,40.5 16.5,35.15 16.5,27.9C16.5,22.85 20.45,19.2 25.1,19.2C27.35,19.2 29.3,20.25 30,21.85C30.7,20.25 32.65,19.2 34.9,19.2C39.55,19.2 43.5,22.85 43.5,27.9C43.5,35.15 36.9,40.5 31.1,45.75C30.8,46.05 30.4,46.2 30,46.2Z" />
-    <!-- Gold Star inside heart -->
-    <path
-        android:fillColor="#FFC746"
-        android:pathData="M30,24.6L31.55,28.55H35.7L32.35,31.05L33.85,35L30,32.5L26.15,35L27.65,31.05L24.3,28.55H28.45L30,24.6Z" />
+        android:pathData="M32.00,17.00L35.64,26.98L46.27,27.36L37.90,33.92L40.82,44.14L32.00,38.20L23.18,44.14L26.10,33.92L17.73,27.36L28.36,26.98Z" />
 </vector>
-

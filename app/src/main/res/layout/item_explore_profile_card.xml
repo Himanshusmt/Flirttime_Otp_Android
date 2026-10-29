@@ -158,14 +158,14 @@
                         android:textSize="15.5sp"
                         tools:text="tushar42, 19" />
 
-                    <!-- Verified Rosette Badge (exact match to iOS) -->
+                    <!-- Verified Checkmark Badge (exact match to iOS) -->
                     <ImageView
                         android:id="@+id/ivRibbonBadge"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
                         android:layout_marginStart="4dp"
                         android:contentDescription="Verified Badge"
-                        android:src="@drawable/achievement_badge"
+                        android:src="@drawable/ic_verified_badge"
                         android:visibility="visible" />
 
                     <!-- Online Dot Indicator next to name -->

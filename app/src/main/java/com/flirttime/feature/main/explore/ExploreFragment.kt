@@ -45,6 +45,19 @@ class ExploreFragment : Fragment() {
     private val viewModel: ExploreViewModel by viewModel()
     private var currentTab: ExploreTab = ExploreTab.YOU_LIKED
     private lateinit var profileAdapter: ExploreProfileAdapter
+    private var shouldResetScrollToTop: Boolean = true
+
+    private fun resetScrollToTop() {
+        if (_binding == null) return
+        binding.rvExploreProfiles.stopScroll()
+        val layoutManager = binding.rvExploreProfiles.layoutManager as? GridLayoutManager
+        layoutManager?.scrollToPositionWithOffset(0, 0)
+        binding.rvExploreProfiles.post {
+            if (_binding != null) {
+                (binding.rvExploreProfiles.layoutManager as? GridLayoutManager)?.scrollToPositionWithOffset(0, 0)
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -110,12 +123,14 @@ class ExploreFragment : Fragment() {
             ContextCompat.getColor(requireContext(), R.color.brand_red)
         )
         binding.swipeRefreshExplore.setOnRefreshListener {
+            shouldResetScrollToTop = true
             viewModel.refreshCurrentTab()
         }
     }
 
     private fun setupEmptyStateRefresh() {
         binding.btnRefreshExplore.setOnClickListener {
+            shouldResetScrollToTop = true
             viewModel.refreshCurrentTab()
         }
     }
@@ -193,7 +208,9 @@ class ExploreFragment : Fragment() {
         // Instant 0ms display on initial view setup if cached data exists
         val initialCached = viewModel.getCachedItems(ExploreTab.YOU_LIKED)
         if (!initialCached.isNullOrEmpty()) {
-            profileAdapter.submitList(initialCached)
+            profileAdapter.submitList(initialCached) {
+                resetScrollToTop()
+            }
             binding.progressBarExplore.visibility = View.GONE
             binding.layoutEmptyExplore.visibility = View.GONE
         }
@@ -203,12 +220,21 @@ class ExploreFragment : Fragment() {
         currentTab = tab
         viewModel.selectTab(tab)
 
+        // Always reset scroll to top when user selects or switches tab
+        shouldResetScrollToTop = true
+        resetScrollToTop()
+
         // Instantaneous 0ms switch if cached
         val cached = viewModel.getCachedItems(tab)
         if (!cached.isNullOrEmpty()) {
-            profileAdapter.submitList(cached)
+            profileAdapter.submitList(cached) {
+                resetScrollToTop()
+                shouldResetScrollToTop = false
+            }
             binding.progressBarExplore.visibility = View.GONE
             binding.layoutEmptyExplore.visibility = View.GONE
+        } else {
+            resetScrollToTop()
         }
 
         val brandRed = ContextCompat.getColor(requireContext(), R.color.brand_red)
@@ -269,7 +295,12 @@ class ExploreFragment : Fragment() {
                                 binding.progressBarExplore.visibility = View.GONE
                                 binding.swipeRefreshExplore.isRefreshing = false
                                 val items = resource.data
-                                profileAdapter.submitList(items)
+                                profileAdapter.submitList(items) {
+                                    if (shouldResetScrollToTop) {
+                                        shouldResetScrollToTop = false
+                                        resetScrollToTop()
+                                    }
+                                }
 
                                 if (items.isEmpty()) {
                                     binding.layoutEmptyExplore.visibility = View.VISIBLE

@@ -319,8 +319,7 @@ fun InteractionItemDto.toExploreProfileItem(tab: ExploreTab, isTabLocked: Boolea
     }
 
     val effectiveSuperLike = when (tab) {
-        ExploreTab.YOU_LIKED -> (isMatched ?: matched ?: interaction?.isMatched ?: interaction?.matched ?: false) ||
-                (isSuperLike ?: (interaction?.action == "super_like"))
+        ExploreTab.YOU_LIKED -> true // Matches iOS: all cards in "You Liked" display the top-right superlike star badge
         else -> isSuperLike ?: (interaction?.action == "super_like")
     }
 
