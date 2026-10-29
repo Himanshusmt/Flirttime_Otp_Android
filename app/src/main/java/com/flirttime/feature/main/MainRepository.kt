@@ -31,6 +31,10 @@ interface MainRepository {
         cursor: String? = null
     ): Flow<Resource<InteractionsResponseData>>
 
+    fun getInteractionCounts(): Flow<Resource<com.flirttime.feature.main.explore.InteractionCountsData>>
+
+    fun markInteractionRead(id: String): Flow<Resource<Unit>>
+
 
     // ==========================================
     // 2. PROFILE DETAILS & MEDIA (ME)

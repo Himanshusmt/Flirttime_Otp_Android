@@ -1,12 +1,15 @@
 package com.flirttime.feature.main.explore
 
+import android.app.Dialog
 import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -22,6 +25,7 @@ import com.flirttime.R
 import com.flirttime.Resource
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
+import com.flirttime.databinding.DialogCommonConfirmationBinding
 import com.flirttime.databinding.FragmentExploreBinding
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -57,9 +61,15 @@ class ExploreFragment : Fragment() {
         setupTabs()
         setupGrid()
         setupPullToRefresh()
+        setupUpsellBanner()
         setupEmptyStateRefresh()
         observeViewModel()
         updateTabSelection(ExploreTab.YOU_LIKED)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadCounts()
     }
 
     private fun setupHeaderActions() {
@@ -86,6 +96,15 @@ class ExploreFragment : Fragment() {
         }
     }
 
+    private fun setupUpsellBanner() {
+        binding.layoutUpsellBanner.setOnClickListener {
+            showUnlockPremiumDialog()
+        }
+        binding.btnUpsellUnlock.setOnClickListener {
+            showUnlockPremiumDialog()
+        }
+    }
+
     private fun setupPullToRefresh() {
         binding.swipeRefreshExplore.setColorSchemeColors(
             ContextCompat.getColor(requireContext(), R.color.brand_red)
@@ -103,6 +122,22 @@ class ExploreFragment : Fragment() {
 
     private fun setupGrid() {
         profileAdapter = ExploreProfileAdapter { profile ->
+            if (profile.isLocked) {
+                // Matches iOS behavior: locked cards show unlock subscription prompt
+                showUnlockPremiumDialog(
+                    if (currentTab == ExploreTab.COMPLIMENTS) {
+                        "Read your compliments and reply right away with FlirtTime Premium!"
+                    } else {
+                        "See everyone who likes you and match instantly with FlirtTime Premium!"
+                    }
+                )
+                return@ExploreProfileAdapter
+            }
+
+            if (currentTab == ExploreTab.COMPLIMENTS) {
+                viewModel.markRead(profile)
+            }
+
             AppNavigator.navigateTo(
                 context = requireContext(),
                 destination = Destination.UserProfile(
@@ -119,6 +154,7 @@ class ExploreFragment : Fragment() {
         binding.rvExploreProfiles.apply {
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = profileAdapter
+            itemAnimator = null // Smooth scrolling without item flicker
             addItemDecoration(object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(
                     outRect: Rect,
@@ -127,6 +163,7 @@ class ExploreFragment : Fragment() {
                     state: RecyclerView.State
                 ) {
                     val position = parent.getChildAdapterPosition(view)
+                    if (position == RecyclerView.NO_POSITION) return
                     val column = position % 2
 
                     if (column == 0) {
@@ -152,11 +189,27 @@ class ExploreFragment : Fragment() {
                 }
             })
         }
+
+        // Instant 0ms display on initial view setup if cached data exists
+        val initialCached = viewModel.getCachedItems(ExploreTab.YOU_LIKED)
+        if (!initialCached.isNullOrEmpty()) {
+            profileAdapter.submitList(initialCached)
+            binding.progressBarExplore.visibility = View.GONE
+            binding.layoutEmptyExplore.visibility = View.GONE
+        }
     }
 
     fun updateTabSelection(tab: ExploreTab) {
         currentTab = tab
         viewModel.selectTab(tab)
+
+        // Instantaneous 0ms switch if cached
+        val cached = viewModel.getCachedItems(tab)
+        if (!cached.isNullOrEmpty()) {
+            profileAdapter.submitList(cached)
+            binding.progressBarExplore.visibility = View.GONE
+            binding.layoutEmptyExplore.visibility = View.GONE
+        }
 
         val brandRed = ContextCompat.getColor(requireContext(), R.color.brand_red)
         val mutedGray = Color.parseColor("#8E8E93")
@@ -164,65 +217,39 @@ class ExploreFragment : Fragment() {
         val semiboldFont = ResourcesCompat.getFont(requireContext(), R.font.fredokasemibold)
         val mediumFont = ResourcesCompat.getFont(requireContext(), R.font.fredokamedium)
 
-        // 1. Likes
+        // 1. Likes Tab
         val isLikes = tab == ExploreTab.LIKES
-        bindTabState(
-            iconView = binding.ivTabLikesIcon,
-            labelView = binding.tvTabLikesLabel,
-            indicatorView = binding.indicatorTabLikes,
-            isActive = isLikes,
-            activeIconColor = brandRed,
-            inactiveIconColor = mutedGray,
-            activeTextColor = activeText,
-            inactiveTextColor = mutedGray,
-            activeFont = semiboldFont,
-            inactiveFont = mediumFont
-        )
+        binding.ivTabLikesIcon.setImageResource(R.drawable.ic_tab_likes)
+        binding.ivTabLikesIcon.setColorFilter(if (isLikes) brandRed else mutedGray)
+        binding.tvTabLikesLabel.setTextColor(if (isLikes) activeText else mutedGray)
+        binding.tvTabLikesLabel.typeface = if (isLikes) semiboldFont else mediumFont
+        binding.indicatorTabLikes.visibility = if (isLikes) View.VISIBLE else View.INVISIBLE
 
-        // 2. You Liked
+        // 2. You Liked Tab (Uses dedicated active/inactive drawables to preserve the white arrow)
         val isYouLiked = tab == ExploreTab.YOU_LIKED
-        bindTabState(
-            iconView = binding.ivTabYouLikedIcon,
-            labelView = binding.tvTabYouLikedLabel,
-            indicatorView = binding.indicatorTabYouLiked,
-            isActive = isYouLiked,
-            activeIconColor = null,
-            inactiveIconColor = mutedGray,
-            activeTextColor = activeText,
-            inactiveTextColor = mutedGray,
-            activeFont = semiboldFont,
-            inactiveFont = mediumFont
+        binding.ivTabYouLikedIcon.clearColorFilter()
+        binding.ivTabYouLikedIcon.setImageResource(
+            if (isYouLiked) R.drawable.ic_tab_you_liked_active else R.drawable.ic_tab_you_liked_inactive
         )
+        binding.tvTabYouLikedLabel.setTextColor(if (isYouLiked) activeText else mutedGray)
+        binding.tvTabYouLikedLabel.typeface = if (isYouLiked) semiboldFont else mediumFont
+        binding.indicatorTabYouLiked.visibility = if (isYouLiked) View.VISIBLE else View.INVISIBLE
 
-        // 3. Matches
+        // 3. Matches Tab
         val isMatches = tab == ExploreTab.MATCHES
-        bindTabState(
-            iconView = binding.ivTabMatchesIcon,
-            labelView = binding.tvTabMatchesLabel,
-            indicatorView = binding.indicatorTabMatches,
-            isActive = isMatches,
-            activeIconColor = brandRed,
-            inactiveIconColor = mutedGray,
-            activeTextColor = activeText,
-            inactiveTextColor = mutedGray,
-            activeFont = semiboldFont,
-            inactiveFont = mediumFont
-        )
+        binding.ivTabMatchesIcon.setImageResource(R.drawable.ic_tab_matches)
+        binding.ivTabMatchesIcon.setColorFilter(if (isMatches) brandRed else mutedGray)
+        binding.tvTabMatchesLabel.setTextColor(if (isMatches) activeText else mutedGray)
+        binding.tvTabMatchesLabel.typeface = if (isMatches) semiboldFont else mediumFont
+        binding.indicatorTabMatches.visibility = if (isMatches) View.VISIBLE else View.INVISIBLE
 
-        // 4. Compliments
+        // 4. Compliments Tab
         val isCompliments = tab == ExploreTab.COMPLIMENTS
-        bindTabState(
-            iconView = binding.ivTabComplimentsIcon,
-            labelView = binding.tvTabComplimentsLabel,
-            indicatorView = binding.indicatorTabCompliments,
-            isActive = isCompliments,
-            activeIconColor = brandRed,
-            inactiveIconColor = mutedGray,
-            activeTextColor = activeText,
-            inactiveTextColor = mutedGray,
-            activeFont = semiboldFont,
-            inactiveFont = mediumFont
-        )
+        binding.ivTabComplimentsIcon.setImageResource(R.drawable.ic_tab_compliments)
+        binding.ivTabComplimentsIcon.setColorFilter(if (isCompliments) brandRed else mutedGray)
+        binding.tvTabComplimentsLabel.setTextColor(if (isCompliments) activeText else mutedGray)
+        binding.tvTabComplimentsLabel.typeface = if (isCompliments) semiboldFont else mediumFont
+        binding.indicatorTabCompliments.visibility = if (isCompliments) View.VISIBLE else View.INVISIBLE
     }
 
     private fun observeViewModel() {
@@ -246,7 +273,7 @@ class ExploreFragment : Fragment() {
 
                                 if (items.isEmpty()) {
                                     binding.layoutEmptyExplore.visibility = View.VISIBLE
-                                    updateEmptyStateText(currentTab)
+                                    updateEmptyStateUI(currentTab)
                                 } else {
                                     binding.layoutEmptyExplore.visibility = View.GONE
                                 }
@@ -256,7 +283,7 @@ class ExploreFragment : Fragment() {
                                 binding.swipeRefreshExplore.isRefreshing = false
                                 if (profileAdapter.itemCount == 0) {
                                     binding.layoutEmptyExplore.visibility = View.VISIBLE
-                                    updateEmptyStateText(currentTab)
+                                    updateEmptyStateUI(currentTab)
                                 }
                                 Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
                             }
@@ -280,31 +307,48 @@ class ExploreFragment : Fragment() {
                         updateBadgeView(binding.tvComplimentsBadge, badges[ExploreTab.COMPLIMENTS] ?: 0)
                     }
                 }
+
+                // 4. Observe Upsell Banner
+                launch {
+                    viewModel.upsellText.collect { text ->
+                        if (!text.isNullOrBlank()) {
+                            binding.layoutUpsellBanner.visibility = View.VISIBLE
+                            binding.tvUpsellMessage.text = text
+                        } else {
+                            binding.layoutUpsellBanner.visibility = View.GONE
+                        }
+                    }
+                }
             }
         }
     }
 
-    private fun updateEmptyStateText(tab: ExploreTab) {
+    private fun updateEmptyStateUI(tab: ExploreTab) {
+        val brandRed = ContextCompat.getColor(requireContext(), R.color.brand_red)
         when (tab) {
             ExploreTab.LIKES -> {
-                binding.tvEmptyExploreEmoji.text = "❤️"
-                binding.tvEmptyExploreTitle.text = "No Likes Yet"
-                binding.tvEmptyExploreSubtitle.text = "People who swipe right on you will appear here"
+                binding.ivEmptyExploreIcon.setImageResource(R.drawable.ic_tab_likes)
+                binding.ivEmptyExploreIcon.setColorFilter(brandRed)
+                binding.tvEmptyExploreTitle.text = "No likes yet"
+                binding.tvEmptyExploreSubtitle.text = "Keep your profile fresh. People who like you will show up here."
             }
             ExploreTab.YOU_LIKED -> {
-                binding.tvEmptyExploreEmoji.text = "👉"
-                binding.tvEmptyExploreTitle.text = "No Profiles Liked"
-                binding.tvEmptyExploreSubtitle.text = "Profiles you swipe right on will be saved here"
+                binding.ivEmptyExploreIcon.clearColorFilter()
+                binding.ivEmptyExploreIcon.setImageResource(R.drawable.ic_tab_you_liked_active)
+                binding.tvEmptyExploreTitle.text = "You haven't liked anyone yet"
+                binding.tvEmptyExploreSubtitle.text = "Start swiping on Discover and the people you like will appear here."
             }
             ExploreTab.MATCHES -> {
-                binding.tvEmptyExploreEmoji.text = "🎉"
-                binding.tvEmptyExploreTitle.text = "No Matches Yet"
-                binding.tvEmptyExploreSubtitle.text = "When you and someone like each other, you'll match here"
+                binding.ivEmptyExploreIcon.setImageResource(R.drawable.ic_tab_matches)
+                binding.ivEmptyExploreIcon.setColorFilter(brandRed)
+                binding.tvEmptyExploreTitle.text = "No matches yet"
+                binding.tvEmptyExploreSubtitle.text = "When you and someone like each other, it's a match. They'll appear here."
             }
             ExploreTab.COMPLIMENTS -> {
-                binding.tvEmptyExploreEmoji.text = "💬"
-                binding.tvEmptyExploreTitle.text = "No Compliments Yet"
-                binding.tvEmptyExploreSubtitle.text = "Compliments you send or receive will be listed here"
+                binding.ivEmptyExploreIcon.setImageResource(R.drawable.ic_tab_compliments)
+                binding.ivEmptyExploreIcon.setColorFilter(brandRed)
+                binding.tvEmptyExploreTitle.text = "No compliments yet"
+                binding.tvEmptyExploreSubtitle.text = "Sweet words from your admirers will land here."
             }
         }
     }
@@ -318,33 +362,36 @@ class ExploreFragment : Fragment() {
         }
     }
 
-    private fun bindTabState(
-        iconView: ImageView,
-        labelView: TextView,
-        indicatorView: View,
-        isActive: Boolean,
-        activeIconColor: Int?,
-        inactiveIconColor: Int,
-        activeTextColor: Int,
-        inactiveTextColor: Int,
-        activeFont: android.graphics.Typeface?,
-        inactiveFont: android.graphics.Typeface?
-    ) {
-        if (isActive) {
-            if (activeIconColor != null) {
-                iconView.setColorFilter(activeIconColor)
-            } else {
-                iconView.clearColorFilter()
-            }
-            labelView.setTextColor(activeTextColor)
-            labelView.typeface = activeFont
-            indicatorView.visibility = View.VISIBLE
-        } else {
-            iconView.setColorFilter(inactiveIconColor)
-            labelView.setTextColor(inactiveTextColor)
-            labelView.typeface = inactiveFont
-            indicatorView.visibility = View.INVISIBLE
+    private fun showUnlockPremiumDialog(customMessage: String? = null) {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val dialogBinding = DialogCommonConfirmationBinding.inflate(layoutInflater)
+        dialog.setContentView(dialogBinding.root)
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.88).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        dialogBinding.tvDialogTitle.text = "Unlock FlirtTime Premium"
+        dialogBinding.tvDialogMessage.visibility = View.VISIBLE
+        dialogBinding.tvDialogMessage.text = customMessage
+            ?: "See everyone who liked your profile, send unlimited compliments, and connect instantly!"
+
+        dialogBinding.btnPositive.text = "Unlock Now"
+        dialogBinding.btnNegative.text = "Maybe Later"
+
+        dialogBinding.btnPositive.setOnClickListener {
+            dialog.dismiss()
+            Toast.makeText(requireContext(), "Opening Premium Plans...", Toast.LENGTH_SHORT).show()
         }
+
+        dialogBinding.btnNegative.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun dpToPx(dp: Float): Int {
