@@ -160,6 +160,7 @@ class ExploreFragment : Fragment() {
                     username = profile.username,
                     age = profile.age,
                     profilePhotoUrl = profile.imageUrl,
+                    coverPhotoUrl = profile.coverUrl,
                     city = profile.location
                 )
             )

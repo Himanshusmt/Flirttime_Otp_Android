@@ -99,6 +99,12 @@ data class ExplorePersonDto(
     @SerializedName("primaryPhotoUrl") val primaryPhotoUrl: String? = null,
     @SerializedName("primary_photo_url") val primaryPhotoUrlSnake: String? = null,
     @SerializedName("photos") val photos: List<UserPhotoDto>? = null,
+    @SerializedName("coverPhoto") val coverPhoto: String? = null,
+    @SerializedName("cover_photo") val coverPhotoSnake: String? = null,
+    @SerializedName("coverPhotoUrl") val coverPhotoUrl: String? = null,
+    @SerializedName("cover_photo_url") val coverPhotoUrlSnake: String? = null,
+    @SerializedName("coverPicture") val coverPicture: String? = null,
+    @SerializedName("banner") val banner: String? = null,
     @SerializedName("city") val city: String? = null,
     @SerializedName("location") val location: Any? = null,
     @SerializedName("locationLabel") val locationLabel: String? = null,
@@ -213,6 +219,12 @@ data class InteractionItemDto(
     @SerializedName("image") val image: String? = null,
     @SerializedName("primaryPhotoUrl") val primaryPhotoUrl: String? = null,
     @SerializedName("photos") val photos: List<UserPhotoDto>? = null,
+    @SerializedName("coverPhoto") val coverPhoto: String? = null,
+    @SerializedName("cover_photo") val coverPhotoSnake: String? = null,
+    @SerializedName("coverPhotoUrl") val coverPhotoUrl: String? = null,
+    @SerializedName("cover_photo_url") val coverPhotoUrlSnake: String? = null,
+    @SerializedName("coverPicture") val coverPicture: String? = null,
+    @SerializedName("banner") val banner: String? = null,
     @SerializedName("city") val city: String? = null,
     @SerializedName("location") val location: String? = null,
     @SerializedName("locationLabel") val locationLabel: String? = null,
@@ -339,6 +351,7 @@ fun InteractionItemDto.toExploreProfileItem(tab: ExploreTab, isTabLocked: Boolea
     val effectiveAge = getEffectiveAge(tab)
     val isVerifiedUser = isVerified ?: isVerifiedSnake ?: isFaceVerified ?: verified ?: person?.effectiveVerified ?: false
     val isOnlineUser = isOnline ?: isOnlineSnake ?: online ?: person?.effectiveOnline ?: false
+    val cover = coverPhoto ?: coverPhotoSnake ?: coverPhotoUrl ?: coverPhotoUrlSnake ?: coverPicture ?: banner ?: person?.coverPhoto ?: person?.coverPhotoSnake ?: person?.coverPhotoUrl ?: person?.coverPhotoUrlSnake ?: person?.coverPicture ?: person?.banner
 
     return ExploreProfileItem(
         id = effectiveId,
@@ -354,6 +367,7 @@ fun InteractionItemDto.toExploreProfileItem(tab: ExploreTab, isTabLocked: Boolea
         location = getEffectiveLocation(tab),
         subtitle = effectiveSubtitle,
         imageUrl = photo,
+        coverUrl = cover,
         isLocked = effectiveLocked,
         isPlaceholder = photo.isNullOrBlank()
     )

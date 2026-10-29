@@ -17,6 +17,7 @@ data class ExploreProfileItem(
     val location: String,
     val subtitle: String? = null,
     val imageUrl: String? = null,
+    val coverUrl: String? = null,
     val isLocked: Boolean = false,
     val isPlaceholder: Boolean = false
 )
