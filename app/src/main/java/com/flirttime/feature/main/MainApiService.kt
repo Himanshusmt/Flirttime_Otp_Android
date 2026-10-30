@@ -1,9 +1,5 @@
 package com.flirttime.feature.main
 
-import DiscoveryActionRequest
-import DiscoveryActionResponseData
-import DiscoveryPeopleResponseData
-import OtherUserProfileResponseData
 import com.flirttime.core.network.ApiResponse
 import com.flirttime.feature.auth.AuthUserDto
 import com.flirttime.feature.main.explore.InteractionsResponseData
@@ -25,20 +21,28 @@ import com.flirttime.feature.moments.SendMomentGiftRequest
 import com.flirttime.feature.moments.ToggleLikeRequest
 import com.flirttime.feature.moments.UserMomentsResponseData
 import com.flirttime.feature.profile.AudioIntroResponseData
+import com.flirttime.feature.profile.DiscoveryActionRequest
+import com.flirttime.feature.profile.DiscoveryActionResponseData
 import com.flirttime.feature.profile.DiscoveryFilterOptionsData
+import com.flirttime.feature.profile.DiscoveryPeopleResponseData
 import com.flirttime.feature.profile.InterestsCatalogResponseData
 import com.flirttime.feature.profile.MoreAboutMeResponseData
 import com.flirttime.feature.profile.MyProfileEnvelopeData
 import com.flirttime.feature.profile.NotificationCountsResponseData
 import com.flirttime.feature.profile.OnboardingInterestsResponseData
+import com.flirttime.feature.profile.OtherUserProfileResponseData
 import com.flirttime.feature.profile.PresignedUrlResponseData
 import com.flirttime.feature.profile.UpdateInterestsRequest
 import com.flirttime.feature.profile.UpdateProfileRequest
 import com.flirttime.feature.profile.UserPhotosResponseData
+import com.flirttime.feature.quickmoments.CreateTextQuickMomentRequest
 import com.flirttime.feature.quickmoments.MyQuickMomentsResponseData
 import com.flirttime.feature.quickmoments.QuickMomentReactionRequest
 import com.flirttime.feature.quickmoments.QuickMomentReplyRequest
+import com.flirttime.feature.quickmoments.QuickMomentSlideDto
 import com.flirttime.feature.quickmoments.QuickMomentsTrayResponseData
+import com.flirttime.feature.quickmoments.QuickMomentViewersResponseData
+import com.flirttime.feature.quickmoments.QuickMomentReactionsResponseData
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -139,6 +143,14 @@ interface MainApiService {
         @Query("limit") limit: Int = 20,
         @Query("cursor") cursor: String? = null
     ): ApiResponse<InteractionsResponseData>
+
+    @GET("api/v1/interactions/counts")
+    suspend fun getInteractionCounts(): ApiResponse<com.flirttime.feature.main.explore.InteractionCountsData>
+
+    @POST("api/v1/interactions/{id}/read")
+    suspend fun markInteractionRead(
+        @Path("id") id: String
+    ): ApiResponse<Any>
 
 
     // ==========================================
@@ -253,6 +265,33 @@ interface MainApiService {
     suspend fun markQuickMomentViewed(
         @Path("momentId") momentId: String
     ): ApiResponse<Any>
+
+    @POST("api/v1/quick-moments")
+    suspend fun createTextQuickMoment(
+        @Body request: CreateTextQuickMomentRequest
+    ): ApiResponse<QuickMomentSlideDto>
+
+    @GET("api/v1/quick-moments/{momentId}/viewers")
+    suspend fun getQuickMomentViewers(
+        @Path("momentId") momentId: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 30
+    ): ApiResponse<QuickMomentViewersResponseData>
+
+    @GET("api/v1/quick-moments/{momentId}/reactions")
+    suspend fun getQuickMomentReactions(
+        @Path("momentId") momentId: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 50
+    ): ApiResponse<QuickMomentReactionsResponseData>
+
+    @Multipart
+    @POST("api/v1/quick-moments")
+    suspend fun createImageQuickMoment(
+        @Part image: MultipartBody.Part,
+        @Part("caption") caption: RequestBody? = null,
+        @Part("locationLabel") locationLabel: RequestBody? = null
+    ): ApiResponse<QuickMomentSlideDto>
 
 
     // ==========================================
