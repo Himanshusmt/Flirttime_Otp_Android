@@ -242,6 +242,7 @@ data class InteractionItemDto(
     @SerializedName("isMatched") val isMatched: Boolean? = null,
     @SerializedName("matched") val matched: Boolean? = null,
     @SerializedName("isSuperLike") val isSuperLike: Boolean? = null,
+    @SerializedName("action") val action: String? = null,
     @SerializedName("isBlurred") val isBlurred: Boolean? = null,
     @SerializedName("is_blurred") val isBlurredSnake: Boolean? = null,
     @SerializedName("isSubscribed") val isSubscribed: Boolean? = null,
@@ -330,9 +331,13 @@ fun InteractionItemDto.toExploreProfileItem(tab: ExploreTab, isTabLocked: Boolea
         ExploreTab.COMPLIMENTS -> cardIsBlurred || isTabLocked
     }
 
+    val isSuperLikeFromAction = (interaction?.action?.equals("super_like", ignoreCase = true) == true)
+        || (action?.equals("super_like", ignoreCase = true) == true)
+        || isSuperLike == true
+
     val effectiveSuperLike = when (tab) {
-        ExploreTab.YOU_LIKED -> true // Matches iOS: all cards in "You Liked" display the top-right superlike star badge
-        else -> isSuperLike ?: (interaction?.action == "super_like")
+        ExploreTab.YOU_LIKED -> (isMatched ?: matched ?: interaction?.isMatched ?: interaction?.matched ?: false) || isSuperLikeFromAction
+        else -> isSuperLikeFromAction
     }
 
     val effectiveSubtitle = when (tab) {

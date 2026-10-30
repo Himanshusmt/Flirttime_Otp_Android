@@ -106,8 +106,29 @@ data class UserSearchItemDto(
     @SerializedName("education") val education: String? = null,
     @SerializedName("relationshipStatus") val relationshipStatus: String? = null,
     @SerializedName("relationship") val relationship: String? = null,
-    @SerializedName("children") val children: String? = null
+    @SerializedName("children") val children: String? = null,
+    @SerializedName("myAction") val myAction: String? = null,
+    @SerializedName("action") val action: String? = null,
+    @SerializedName("isMatched") val isMatched: Boolean? = null,
+    @SerializedName("hasLiked") val hasLiked: Boolean? = null,
+    @SerializedName("isSuperLike") val isSuperLike: Boolean? = null,
+    @SerializedName("matchStatus") val matchStatus: String? = null
 ) {
+    fun resolveIsMatched(fallback: Boolean? = null): Boolean {
+        if (isMatched == true) return true
+        val status = matchStatus?.lowercase()
+        if (status == "matched" || status == "accepted" || status == "connected") return true
+        return fallback == true
+    }
+
+    fun resolveMyAction(fallback: String? = null): String? {
+        val raw = (myAction ?: action)?.lowercase()
+        if (raw == "super_like" || raw == "like" || raw == "nope") return raw
+        if (isSuperLike == true) return "super_like"
+        if (hasLiked == true) return if (fallback == "super_like") "super_like" else "like"
+        return fallback
+    }
+
     val effectiveId: String
         get() = userId ?: id.orEmpty()
 
@@ -300,6 +321,9 @@ data class OtherUserProfileResponseData(
     @SerializedName("action") val action: String? = null,
     @SerializedName("myAction") val myAction: String? = null,
     @SerializedName("isMatched") val isMatched: Boolean? = null,
+    @SerializedName("hasLiked") val hasLiked: Boolean? = null,
+    @SerializedName("isSuperLike") val isSuperLike: Boolean? = null,
+    @SerializedName("matchStatus") val matchStatus: String? = null,
     @SerializedName("canConnect") val canConnect: Boolean? = null,
     @SerializedName("canChat") val canChat: Boolean? = null,
     @SerializedName("conversationId") val conversationId: String? = null,
@@ -407,7 +431,13 @@ data class OtherUserProfileResponseData(
                 religion = src.religion,
                 education = src.education,
                 relationshipStatus = src.relationshipStatus ?: src.relationship,
-                children = src.children
+                children = src.children,
+                myAction = src.myAction ?: src.action,
+                action = src.action ?: src.myAction,
+                isMatched = src.isMatched,
+                hasLiked = src.hasLiked,
+                isSuperLike = src.isSuperLike,
+                matchStatus = src.matchStatus
             )
         }
 

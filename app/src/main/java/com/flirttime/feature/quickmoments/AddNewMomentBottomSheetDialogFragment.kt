@@ -91,7 +91,9 @@ class AddNewMomentBottomSheetDialogFragment : BottomSheetDialogFragment() {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         dialog.window?.let { window ->
             WindowCompat.setDecorFitsSystemWindows(window, false)
+            @Suppress("DEPRECATION")
             window.statusBarColor = Color.TRANSPARENT
+            @Suppress("DEPRECATION")
             window.navigationBarColor = Color.TRANSPARENT
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }

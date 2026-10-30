@@ -69,7 +69,9 @@ sealed class Destination {
         val profilePhotoUrl: String? = null,
         val coverPhotoUrl: String? = null,
         val city: String? = null,
-        val bio: String? = null
+        val bio: String? = null,
+        val isMatched: Boolean = false,
+        val myAction: String? = null
     ) : Destination()
 }
 
@@ -93,6 +95,8 @@ object AppNavigator {
     const val EXTRA_COVER_PHOTO_URL = "extra_cover_photo_url"
     const val EXTRA_CITY = "extra_city"
     const val EXTRA_BIO = "extra_bio"
+    const val EXTRA_IS_MATCHED = "extra_is_matched"
+    const val EXTRA_MY_ACTION = "extra_my_action"
 
     fun navigateTo(
         context: Context,
@@ -159,6 +163,8 @@ object AppNavigator {
                     destination.coverPhotoUrl?.let { putExtra(EXTRA_COVER_PHOTO_URL, it) }
                     destination.city?.let { putExtra(EXTRA_CITY, it) }
                     destination.bio?.let { putExtra(EXTRA_BIO, it) }
+                    putExtra(EXTRA_IS_MATCHED, destination.isMatched)
+                    destination.myAction?.let { putExtra(EXTRA_MY_ACTION, it) }
                 }
                 else -> Unit
             }

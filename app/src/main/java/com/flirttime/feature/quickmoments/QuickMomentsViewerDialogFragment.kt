@@ -53,7 +53,9 @@ class QuickMomentsViewerDialogFragment : DialogFragment() {
             window.setBackgroundDrawable(ColorDrawable(Color.BLACK))
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             WindowCompat.setDecorFitsSystemWindows(window, false)
+            @Suppress("DEPRECATION")
             window.statusBarColor = Color.TRANSPARENT
+            @Suppress("DEPRECATION")
             window.navigationBarColor = Color.TRANSPARENT
         }
         return dialog
