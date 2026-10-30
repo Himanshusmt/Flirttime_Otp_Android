@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_rounded"
+    android:orientation="vertical"
+    android:paddingTop="12dp"
+    android:paddingBottom="24dp">
+
+    <!-- Drag Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_sheet_drag_handle" />
+
+    <!-- Option: View Profile (Other Story Only) -->
+    <LinearLayout
+        android:id="@+id/btnMenuViewProfile"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:contentDescription="View Profile"
+            android:src="@drawable/ic_settings_person"
+            app:tint="#1A1A1A" />
+
+        <TextView
+            android:id="@+id/tvMenuViewProfileLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/fredokamedium"
+            android:text="View Profile"
+            android:textColor="#1A1A1A"
+            android:textSize="15.5sp" />
+
+    </LinearLayout>
+
+    <!-- Option: Report Moment (Other Story Only) -->
+    <LinearLayout
+        android:id="@+id/btnMenuReport"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:contentDescription="Report"
+            android:src="@drawable/ic_report_flag_red"
+            app:tint="#D32F2F" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/fredokamedium"
+            android:text="Report Moment"
+            android:textColor="#D32F2F"
+            android:textSize="15.5sp" />
+
+    </LinearLayout>
+
+    <!-- Option: Delete Story (Own Story Only) -->
+    <LinearLayout
+        android:id="@+id/btnMenuDeleteStory"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:contentDescription="Delete Story"
+            android:src="@drawable/ic_trash_red"
+            app:tint="#D32F2F" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/fredokamedium"
+            android:text="Delete Story"
+            android:textColor="#D32F2F"
+            android:textSize="15.5sp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:layout_marginVertical="8dp"
+        android:background="#EFEFEF" />
+
+    <!-- Option: Cancel -->
+    <LinearLayout
+        android:id="@+id/btnMenuCancel"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredokamedium"
+            android:text="Cancel"
+            android:textColor="#8E8E93"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

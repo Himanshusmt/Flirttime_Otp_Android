@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:layout_margin="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2.5dp"
+    app:strokeWidth="0dp">
+
+    <FrameLayout
+        android:id="@+id/layoutCardBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_gradient_story_red">
+
+        <!-- Image Media (Visible if story has a photo) -->
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ivStoryMedia"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Story Media"
+            android:visibility="gone"
+            app:actualImageScaleType="centerCrop"
+            tools:visibility="gone" />
+
+        <!-- Gradient Scrim for Bottom Text Contrast on Images -->
+        <View
+            android:id="@+id/viewScrim"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bg_moment_overlay"
+            android:visibility="gone"
+            tools:visibility="gone" />
+
+        <!-- Centered Story Text Content (e.g. "Hii") -->
+        <TextView
+            android:id="@+id/tvStoryContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/fredokamedium"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="Hii" />
+
+        <!-- Bottom Left: Avatar + Title + Time -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Author Avatar with White Ring -->
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/ivAuthorAvatar"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:contentDescription="Author Avatar"
+                app:actualImageScaleType="centerCrop"
+                app:placeholderImage="@drawable/ic_settings_person"
+                app:roundAsCircle="true"
+                app:roundingBorderColor="@color/white"
+                app:roundingBorderWidth="1.2dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvAuthorName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/fredokamedium"
+                    android:maxLines="1"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="0"
+                    android:shadowDy="1"
+                    android:shadowRadius="2"
+                    android:textColor="@color/white"
+                    android:textSize="11.5sp"
+                    android:textStyle="bold"
+                    tools:text="Mike Hussey" />
+
+                <TextView
+                    android:id="@+id/tvStoryTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokamedium"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="0"
+                    android:shadowDy="1"
+                    android:shadowRadius="2"
+                    android:textColor="#F0F0F0"
+                    android:textSize="10sp"
+                    tools:text="2 min ago" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</com.google.android.material.card.MaterialCardView>

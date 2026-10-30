@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_quick_moment_container"
+    android:clipToOutline="true">
+
+    <!-- Gradient Background Layer -->
+    <View
+        android:id="@+id/vGradientBg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Gallery Image Background Layer -->
+    <ImageView
+        android:id="@+id/ivPickedImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        tools:visibility="gone" />
+
+    <!-- Soft Dark Scrim Overlay when Image is Selected -->
+    <View
+        android:id="@+id/vImageScrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#4D000000"
+        android:visibility="gone"
+        tools:visibility="gone" />
+
+    <!-- Main Content Layout (Insets Applied Here) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Top Close Button -->
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/bg_circle_translucent_action"
+            android:contentDescription="Close"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_close_white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Top Right Action Container -->
+        <LinearLayout
+            android:id="@+id/layoutTopActions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Palette Color Selector Button (Taps cycle gradients instantly) -->
+            <ImageButton
+                android:id="@+id/btnPalette"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circle_translucent_action"
+                android:contentDescription="Color Palette"
+                android:padding="9dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_palette_white" />
+
+            <!-- Gallery Image Picker Button -->
+            <ImageButton
+                android:id="@+id/btnPickImage"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_circle_translucent_action"
+                android:contentDescription="Choose Photo"
+                android:padding="9dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_gallery_white" />
+        </LinearLayout>
+
+        <!-- Centered Text Story EditText -->
+        <EditText
+            android:id="@+id/etMomentText"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/fredokabold"
+            android:gravity="center"
+            android:hint="Type a quick moment..."
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLength="200"
+            android:scrollbars="vertical"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#99FFFFFF"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@id/bottomBarLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutTopActions" />
+
+        <!-- Bottom Controls Bar -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottomBarLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!-- Live Character Counter (0/200) -->
+            <TextView
+                android:id="@+id/tvCharCounter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokasemibold"
+                android:text="0/200"
+                android:textColor="#99FFFFFF"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Share Pill Button -->
+            <LinearLayout
+                android:id="@+id/btnShare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_share_btn_disabled"
+                android:clickable="false"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="22dp"
+                android:paddingTop="11dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="11dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tvShareLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokabold"
+                    android:text="Share"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/ivShareIcon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="Send"
+                    android:src="@drawable/ic_paper_plane_disabled" />
+
+                <ProgressBar
+                    android:id="@+id/pbShareLoading"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="8dp"
+                    android:indeterminateTint="#EA3355"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

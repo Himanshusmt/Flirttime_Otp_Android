@@ -35,10 +35,14 @@ import com.flirttime.feature.profile.PresignedUrlResponseData
 import com.flirttime.feature.profile.UpdateInterestsRequest
 import com.flirttime.feature.profile.UpdateProfileRequest
 import com.flirttime.feature.profile.UserPhotosResponseData
+import com.flirttime.feature.quickmoments.CreateTextQuickMomentRequest
 import com.flirttime.feature.quickmoments.MyQuickMomentsResponseData
 import com.flirttime.feature.quickmoments.QuickMomentReactionRequest
 import com.flirttime.feature.quickmoments.QuickMomentReplyRequest
+import com.flirttime.feature.quickmoments.QuickMomentSlideDto
 import com.flirttime.feature.quickmoments.QuickMomentsTrayResponseData
+import com.flirttime.feature.quickmoments.QuickMomentViewersResponseData
+import com.flirttime.feature.quickmoments.QuickMomentReactionsResponseData
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -261,6 +265,33 @@ interface MainApiService {
     suspend fun markQuickMomentViewed(
         @Path("momentId") momentId: String
     ): ApiResponse<Any>
+
+    @POST("api/v1/quick-moments")
+    suspend fun createTextQuickMoment(
+        @Body request: CreateTextQuickMomentRequest
+    ): ApiResponse<QuickMomentSlideDto>
+
+    @GET("api/v1/quick-moments/{momentId}/viewers")
+    suspend fun getQuickMomentViewers(
+        @Path("momentId") momentId: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 30
+    ): ApiResponse<QuickMomentViewersResponseData>
+
+    @GET("api/v1/quick-moments/{momentId}/reactions")
+    suspend fun getQuickMomentReactions(
+        @Path("momentId") momentId: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 50
+    ): ApiResponse<QuickMomentReactionsResponseData>
+
+    @Multipart
+    @POST("api/v1/quick-moments")
+    suspend fun createImageQuickMoment(
+        @Part image: MultipartBody.Part,
+        @Part("caption") caption: RequestBody? = null,
+        @Part("locationLabel") locationLabel: RequestBody? = null
+    ): ApiResponse<QuickMomentSlideDto>
 
 
     // ==========================================

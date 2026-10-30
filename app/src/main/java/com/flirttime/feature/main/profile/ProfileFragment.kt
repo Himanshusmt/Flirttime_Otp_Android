@@ -24,6 +24,7 @@ import com.flirttime.core.navigation.Destination
 import com.flirttime.databinding.FragmentProfileBinding
 import com.flirttime.feature.profile.VoiceIntroBottomSheetDialogFragment
 import com.flirttime.feature.quickmoments.QuickMomentsTrayAdapter
+import com.flirttime.feature.quickmoments.AddNewMomentBottomSheetDialogFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -733,6 +734,15 @@ class ProfileFragment : Fragment() {
             )
         }
         bottomSheet.show(childFragmentManager, PhotoSourceBottomSheetDialogFragment.TAG)
+    }
+
+    private fun showAddNewMomentBottomSheet() {
+        val sheet = AddNewMomentBottomSheetDialogFragment.newInstance()
+        sheet.onMomentCreated = {
+            userProfileViewModel.loadMyQuickMoments()
+            userProfileViewModel.fetchUserProfile()
+        }
+        sheet.show(childFragmentManager, AddNewMomentBottomSheetDialogFragment.TAG)
     }
 
     override fun onDestroyView() {

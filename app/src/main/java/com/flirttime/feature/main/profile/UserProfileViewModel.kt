@@ -12,6 +12,7 @@ import com.flirttime.feature.main.MainRepository
 import com.flirttime.feature.moments.MomentDto
 import com.flirttime.feature.moments.UserMomentsResponseData
 import com.flirttime.feature.moments.MomentsRepository
+import com.flirttime.feature.main.matches.MatchesRepository
 import com.flirttime.feature.profile.AudioIntroDto
 import com.flirttime.feature.profile.MoreAboutMeResponseData
 import com.flirttime.feature.profile.UpdateProfileRequest
@@ -39,6 +40,7 @@ data class UserProfileUiModel(
 
 class UserProfileViewModel(
     private val authRepository: AuthRepository,
+    private val matchesRepository: MatchesRepository,
     private val momentsRepository: MomentsRepository,
     private val mainRepository: MainRepository,
     private val sessionManager: SessionManager
@@ -295,7 +297,7 @@ class UserProfileViewModel(
 
     fun loadMyQuickMoments() {
         viewModelScope.launch {
-            momentsRepository.getMyQuickMoments().collectLatest { resource ->
+            matchesRepository.getMyQuickMoments().collectLatest { resource ->
                 _myQuickMomentsState.value = resource
             }
         }

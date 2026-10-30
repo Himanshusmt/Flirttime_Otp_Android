@@ -102,7 +102,7 @@
             android:layout_weight="1"
             android:background="@null"
             android:fontFamily="@font/fredokaregular"
-            android:hint="Search cafés, bars, parks..."
+            android:hint="Search cafs, bars, parks..."
             android:imeOptions="actionSearch"
             android:singleLine="true"
             android:textColor="#1A1A1A"

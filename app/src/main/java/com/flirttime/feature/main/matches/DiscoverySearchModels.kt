@@ -4,6 +4,20 @@ import com.flirttime.core.common.MediaUrlHelper
 import com.google.gson.annotations.SerializedName
 
 // 1. Search Request & Filters
+fun normalizeGenders(genders: List<String>?): List<String>? {
+    if (genders.isNullOrEmpty()) return null
+    val mapped = genders.mapNotNull { g ->
+        when (g.trim().lowercase()) {
+            "men", "man", "male" -> "men"
+            "women", "woman", "female" -> "women"
+            "non_binary", "non-binary" -> "non_binary"
+            "everyone", "all" -> "everyone"
+            else -> null
+        }
+    }.distinct()
+    return if (mapped.isNotEmpty()) mapped else null
+}
+
 data class DiscoverySearchRequest(
     @SerializedName("page") val page: Int = 1,
     @SerializedName("limit") val limit: Int = 20,
@@ -26,7 +40,10 @@ data class DiscoveryFiltersDto(
     @SerializedName("interestIds") val interestIds: List<String>? = null,
     @SerializedName("verifiedOnly") val verifiedOnly: Boolean? = null,
     @SerializedName("onlineOnly") val onlineOnly: Boolean? = null
-)
+) {
+    val normalizedGenders: List<String>?
+        get() = normalizeGenders(genders)
+}
 
 data class DiscoveryFiltersResponseData(
     @SerializedName("filters") val filters: DiscoveryFiltersDto? = null,
@@ -106,7 +123,7 @@ data class DiscoveryProfileCardDto(
     @SerializedName("profilePhoto") val profilePhoto: String? = null,
     @SerializedName("photos") val photos: List<DiscoveryCardPhotoDto>? = null,
     @SerializedName("interests") val interests: List<DiscoveryCardInterestDto>? = null,
-    @SerializedName("sharedInterests") val sharedInterests: List<DiscoveryCardInterestDto>? = null,
+    @SerializedName("sharedInterests") val sharedInterests: List<String>? = null,
     @SerializedName("commonInterestsCount") val commonInterestsCount: Int? = null,
     @SerializedName("profileMatchPercentage") val profileMatchPercentage: Int? = null,
     @SerializedName("vibeScore") val vibeScore: Int? = null,
@@ -120,14 +137,14 @@ data class DiscoveryProfileCardDto(
         val resolvedPhoto = MediaUrlHelper.resolveMediaUrl(photoPath)
 
         val shared = sharedInterests.orEmpty()
-        val sharedIds = shared.mapNotNull { it.id }.filter { it.isNotBlank() }.toSet()
-        val sharedNames = shared.mapNotNull { it.name }.filter { it.isNotBlank() }.map { it.lowercase() }.toSet()
+        val sharedSet = shared.map { it.lowercase().trim() }.toSet()
+
 
         val allInterests = interests.orEmpty()
         val interestItems = if (allInterests.isNotEmpty()) {
             allInterests.filter { !it.name.isNullOrBlank() }.map { item ->
                 val label = item.name.orEmpty()
-                val isShared = sharedIds.contains(item.id) || sharedNames.contains(label.lowercase())
+                val isShared = sharedSet.contains(label.lowercase().trim()) || (item.id != null && sharedSet.contains(item.id.lowercase().trim()))
                 InterestItem(
                     emoji = item.emoji ?: getEmojiForInterestTag(label),
                     label = label,
@@ -135,10 +152,10 @@ data class DiscoveryProfileCardDto(
                 )
             }
         } else {
-            shared.filter { !it.name.isNullOrBlank() }.map { item ->
+            shared.filter { it.isNotBlank() }.map { interestName ->
                 InterestItem(
-                    emoji = item.emoji ?: getEmojiForInterestTag(item.name.orEmpty()),
-                    label = item.name.orEmpty(),
+                    emoji = getEmojiForInterestTag(interestName),
+                    label = interestName,
                     isShared = true
                 )
             }

@@ -153,7 +153,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="👱‍♀️"
+                            android:text="&#8226;"
                             android:textSize="24sp" />
 
                         <TextView
@@ -187,7 +187,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="👱‍♂️"
+                            android:text="&#8226;"
                             android:textSize="24sp" />
 
                         <TextView
@@ -221,7 +221,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="🧑"
+                            android:text="&#8226;"
                             android:textSize="24sp" />
 
                         <TextView
@@ -255,7 +255,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="🌈"
+                            android:text="&#8226;"
                             android:textSize="24sp" />
 
                         <TextView
@@ -324,7 +324,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/fredokasemibold"
                         android:includeFontPadding="false"
-                        android:text="18 – 70+"
+                        android:text="18 - 70+"
                         android:textColor="@color/brand_red"
                         android:textSize="17.5sp" />
 
@@ -561,7 +561,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="long_term"
-                        android:text="💍 Long-term" />
+                        android:text=" Long-term" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipLookingForCasual"
@@ -569,7 +569,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="casual"
-                        android:text="🥂 Something casual" />
+                        android:text=" Something casual" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipLookingForNotSure"
@@ -577,7 +577,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="not_sure"
-                        android:text="🤔 Not sure yet" />
+                        android:text=" Not sure yet" />
 
                 </com.google.android.material.chip.ChipGroup>
 

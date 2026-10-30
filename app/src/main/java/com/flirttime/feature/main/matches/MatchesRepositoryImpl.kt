@@ -1,7 +1,10 @@
 package com.flirttime.feature.main.matches
 
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.flirttime.Resource
+import com.flirttime.core.common.MultipartHelper
 import com.flirttime.core.network.safeApiCall
 import com.flirttime.feature.main.MainApiService
 import com.flirttime.feature.profile.DiscoveryActionRequest
@@ -9,7 +12,14 @@ import com.flirttime.feature.profile.DiscoveryActionResponseData
 import com.flirttime.feature.profile.DiscoveryFilterOptionsData
 import com.flirttime.feature.profile.DiscoveryPeopleResponseData
 import com.flirttime.feature.profile.InterestsCatalogResponseData
+import com.flirttime.feature.quickmoments.CreateTextQuickMomentRequest
+import com.flirttime.feature.quickmoments.MyQuickMomentsResponseData
+import com.flirttime.feature.quickmoments.QuickMomentReactionRequest
+import com.flirttime.feature.quickmoments.QuickMomentReplyRequest
+import com.flirttime.feature.quickmoments.QuickMomentSlideDto
 import com.flirttime.feature.quickmoments.QuickMomentsTrayResponseData
+import com.flirttime.feature.quickmoments.QuickMomentViewersResponseData
+import com.flirttime.feature.quickmoments.QuickMomentReactionsResponseData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -31,7 +41,7 @@ class MatchesRepositoryImpl(
         val request = DiscoverySearchRequest(
             page = page,
             limit = limit,
-            genders = f.genders?.takeIf { it.isNotEmpty() },
+            genders = f.normalizedGenders,
             ageMin = f.ageMin,
             ageMax = f.ageMax,
             maxDistanceKm = f.maxDistanceKm,
@@ -110,7 +120,8 @@ class MatchesRepositoryImpl(
     }.flowOn(Dispatchers.IO)
 
     override fun saveDiscoveryFilters(filters: DiscoveryFiltersDto): Flow<Resource<Unit>> = flow {
-        val result = safeApiCall { mainApiService.saveDiscoveryFilters(filters) }
+        val sanitized = filters.copy(genders = filters.normalizedGenders)
+        val result = safeApiCall { mainApiService.saveDiscoveryFilters(sanitized) }
         when (result) {
             is Resource.Success -> emit(Resource.Success(Unit))
             is Resource.Error -> emit(Resource.Error(result.message, result.code, result.cause, result.errorBody))
@@ -191,6 +202,144 @@ class MatchesRepositoryImpl(
                 emit(Resource.Error(result.message, result.code, result.cause, result.errorBody))
             }
             Resource.Loading -> emit(Resource.Loading)
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun getMyQuickMoments(): Flow<Resource<MyQuickMomentsResponseData>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.getMyQuickMoments()
+        }
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
+    override fun createTextQuickMoment(
+        text: String,
+        backgroundColor: String
+    ): Flow<Resource<QuickMomentSlideDto>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.createTextQuickMoment(
+                CreateTextQuickMomentRequest(
+                    type = "text",
+                    text = text,
+                    backgroundColor = backgroundColor,
+                    textColor = "#ffffff"
+                )
+            )
+        }
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
+    override fun createImageQuickMoment(
+        context: Context,
+        imageUri: Uri,
+        caption: String?
+    ): Flow<Resource<QuickMomentSlideDto>> = flow {
+        emit(Resource.Loading)
+        val part = MultipartHelper.createPartFromUri(context, imageUri, "image")
+        if (part == null) {
+            emit(Resource.Error("Unable to process selected image."))
+            return@flow
+        }
+        val captionPart = caption?.takeIf { it.isNotBlank() }?.let { MultipartHelper.createTextPart(it) }
+        val result = safeApiCall {
+            mainApiService.createImageQuickMoment(
+                image = part,
+                caption = captionPart
+            )
+        }
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
+    override fun deleteQuickMoment(momentId: String): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.deleteQuickMoment(momentId)
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(Unit))
+            is Resource.Error -> emit(Resource.Error(result.message, result.code, result.cause, result.errorBody))
+            Resource.Loading -> emit(Resource.Loading)
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun reactToQuickMoment(
+        momentId: String,
+        reaction: String
+    ): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.reactToQuickMoment(momentId, QuickMomentReactionRequest(reaction))
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(Unit))
+            is Resource.Error -> emit(Resource.Error(result.message, result.code, result.cause, result.errorBody))
+            Resource.Loading -> emit(Resource.Loading)
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun replyToQuickMoment(
+        momentId: String,
+        message: String
+    ): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.replyToQuickMoment(momentId, QuickMomentReplyRequest(message))
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(Unit))
+            is Resource.Error -> emit(Resource.Error(result.message, result.code, result.cause, result.errorBody))
+            Resource.Loading -> emit(Resource.Loading)
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun markQuickMomentViewed(momentId: String): Flow<Resource<Unit>> = flow {
+        val result = safeApiCall {
+            mainApiService.markQuickMomentViewed(momentId)
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(Unit))
+            is Resource.Error -> emit(Resource.Error(result.message, result.code, result.cause, result.errorBody))
+            Resource.Loading -> emit(Resource.Loading)
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun getQuickMomentViewers(
+        momentId: String,
+        page: Int,
+        limit: Int
+    ): Flow<Resource<QuickMomentViewersResponseData>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.getQuickMomentViewers(momentId = momentId, page = page, limit = limit)
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(result.data))
+            is Resource.Error -> {
+                Log.e("MatchesRepository", "[getQuickMomentViewers] failed: code=${result.code} msg=${result.message}")
+                emit(Resource.Error(message = result.message, code = result.code, cause = result.cause, errorBody = result.errorBody))
+            }
+            is Resource.Loading -> Unit
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun getQuickMomentReactions(
+        momentId: String,
+        page: Int,
+        limit: Int
+    ): Flow<Resource<QuickMomentReactionsResponseData>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.getQuickMomentReactions(momentId = momentId, page = page, limit = limit)
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(result.data))
+            is Resource.Error -> {
+                Log.e("MatchesRepository", "[getQuickMomentReactions] failed: code=${result.code} msg=${result.message}")
+                emit(Resource.Error(message = result.message, code = result.code, cause = result.cause, errorBody = result.errorBody))
+            }
+            is Resource.Loading -> Unit
         }
     }.flowOn(Dispatchers.IO)
 }
