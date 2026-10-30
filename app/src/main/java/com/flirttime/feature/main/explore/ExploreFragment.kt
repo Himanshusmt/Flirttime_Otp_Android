@@ -153,6 +153,13 @@ class ExploreFragment : Fragment() {
                 viewModel.markRead(profile)
             }
 
+            val seededMyAction = when {
+                currentTab == ExploreTab.YOU_LIKED -> if (profile.isSuperLike) "super_like" else "like"
+                profile.isSuperLike -> "super_like"
+                else -> null
+            }
+            val isMatchedUser = (currentTab == ExploreTab.MATCHES) || profile.isMatched
+
             AppNavigator.navigateTo(
                 context = requireContext(),
                 destination = Destination.UserProfile(
@@ -161,7 +168,9 @@ class ExploreFragment : Fragment() {
                     age = profile.age,
                     profilePhotoUrl = profile.imageUrl,
                     coverPhotoUrl = profile.coverUrl,
-                    city = profile.location
+                    city = profile.location,
+                    isMatched = isMatchedUser,
+                    myAction = seededMyAction
                 )
             )
         }
