@@ -181,6 +181,12 @@
             android:exported="false"
             android:theme="@style/Theme.FlirtTime" />
 
+        <!-- Premium paywall (iOS PremiumViewController) -->
+        <activity
+            android:name=".feature.subscription.PremiumActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FlirtTime" />
+
         <!-- Reusable Image Crop Activity -->
         <activity
             android:name=".core.image.CropActivity"

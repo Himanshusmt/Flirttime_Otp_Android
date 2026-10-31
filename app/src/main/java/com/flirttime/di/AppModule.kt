@@ -37,6 +37,10 @@ import com.flirttime.feature.profile.edit.EditProfileViewModel
 import com.flirttime.feature.profile.otherUser.OtherUserProfileViewModel
 import com.flirttime.feature.profile.settings.SettingsViewModel
 import com.flirttime.feature.splash.SplashViewModel
+import com.flirttime.feature.subscription.PlayBillingManager
+import com.flirttime.feature.subscription.PremiumViewModel
+import com.flirttime.feature.subscription.SubscriptionPlanStore
+import com.flirttime.feature.subscription.SubscriptionRepository
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -99,4 +103,10 @@ val appModule = module {
 
     // Explore Feature
     viewModelOf(::ExploreViewModel)
+
+    // Premium / Subscriptions (iOS Features/Subscription)
+    single { SubscriptionRepository(get()) }
+    single { PlayBillingManager(get()) }
+    single { SubscriptionPlanStore(get(), get()) }
+    viewModelOf(::PremiumViewModel)
 }

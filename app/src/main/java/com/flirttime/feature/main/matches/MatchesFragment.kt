@@ -29,12 +29,17 @@ import com.flirttime.databinding.FragmentMatchesBinding
 import com.flirttime.feature.main.matches.interest.InterestAdapter
 import com.flirttime.feature.main.matches.interest.InterestPeopleAdapter
 import com.flirttime.feature.main.matches.interest.MockInterestsProvider
+import com.flirttime.feature.main.profile.UserProfileViewModel
 import com.flirttime.feature.quickmoments.AddNewMomentBottomSheetDialogFragment
 import com.flirttime.feature.quickmoments.QuickMomentCardItem
 import com.flirttime.feature.quickmoments.QuickMomentsCardAdapter
 import com.flirttime.feature.quickmoments.QuickMomentsViewerDialogFragment
+import com.flirttime.feature.subscription.PremiumStatus
+import com.flirttime.feature.subscription.SubscriptionPopUp
+import com.flirttime.feature.subscription.SubscriptionPopUpType
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
@@ -43,6 +48,7 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
     private val binding get() = _binding!!
 
     private val viewModel: MatchesViewModel by viewModel()
+    private val userProfileViewModel: UserProfileViewModel by inject()
 
     private lateinit var interestAdapter: InterestAdapter
     private lateinit var interestPeopleAdapter: InterestPeopleAdapter
@@ -297,16 +303,10 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
                         binding.cardStackView.restoreCard(errorEvent.profile)
                         when (errorEvent) {
                             is DiscoveryActionError.DailyLikesExceeded -> {
-                                CommonConfirmationDialog.show(
-                                    context = requireContext(),
-                                    title = "Daily Likes Limit Reached",
-                                    message = errorEvent.message,
-                                    positiveText = "Upgrade Now",
-                                    negativeText = "Maybe Later",
-                                    onPositiveClick = {
-                                        Toast.makeText(requireContext(), "Redirecting to Upgrade...", Toast.LENGTH_SHORT).show()
-                                    }
-                                )
+                                // iOS `.likeLimitReached` → showSubscriptionPopUp(.unlimitedSwipes)
+                                if (!PremiumStatus.isPremium(userProfileViewModel)) {
+                                    SubscriptionPopUp.show(requireContext(), SubscriptionPopUpType.UNLIMITED_SWIPES)
+                                }
                             }
                             is DiscoveryActionError.InsufficientCoins -> {
                                 CommonConfirmationDialog.show(

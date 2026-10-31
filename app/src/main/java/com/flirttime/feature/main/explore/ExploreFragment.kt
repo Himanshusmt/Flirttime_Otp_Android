@@ -1,20 +1,13 @@
 package com.flirttime.feature.main.explore
 
-import android.app.Dialog
-import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -25,9 +18,14 @@ import com.flirttime.R
 import com.flirttime.Resource
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
-import com.flirttime.databinding.DialogCommonConfirmationBinding
+import com.flirttime.feature.main.profile.UserProfileViewModel
+import com.flirttime.feature.subscription.PremiumActivity
+import com.flirttime.feature.subscription.PremiumStatus
+import com.flirttime.feature.subscription.SubscriptionPopUp
+import com.flirttime.feature.subscription.SubscriptionPopUpType
 import com.flirttime.databinding.FragmentExploreBinding
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 enum class ExploreTab {
@@ -43,6 +41,7 @@ class ExploreFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ExploreViewModel by viewModel()
+    private val userProfileViewModel: UserProfileViewModel by inject()
     private var currentTab: ExploreTab = ExploreTab.YOU_LIKED
     private lateinit var profileAdapter: ExploreProfileAdapter
     private var shouldResetScrollToTop: Boolean = true
@@ -92,30 +91,20 @@ class ExploreFragment : Fragment() {
     }
 
     private fun setupTabs() {
-        binding.tabLikes.setOnClickListener {
-            updateTabSelection(ExploreTab.LIKES)
-        }
-
-        binding.tabYouLiked.setOnClickListener {
-            updateTabSelection(ExploreTab.YOU_LIKED)
-        }
-
-        binding.tabMatches.setOnClickListener {
-            updateTabSelection(ExploreTab.MATCHES)
-        }
-
-        binding.tabCompliments.setOnClickListener {
-            updateTabSelection(ExploreTab.COMPLIMENTS)
-        }
+        binding.segmentHeader.onSelect = { tab -> updateTabSelection(tab) }
     }
 
     private fun setupUpsellBanner() {
-        binding.layoutUpsellBanner.setOnClickListener {
-            showUnlockPremiumDialog()
+        // iOS `page.onUpsellTap` → openPremium(source: tab == .compliments ? .compliment : .superLike)
+        val openPremium = {
+            PremiumActivity.start(
+                requireContext(),
+                if (currentTab == ExploreTab.COMPLIMENTS) SubscriptionPopUpType.COMPLIMENT
+                else SubscriptionPopUpType.SUPER_LIKE
+            )
         }
-        binding.btnUpsellUnlock.setOnClickListener {
-            showUnlockPremiumDialog()
-        }
+        binding.layoutUpsellBanner.setOnClickListener { openPremium() }
+        binding.btnUpsellUnlock.setOnClickListener { openPremium() }
     }
 
     private fun setupPullToRefresh() {
@@ -138,14 +127,14 @@ class ExploreFragment : Fragment() {
     private fun setupGrid() {
         profileAdapter = ExploreProfileAdapter { profile ->
             if (profile.isLocked) {
-                // Matches iOS behavior: locked cards show unlock subscription prompt
-                showUnlockPremiumDialog(
-                    if (currentTab == ExploreTab.COMPLIMENTS) {
-                        "Read your compliments and reply right away with FlirtTime Premium!"
-                    } else {
-                        "See everyone who likes you and match instantly with FlirtTime Premium!"
-                    }
-                )
+                // iOS: likes → .superLike popup, compliments → .chat popup (skipped for Premium members).
+                if (!PremiumStatus.isPremium(userProfileViewModel)) {
+                    SubscriptionPopUp.show(
+                        requireContext(),
+                        if (currentTab == ExploreTab.COMPLIMENTS) SubscriptionPopUpType.CHAT
+                        else SubscriptionPopUpType.SUPER_LIKE
+                    )
+                }
                 return@ExploreProfileAdapter
             }
 
@@ -247,45 +236,7 @@ class ExploreFragment : Fragment() {
             resetScrollToTop()
         }
 
-        val brandRed = ContextCompat.getColor(requireContext(), R.color.brand_red)
-        val mutedGray = Color.parseColor("#8E8E93")
-        val activeText = Color.parseColor("#1A1A1A")
-        val semiboldFont = ResourcesCompat.getFont(requireContext(), R.font.fredokasemibold)
-        val mediumFont = ResourcesCompat.getFont(requireContext(), R.font.fredokamedium)
-
-        // 1. Likes Tab
-        val isLikes = tab == ExploreTab.LIKES
-        binding.ivTabLikesIcon.setImageResource(R.drawable.ic_tab_likes)
-        binding.ivTabLikesIcon.setColorFilter(if (isLikes) brandRed else mutedGray)
-        binding.tvTabLikesLabel.setTextColor(if (isLikes) activeText else mutedGray)
-        binding.tvTabLikesLabel.typeface = if (isLikes) semiboldFont else mediumFont
-        binding.indicatorTabLikes.visibility = if (isLikes) View.VISIBLE else View.INVISIBLE
-
-        // 2. You Liked Tab (Uses dedicated active/inactive drawables to preserve the white arrow)
-        val isYouLiked = tab == ExploreTab.YOU_LIKED
-        binding.ivTabYouLikedIcon.clearColorFilter()
-        binding.ivTabYouLikedIcon.setImageResource(
-            if (isYouLiked) R.drawable.ic_tab_you_liked_active else R.drawable.ic_tab_you_liked_inactive
-        )
-        binding.tvTabYouLikedLabel.setTextColor(if (isYouLiked) activeText else mutedGray)
-        binding.tvTabYouLikedLabel.typeface = if (isYouLiked) semiboldFont else mediumFont
-        binding.indicatorTabYouLiked.visibility = if (isYouLiked) View.VISIBLE else View.INVISIBLE
-
-        // 3. Matches Tab
-        val isMatches = tab == ExploreTab.MATCHES
-        binding.ivTabMatchesIcon.setImageResource(R.drawable.ic_tab_matches)
-        binding.ivTabMatchesIcon.setColorFilter(if (isMatches) brandRed else mutedGray)
-        binding.tvTabMatchesLabel.setTextColor(if (isMatches) activeText else mutedGray)
-        binding.tvTabMatchesLabel.typeface = if (isMatches) semiboldFont else mediumFont
-        binding.indicatorTabMatches.visibility = if (isMatches) View.VISIBLE else View.INVISIBLE
-
-        // 4. Compliments Tab
-        val isCompliments = tab == ExploreTab.COMPLIMENTS
-        binding.ivTabComplimentsIcon.setImageResource(R.drawable.ic_tab_compliments)
-        binding.ivTabComplimentsIcon.setColorFilter(if (isCompliments) brandRed else mutedGray)
-        binding.tvTabComplimentsLabel.setTextColor(if (isCompliments) activeText else mutedGray)
-        binding.tvTabComplimentsLabel.typeface = if (isCompliments) semiboldFont else mediumFont
-        binding.indicatorTabCompliments.visibility = if (isCompliments) View.VISIBLE else View.INVISIBLE
+        binding.segmentHeader.select(tab, animated = isResumed)
     }
 
     private fun observeViewModel() {
@@ -342,10 +293,9 @@ class ExploreFragment : Fragment() {
                 // 3. Observe Tab Badge Counts
                 launch {
                     viewModel.badgeCounts.collect { badges ->
-                        updateBadgeView(binding.tvLikesBadge, badges[ExploreTab.LIKES] ?: 0)
-                        updateBadgeView(binding.tvYouLikedBadge, badges[ExploreTab.YOU_LIKED] ?: 0)
-                        updateBadgeView(binding.tvMatchesBadge, badges[ExploreTab.MATCHES] ?: 0)
-                        updateBadgeView(binding.tvComplimentsBadge, badges[ExploreTab.COMPLIMENTS] ?: 0)
+                        ExploreTab.entries.forEach { tab ->
+                            binding.segmentHeader.setCount(tab, badges[tab] ?: 0)
+                        }
                     }
                 }
 
@@ -365,74 +315,9 @@ class ExploreFragment : Fragment() {
     }
 
     private fun updateEmptyStateUI(tab: ExploreTab) {
-        val brandRed = ContextCompat.getColor(requireContext(), R.color.brand_red)
-        when (tab) {
-            ExploreTab.LIKES -> {
-                binding.ivEmptyExploreIcon.setImageResource(R.drawable.ic_tab_likes)
-                binding.ivEmptyExploreIcon.setColorFilter(brandRed)
-                binding.tvEmptyExploreTitle.text = "No likes yet"
-                binding.tvEmptyExploreSubtitle.text = "Keep your profile fresh. People who like you will show up here."
-            }
-            ExploreTab.YOU_LIKED -> {
-                binding.ivEmptyExploreIcon.clearColorFilter()
-                binding.ivEmptyExploreIcon.setImageResource(R.drawable.ic_tab_you_liked_active)
-                binding.tvEmptyExploreTitle.text = "You haven't liked anyone yet"
-                binding.tvEmptyExploreSubtitle.text = "Start swiping on Discover and the people you like will appear here."
-            }
-            ExploreTab.MATCHES -> {
-                binding.ivEmptyExploreIcon.setImageResource(R.drawable.ic_tab_matches)
-                binding.ivEmptyExploreIcon.setColorFilter(brandRed)
-                binding.tvEmptyExploreTitle.text = "No matches yet"
-                binding.tvEmptyExploreSubtitle.text = "When you and someone like each other, it's a match. They'll appear here."
-            }
-            ExploreTab.COMPLIMENTS -> {
-                binding.ivEmptyExploreIcon.setImageResource(R.drawable.ic_tab_compliments)
-                binding.ivEmptyExploreIcon.setColorFilter(brandRed)
-                binding.tvEmptyExploreTitle.text = "No compliments yet"
-                binding.tvEmptyExploreSubtitle.text = "Sweet words from your admirers will land here."
-            }
-        }
-    }
-
-    private fun updateBadgeView(badgeView: TextView, count: Int) {
-        if (count > 0) {
-            badgeView.visibility = View.VISIBLE
-            badgeView.text = if (count > 99) "99+" else count.toString()
-        } else {
-            badgeView.visibility = View.GONE
-        }
-    }
-
-    private fun showUnlockPremiumDialog(customMessage: String? = null) {
-        val dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val dialogBinding = DialogCommonConfirmationBinding.inflate(layoutInflater)
-        dialog.setContentView(dialogBinding.root)
-
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window?.setLayout(
-            (resources.displayMetrics.widthPixels * 0.88).toInt(),
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-
-        dialogBinding.tvDialogTitle.text = "Unlock FlirtTime Premium"
-        dialogBinding.tvDialogMessage.visibility = View.VISIBLE
-        dialogBinding.tvDialogMessage.text = customMessage
-            ?: "See everyone who liked your profile, send unlimited compliments, and connect instantly!"
-
-        dialogBinding.btnPositive.text = "Unlock Now"
-        dialogBinding.btnNegative.text = "Maybe Later"
-
-        dialogBinding.btnPositive.setOnClickListener {
-            dialog.dismiss()
-            Toast.makeText(requireContext(), "Opening Premium Plans...", Toast.LENGTH_SHORT).show()
-        }
-
-        dialogBinding.btnNegative.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
+        binding.ivEmptyExploreIcon.setImageResource(tab.iconRes)
+        binding.tvEmptyExploreTitle.text = tab.emptyTitle
+        binding.tvEmptyExploreSubtitle.text = tab.emptyMessage
     }
 
     private fun dpToPx(dp: Float): Int {
