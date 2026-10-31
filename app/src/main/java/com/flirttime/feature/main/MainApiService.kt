@@ -128,6 +128,16 @@ interface MainApiService {
     @GET("api/v1/subscriptions/my")
     suspend fun getMySubscription(): com.google.gson.JsonObject
 
+    /** Premium plans (iOS `AppEndPoint.subscriptions`). */
+    @GET("api/v1/subscriptions")
+    suspend fun getSubscriptionPlans(): ApiResponse<List<com.flirttime.feature.subscription.SubscriptionPlanDto>>
+
+    /** Verifies a store purchase and activates Premium (iOS `AppEndPoint.subscriptionsPurchaseVerify`). */
+    @POST("api/v1/subscriptions/purchase/verify")
+    suspend fun verifySubscriptionPurchase(
+        @Body body: Map<String, String>
+    ): com.google.gson.JsonObject
+
     @GET("api/v1/notifications/counts")
     suspend fun getNotificationCounts(): ApiResponse<NotificationCountsResponseData>
 

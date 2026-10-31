@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS ExploreSegmentItemView: 22dp icon, 4dp gap, 13sp title and a badge ringed on the icon's top-trailing corner. -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/contentStack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="2dp">
+
+        <ImageView
+            android:id="@+id/ivSegmentIcon"
+            android:layout_width="24dp"
+            android:layout_height="22dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/tvSegmentTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/fredokamedium"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvSegmentBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_gravity="top|start"
+        android:background="@drawable/bg_explore_badge"
+        android:fontFamily="@font/fredokamedium"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:minWidth="18dp"
+        android:paddingHorizontal="4dp"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:visibility="gone" />
+</merge>

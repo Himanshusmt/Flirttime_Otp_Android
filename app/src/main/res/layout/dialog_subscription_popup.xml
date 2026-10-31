@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS SubscriptionPopUp.xib: dimmed backdrop + 537pt gold panel pinned to the bottom. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/popupRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#B3FFFFFF">
+
+    <FrameLayout
+        android:id="@+id/popupPanel"
+        android:layout_width="match_parent"
+        android:layout_height="537dp"
+        android:layout_gravity="bottom"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="489dp"
+            android:layout_gravity="bottom"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY"
+            android:src="@drawable/img_sub_popup_bg" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="83dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY"
+            android:src="@drawable/img_sub_popup_top" />
+
+        <ImageView
+            android:layout_width="173dp"
+            android:layout_height="76dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="103dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:src="@drawable/img_sub_popup_wow" />
+
+        <LinearLayout
+            android:layout_width="338dp"
+            android:layout_height="59dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="199dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvPopupTitle"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:fontFamily="@font/fredokaregular"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tvPopupSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:layout_marginTop="9dp"
+                android:fontFamily="@font/fredokaregular"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="View and respond quickly."
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivPopupIcon"
+            android:layout_width="298dp"
+            android:layout_height="128dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="278dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter" />
+
+        <ImageView
+            android:id="@+id/btnPopupCta"
+            android:layout_width="174dp"
+            android:layout_height="46dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="426dp"
+            android:contentDescription="Unlock Premium"
+            android:scaleType="fitXY"
+            android:src="@drawable/img_sub_popup_cta" />
+
+        <TextView
+            android:layout_width="338dp"
+            android:layout_height="25dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/fredokaregular"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="Unlock the full power of Premium now"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+    </FrameLayout>
+</FrameLayout>

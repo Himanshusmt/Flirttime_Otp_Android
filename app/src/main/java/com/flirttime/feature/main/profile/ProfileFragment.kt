@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.flirttime.R
+import com.flirttime.feature.subscription.PremiumActivity
 import com.flirttime.Resource
 import com.flirttime.core.image.CropAspectRatio
 import com.flirttime.core.image.CropConfig
@@ -426,10 +427,10 @@ class ProfileFragment : Fragment() {
 
         // Premium Benefit Banner (Matching iOS openPremium)
         binding.cardPremiumBanner.setOnClickListener {
-            showSubscriptionDialog()
+            PremiumActivity.start(requireContext())
         }
         binding.btnUpgradePremium.setOnClickListener {
-            showSubscriptionDialog()
+            PremiumActivity.start(requireContext())
         }
 
         // Active Membership Card & Manage Button (Matching iOS manageSubscription)
@@ -1019,19 +1020,6 @@ class ProfileFragment : Fragment() {
             negativeText = "Close",
             onPositiveClick = {
                 Toast.makeText(requireContext(), "Redirecting to Coin Shop...", Toast.LENGTH_SHORT).show()
-            }
-        )
-    }
-
-    private fun showSubscriptionDialog() {
-        CommonConfirmationDialog.show(
-            context = requireContext(),
-            title = "FlirtTime Premium",
-            message = "Unlock unlimited swiping, see who liked you, rewind passes, and chat with zero ads!",
-            positiveText = "Upgrade Now",
-            negativeText = "Maybe Later",
-            onPositiveClick = {
-                Toast.makeText(requireContext(), "Redirecting to Premium Plans...", Toast.LENGTH_SHORT).show()
             }
         )
     }

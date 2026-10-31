@@ -46,270 +46,13 @@
 
     </LinearLayout>
 
-    <!-- Horizontal 4-Tab Bar -->
-    <LinearLayout
-        android:id="@+id/layoutTabs"
+    <!-- iOS ExploreSegmentHeaderView: 64dp, icons + titles + count badges, sliding indicator. -->
+    <com.flirttime.feature.main.explore.ExploreSegmentHeaderView
+        android:id="@+id/segmentHeader"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:baselineAligned="false"
-        android:orientation="horizontal">
-
-        <!-- 1. Likes Tab -->
-        <LinearLayout
-            android:id="@+id/tabLikes"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/ivTabLikesIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_tab_likes" />
-
-                <!-- Likes Count Badge -->
-                <TextView
-                    android:id="@+id/tvLikesBadge"
-                    android:layout_width="wrap_content"
-                    android:minWidth="18dp"
-                    android:layout_height="18dp"
-                    android:paddingHorizontal="4dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginTop="-4dp"
-                    android:background="@drawable/bg_tab_counter_badge"
-                    android:gravity="center"
-                    android:includeFontPadding="false"
-                    android:textColor="@color/white"
-                    android:textSize="10sp"
-                    android:fontFamily="@font/fredokamedium"
-                    android:visibility="gone" />
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/tvTabLikesLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="@font/fredokamedium"
-                android:includeFontPadding="false"
-                android:text="Likes"
-                android:textColor="#8E8E93"
-                android:textSize="13.5sp" />
-
-            <!-- Underline Indicator -->
-            <View
-                android:id="@+id/indicatorTabLikes"
-                android:layout_width="48dp"
-                android:layout_height="3dp"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/bg_tab_active_indicator"
-                android:visibility="invisible" />
-
-        </LinearLayout>
-
-        <!-- 2. You Liked Tab (Default Active) -->
-        <LinearLayout
-            android:id="@+id/tabYouLiked"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/ivTabYouLikedIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_tab_you_liked_active" />
-
-                <!-- Notification Count Badge -->
-                <TextView
-                    android:id="@+id/tvYouLikedBadge"
-                    android:layout_width="wrap_content"
-                    android:minWidth="18dp"
-                    android:layout_height="18dp"
-                    android:paddingHorizontal="4dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginTop="-4dp"
-                    android:background="@drawable/bg_tab_counter_badge"
-                    android:gravity="center"
-                    android:includeFontPadding="false"
-                    android:textColor="@color/white"
-                    android:textSize="10sp"
-                    android:fontFamily="@font/fredokamedium"
-                    android:visibility="gone" />
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/tvTabYouLikedLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="@font/fredokasemibold"
-                android:includeFontPadding="false"
-                android:text="You Liked"
-                android:textColor="#1A1A1A"
-                android:textSize="13.5sp" />
-
-            <!-- Underline Indicator -->
-            <View
-                android:id="@+id/indicatorTabYouLiked"
-                android:layout_width="56dp"
-                android:layout_height="3dp"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/bg_tab_active_indicator"
-                android:visibility="visible" />
-
-        </LinearLayout>
-
-        <!-- 3. Matches Tab -->
-        <LinearLayout
-            android:id="@+id/tabMatches"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/ivTabMatchesIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_tab_matches" />
-
-                <!-- Matches Count Badge -->
-                <TextView
-                    android:id="@+id/tvMatchesBadge"
-                    android:layout_width="wrap_content"
-                    android:minWidth="18dp"
-                    android:layout_height="18dp"
-                    android:paddingHorizontal="4dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginTop="-4dp"
-                    android:background="@drawable/bg_tab_counter_badge"
-                    android:gravity="center"
-                    android:includeFontPadding="false"
-                    android:textColor="@color/white"
-                    android:textSize="10sp"
-                    android:fontFamily="@font/fredokamedium"
-                    android:visibility="gone" />
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/tvTabMatchesLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="@font/fredokamedium"
-                android:includeFontPadding="false"
-                android:text="Matches"
-                android:textColor="#8E8E93"
-                android:textSize="13.5sp" />
-
-            <!-- Underline Indicator -->
-            <View
-                android:id="@+id/indicatorTabMatches"
-                android:layout_width="48dp"
-                android:layout_height="3dp"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/bg_tab_active_indicator"
-                android:visibility="invisible" />
-
-        </LinearLayout>
-
-        <!-- 4. Compliments Tab -->
-        <LinearLayout
-            android:id="@+id/tabCompliments"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/ivTabComplimentsIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_tab_compliments" />
-
-                <!-- Compliments Count Badge -->
-                <TextView
-                    android:id="@+id/tvComplimentsBadge"
-                    android:layout_width="wrap_content"
-                    android:minWidth="18dp"
-                    android:layout_height="18dp"
-                    android:paddingHorizontal="4dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginTop="-4dp"
-                    android:background="@drawable/bg_tab_counter_badge"
-                    android:gravity="center"
-                    android:includeFontPadding="false"
-                    android:textColor="@color/white"
-                    android:textSize="10sp"
-                    android:fontFamily="@font/fredokamedium"
-                    android:visibility="gone" />
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/tvTabComplimentsLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="@font/fredokamedium"
-                android:includeFontPadding="false"
-                android:text="Compliments"
-                android:textColor="#8E8E93"
-                android:textSize="13.5sp" />
-
-            <!-- Underline Indicator -->
-            <View
-                android:id="@+id/indicatorTabCompliments"
-                android:layout_width="60dp"
-                android:layout_height="3dp"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/bg_tab_active_indicator"
-                android:visibility="invisible" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <!-- Bottom divider hairline -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#EDEDF0" />
+        android:layout_height="64dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="4dp" />
 
     <!-- iOS Upsell Banner (Shown when tab is locked) -->
     <LinearLayout
@@ -317,20 +60,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/bg_upsell_banner"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="14dp"
         android:paddingVertical="10dp"
+        android:paddingStart="14dp"
+        android:paddingEnd="10dp"
         android:visibility="gone"
         tools:visibility="visible">
 
         <ImageView
-            android:layout_width="20dp"
+            android:layout_width="16dp"
             android:layout_height="20dp"
             android:contentDescription="Locked feature"
-            android:src="@drawable/ic_lock_red" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_sf_lock_fill"
+            app:tint="#D92B2B" />
 
         <TextView
             android:id="@+id/tvUpsellMessage"
@@ -340,7 +86,8 @@
             android:layout_weight="1"
             android:fontFamily="@font/fredokamedium"
             android:includeFontPadding="false"
-            android:textColor="#1A1A1A"
+            android:maxLines="2"
+            android:textColor="#252525"
             android:textSize="13sp"
             tools:text="See everyone who likes you and match instantly" />
 
@@ -349,8 +96,8 @@
             android:layout_width="72dp"
             android:layout_height="28dp"
             android:layout_marginStart="10dp"
-            android:background="@drawable/bg_action_pill_red"
-            android:fontFamily="@font/fredokasemibold"
+            android:background="@drawable/bg_explore_unlock_pill"
+            android:fontFamily="@font/fredokabold"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="Unlock"
@@ -412,12 +159,13 @@
 
                 <ImageView
                     android:id="@+id/ivEmptyExploreIcon"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:contentDescription="Empty Tab"
-                    android:src="@drawable/ic_tab_likes"
-                    app:tint="@color/brand_red" />
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_sf_heart_fill"
+                    app:tint="#D92B2B" />
 
             </FrameLayout>
 
@@ -426,9 +174,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
-                android:fontFamily="@font/fredokasemibold"
+                android:fontFamily="@font/fredokabold"
                 android:gravity="center"
-                android:textColor="#1A1A1A"
+                android:textColor="#252525"
                 android:textSize="19sp"
                 tools:text="No likes yet" />
 
@@ -440,7 +188,7 @@
                 android:fontFamily="@font/fredokaregular"
                 android:gravity="center"
                 android:lineSpacingExtra="2dp"
-                android:textColor="#8E8E93"
+                android:textColor="#8C8C8C"
                 android:textSize="14sp"
                 tools:text="Keep your profile fresh. People who like you will show up here." />
 
