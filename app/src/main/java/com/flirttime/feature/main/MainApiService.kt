@@ -13,6 +13,7 @@ import com.flirttime.feature.main.matches.UserLimitsResponseData
 import com.flirttime.feature.main.matches.WalletBalanceData
 import com.flirttime.feature.moments.MomentCommentsResponseData
 import com.flirttime.feature.moments.MomentGiftsCatalogResponseData
+import com.flirttime.feature.moments.MomentLikeResponseData
 import com.flirttime.feature.moments.MomentReceivedGiftsResponseData
 import com.flirttime.feature.moments.MomentsFeedResponseData
 import com.flirttime.feature.moments.PostCommentRequest
@@ -181,11 +182,17 @@ interface MainApiService {
     suspend fun toggleLike(
         @Path("momentId") momentId: String,
         @Body request: ToggleLikeRequest? = null
-    ): ApiResponse<Any>
+    ): ApiResponse<MomentLikeResponseData>
 
     @DELETE("api/v1/moments/{momentId}")
     suspend fun deleteMoment(
         @Path("momentId") momentId: String
+    ): ApiResponse<Any>
+
+    @POST("api/v1/moments/{momentId}/report")
+    suspend fun reportMoment(
+        @Path("momentId") momentId: String,
+        @Body body: Map<String, String>
     ): ApiResponse<Any>
 
     @Multipart

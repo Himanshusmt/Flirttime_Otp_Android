@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    android:paddingHorizontal="10dp"
+    android:paddingBottom="24dp">
+
+    <!-- Top Card: Header + Report Reasons (iOS rounded floating card) -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="#F8F8FA"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Title & Subtitle Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="12dp">
+
+                <TextView
+                    android:id="@+id/tvReportTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokabold"
+                    android:text="Report moment"
+                    android:textColor="#1A1A1A"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvReportSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:text="Why are you reporting this moment?"
+                    android:textColor="#8E8E93"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <!-- Thin Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#D1D1D6" />
+
+            <!-- Reason 1: Nudity or sexual content -->
+            <TextView
+                android:id="@+id/btnReasonNudity"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center"
+                android:text="Nudity or sexual content"
+                android:textColor="#1A1A1A"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#E5E5EA" />
+
+            <!-- Reason 2: Violence or graphic content -->
+            <TextView
+                android:id="@+id/btnReasonViolence"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center"
+                android:text="Violence or graphic content"
+                android:textColor="#1A1A1A"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#E5E5EA" />
+
+            <!-- Reason 3: Harassment or bullying -->
+            <TextView
+                android:id="@+id/btnReasonHarassment"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center"
+                android:text="Harassment or bullying"
+                android:textColor="#1A1A1A"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#E5E5EA" />
+
+            <!-- Reason 4: Inappropriate content -->
+            <TextView
+                android:id="@+id/btnReasonInappropriate"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center"
+                android:text="Inappropriate content"
+                android:textColor="#1A1A1A"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#E5E5EA" />
+
+            <!-- Reason 5: Spam or advertising -->
+            <TextView
+                android:id="@+id/btnReasonSpam"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center"
+                android:text="Spam or advertising"
+                android:textColor="#1A1A1A"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#E5E5EA" />
+
+            <!-- Reason 6: Fake or misleading content -->
+            <TextView
+                android:id="@+id/btnReasonFake"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center"
+                android:text="Fake or misleading content"
+                android:textColor="#1A1A1A"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#E5E5EA" />
+
+            <!-- Reason 7: Something else -->
+            <TextView
+                android:id="@+id/btnReasonOther"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center"
+                android:text="Something else"
+                android:textColor="#1A1A1A"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Bottom Card: Cancel (iOS separate rounded button) -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">
+
+        <TextView
+            android:id="@+id/btnCancel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/fredokamedium"
+            android:gravity="center"
+            android:text="Cancel"
+            android:textColor="#1A1A1A"
+            android:textSize="17sp" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
+

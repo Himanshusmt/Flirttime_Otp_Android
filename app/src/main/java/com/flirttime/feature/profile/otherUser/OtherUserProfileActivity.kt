@@ -52,16 +52,18 @@ class OtherUserProfileActivity : AppCompatActivity() {
     private val momentsAdapter by lazy {
         OtherUserMomentsAdapter(
             onMomentClick = { moment ->
-                Toast.makeText(this, moment.caption ?: "Moment clicked", Toast.LENGTH_SHORT).show()
+                openMoments(focusMomentId = moment.id)
             },
             onSeeAllClick = {
-                Toast.makeText(this, "See all moments", Toast.LENGTH_SHORT).show()
+                openMoments(focusMomentId = null)
             }
         )
     }
 
     private var targetUserId: String = ""
     private var currentUserName: String = "User"
+    private var currentUserAvatar: String? = null
+    private var isCurrentUserVerified: Boolean = false
     private var isMatchedWithUser: Boolean = false
     private var currentMyAction: String? = null
 
@@ -101,6 +103,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
         val coverUrl = intent.getStringExtra(AppNavigator.EXTRA_COVER_PHOTO_URL)
         val city = intent.getStringExtra(AppNavigator.EXTRA_CITY)
         val bio = intent.getStringExtra(AppNavigator.EXTRA_BIO)
+        currentUserAvatar = photoUrl
         isMatchedWithUser = intent.getBooleanExtra(AppNavigator.EXTRA_IS_MATCHED, false)
         currentMyAction = intent.getStringExtra(AppNavigator.EXTRA_MY_ACTION)
         updateActionBar()
@@ -113,7 +116,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
                 name = name,
                 age = age,
                 profilePhotoUrl = photoUrl,
-                coverPhotoUrl = coverUrl,
+                coverPhotoUrl = coverUrl?.takeIf { it.isNotBlank() } ?: photoUrl,
                 city = city,
                 about = bio,
                 isMatched = isMatchedWithUser,
@@ -183,8 +186,21 @@ class OtherUserProfileActivity : AppCompatActivity() {
         }
 
         binding.btnSeeAllMoments.setOnClickListener {
-            Toast.makeText(this, "See all moments", Toast.LENGTH_SHORT).show()
+            openMoments(focusMomentId = null)
         }
+    }
+
+    private fun openMoments(focusMomentId: String? = null) {
+        AppNavigator.navigateTo(
+            context = this@OtherUserProfileActivity,
+            destination = Destination.UserMoments(
+                userId = targetUserId,
+                userName = currentUserName,
+                focusMomentId = focusMomentId,
+                userAvatar = currentUserAvatar,
+                isVerified = isCurrentUserVerified
+            )
+        )
     }
 
     private fun updateActionBar() {
@@ -330,6 +346,8 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
     private fun bindUserToUi(user: UserSearchItemDto) {
         currentUserName = user.effectiveName.ifBlank { "User" }
+        currentUserAvatar = user.effectivePhoto
+        isCurrentUserVerified = user.isVerified == true
         isMatchedWithUser = user.resolveIsMatched(fallback = isMatchedWithUser)
         currentMyAction = user.resolveMyAction(fallback = currentMyAction)
         updateActionBar()
@@ -362,7 +380,11 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
         // Profile Photo & Cover (FAST LOADING - ZERO SHIMMER!)
         val photoUrl = user.effectivePhoto
-        val coverUrl = user.effectiveCover // Only real cover photo, does NOT fallback to avatar!
+        val coverUrl = user.effectiveCover.ifBlank {
+            user.coverPhotoUrl?.takeIf { it.isNotBlank() }
+                ?: user.photos?.firstOrNull()?.effectiveUrl?.takeIf { it.isNotBlank() }
+                ?: photoUrl
+        }
 
         FastImageHelper.loadDirect(
             draweeView = binding.ivAvatar,
@@ -373,7 +395,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
         FastImageHelper.loadDirect(
             draweeView = binding.ivCoverPhoto,
             url = coverUrl.takeIf { it.isNotBlank() },
-            fallbackRes = R.drawable.bg_cover_placeholder
+            fallbackRes = R.drawable.img_login
         )
 
         // Voice Intro (Matching iOS Image 1)

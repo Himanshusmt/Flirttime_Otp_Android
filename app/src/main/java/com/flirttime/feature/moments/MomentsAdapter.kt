@@ -24,6 +24,7 @@ class MomentsAdapter(
     companion object {
         private const val VIEW_TYPE_ITEM = 0
         private const val VIEW_TYPE_LOADING = 1
+        const val PAYLOAD_LIKE_UPDATE = "payload_like_update"
     }
 
     private var isLoadingFooterVisible: Boolean = false
@@ -43,6 +44,31 @@ class MomentsAdapter(
             posts.removeAt(index)
             notifyItemRemoved(index)
         }
+    }
+
+    fun removePostsByAuthor(authorId: String) {
+        val iterator = posts.iterator()
+        var changed = false
+        while (iterator.hasNext()) {
+            val item = iterator.next()
+            if (item.userId == authorId) {
+                iterator.remove()
+                changed = true
+            }
+        }
+        if (changed) {
+            notifyDataSetChanged()
+        }
+    }
+
+    fun notifyLikeChanged(position: Int) {
+        if (position in posts.indices) {
+            notifyItemChanged(position, PAYLOAD_LIKE_UPDATE)
+        }
+    }
+
+    fun findPostPosition(postId: String): Int {
+        return posts.indexOfFirst { it.id == postId }
     }
 
     fun setLoadingFooter(visible: Boolean) {
@@ -82,6 +108,18 @@ class MomentsAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MomentViewHolder && position < posts.size) {
             holder.bind(posts[position])
+        }
+    }
+
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isNotEmpty() && payloads.contains(PAYLOAD_LIKE_UPDATE) && holder is MomentViewHolder && position < posts.size) {
+            holder.updateLikeUi(posts[position])
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
         }
     }
 
@@ -210,7 +248,8 @@ class MomentsAdapter(
                     .start()
 
                 updateLikeUi(post)
-                onLikeClick?.invoke(post, adapterPosition)
+                val pos = adapterPosition
+                onLikeClick?.invoke(post, pos)
             }
 
             // Comment Action
@@ -229,14 +268,16 @@ class MomentsAdapter(
             }
         }
 
-        private fun updateLikeUi(post: MomentPost) {
+        internal fun updateLikeUi(post: MomentPost) {
             binding.tvLikeCount.text = post.likeCount.toString()
             if (post.isLiked) {
                 binding.ivLikeIcon.setImageResource(R.drawable.ic_thread_heart_filled)
                 binding.ivLikeIcon.imageTintList = null
+                binding.ivLikeIcon.clearColorFilter()
             } else {
                 binding.ivLikeIcon.setImageResource(R.drawable.ic_thread_heart)
                 binding.ivLikeIcon.imageTintList = null
+                binding.ivLikeIcon.clearColorFilter()
             }
         }
 

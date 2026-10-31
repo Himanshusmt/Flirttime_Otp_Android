@@ -25,7 +25,7 @@
                 android:id="@+id/coverContainer"
                 android:layout_width="match_parent"
                 android:layout_height="260dp"
-                android:background="#222226"
+                android:background="#FFE8EC"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.facebook.drawee.view.SimpleDraweeView
