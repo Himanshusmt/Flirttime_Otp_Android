@@ -124,6 +124,10 @@ interface MainApiService {
     @GET("api/v1/wallet/balance")
     suspend fun getWalletBalance(): ApiResponse<WalletBalanceData>
 
+    /** The signed-in user's current Premium membership (iOS `AppEndPoint.mySubscription`). Parsed manually. */
+    @GET("api/v1/subscriptions/my")
+    suspend fun getMySubscription(): com.google.gson.JsonObject
+
     @GET("api/v1/notifications/counts")
     suspend fun getNotificationCounts(): ApiResponse<NotificationCountsResponseData>
 
@@ -183,6 +187,13 @@ interface MainApiService {
         @Path("momentId") momentId: String,
         @Body request: ToggleLikeRequest? = null
     ): ApiResponse<MomentLikeResponseData>
+
+    @GET("api/v1/moments/{momentId}/likes")
+    suspend fun getMomentLikes(
+        @Path("momentId") momentId: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 30
+    ): ApiResponse<com.flirttime.feature.moments.MomentLikesResponseData>
 
     @DELETE("api/v1/moments/{momentId}")
     suspend fun deleteMoment(

@@ -110,6 +110,22 @@ class MomentsRepositoryImpl(
         }
     }.flowOn(Dispatchers.IO)
 
+    override fun getMomentLikes(
+        momentId: String,
+        page: Int,
+        limit: Int
+    ): Flow<Resource<MomentLikesResponseData>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.getMomentLikes(momentId = momentId, page = page, limit = limit)
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(result.data))
+            is Resource.Error -> emit(Resource.Error(message = result.message, code = result.code, cause = result.cause, errorBody = result.errorBody))
+            is Resource.Loading -> Unit
+        }
+    }.flowOn(Dispatchers.IO)
+
     override fun deleteMoment(momentId: String): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading)
         val result = safeApiCall {

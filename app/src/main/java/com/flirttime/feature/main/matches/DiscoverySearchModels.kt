@@ -235,7 +235,13 @@ data class SuperLikesLimitDto(
     @SerializedName("userCoins") val userCoins: Int? = null
 )
 
-// 5. Wallet Balance
+// 5. Wallet Balance (GET /api/v1/wallet/balance)
+// Mirrors iOS `WalletBalanceData`: the backend sends `coins`; `coin_balance` / `balance` are accepted aliases.
 data class WalletBalanceData(
-    @SerializedName("balance") val balance: Int = 0
-)
+    @SerializedName("coins") val coins: Int? = null,
+    @SerializedName("coin_balance") val coinBalance: Int? = null,
+    @SerializedName("balance") val rawBalance: Int? = null
+) {
+    val balance: Int
+        get() = (coins ?: coinBalance ?: rawBalance ?: 0).coerceAtLeast(0)
+}

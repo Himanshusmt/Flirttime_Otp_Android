@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS MomentsTheme.brandGradient: #D92B2B -> #FA4D5E -> #FF856B -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <gradient
+        android:angle="315"
+        android:centerColor="#FA4D5E"
+        android:endColor="#FF856B"
+        android:startColor="#D92B2B"
+        android:type="linear" />
+</shape>

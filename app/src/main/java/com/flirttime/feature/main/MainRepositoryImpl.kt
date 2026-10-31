@@ -9,6 +9,8 @@ import com.flirttime.Resource
 import com.flirttime.core.common.MultipartHelper
 import com.flirttime.core.database.SessionManager
 import com.flirttime.core.network.safeApiCall
+import com.flirttime.core.network.safeRawApiCall
+import com.flirttime.feature.subscription.MySubscription
 import com.flirttime.feature.auth.AuthUserDto
 import com.flirttime.feature.main.explore.InteractionsResponseData
 import com.flirttime.feature.profile.AudioIntroDto
@@ -286,6 +288,14 @@ class MainRepositoryImpl(
         }
     }.flowOn(Dispatchers.IO)
 
+    override fun getMySubscription(): Flow<Resource<MySubscription?>> = flow {
+        when (val result = safeRawApiCall { mainApiService.getMySubscription() }) {
+            is Resource.Success -> emit(Resource.Success(MySubscription.fromResponse(result.data)))
+            is Resource.Error -> emit(result)
+            is Resource.Loading -> Unit
+        }
+    }.flowOn(Dispatchers.IO)
+
     override fun getMyFullProfile(): Flow<Resource<MyFullProfileData>> = flow {
         emit(Resource.Loading)
         val result = safeApiCall {
@@ -300,6 +310,16 @@ class MainRepositoryImpl(
                 ?: profile?.username?.takeIf { it.isNotBlank() }
                 ?: sessionManager.getFullName().ifBlank { sessionManager.getFirstName() }.ifBlank { "User" }
 
+            // Header name mirrors iOS `headerName`: live username first, then display name.
+            val headerName = listOf(profile?.username, profile?.displayName, sessionManager.getUsername())
+                .mapNotNull { it?.trim()?.takeIf(String::isNotEmpty) }
+                .firstOrNull()
+                .orEmpty()
+
+            // Voice intro is only playable once the server has finished processing it (status == "ready").
+            val playableVoice = envelope.voiceIntro?.takeIf { it.isPlayable }
+
+            // iOS: location text is "City, State"; avatar is the primary gallery photo, else `profilePhoto`.
             val parsed = MyFullProfileData(
                 name = resolvedName,
                 fullName = profile?.fullName ?: resolvedName,
@@ -307,17 +327,23 @@ class MainRepositoryImpl(
                 dateOfBirth = sessionManager.getDob(),
                 gender = sessionManager.getGender(),
                 age = profile?.age,
-                location = profile?.city ?: profile?.state ?: sessionManager.getLocation(),
+                location = profile?.locationText?.takeIf { it.isNotBlank() } ?: sessionManager.getLocation(),
                 bio = profile?.bio ?: profile?.about ?: sessionManager.getBio(),
-                completionPercent = profile?.completionPercentage ?: 90,
+                completionPercent = (profile?.completionPercentage ?: 0).coerceIn(0, 100),
                 isVerified = profile?.isVerified ?: sessionManager.isVerified(),
-                profilePhotoUrl = profile?.profilePhoto?.url ?: sessionManager.getProfileImageUri().ifBlank { null },
-                coverPhotoUrl = profile?.coverPhoto?.url ?: sessionManager.getCoverPhotoUrl().ifBlank { null },
-                voiceIntroUrl = envelope.voiceIntro?.effectiveUrl ?: sessionManager.getAudioIntroUrl().ifBlank { null },
-                voiceDuration = envelope.voiceIntro?.duration ?: sessionManager.getAudioIntroDuration(),
+                profilePhotoUrl = profile?.avatarUrl ?: sessionManager.getProfileImageUri().ifBlank { null },
+                coverPhotoUrl = (profile?.coverPhoto?.url ?: profile?.coverPhoto?.thumbnailUrl)
+                    ?.takeIf { it.isNotBlank() }
+                    ?: sessionManager.getCoverPhotoUrl().ifBlank { null },
+                voiceIntroUrl = playableVoice?.effectiveUrl,
+                voiceDuration = playableVoice?.duration ?: 0,
                 photos = profile?.photos ?: emptyList(),
-                interests = resolveInterestsWithDefaultEmojis(envelope.interests ?: emptyList()),
-                moreAboutMe = envelope.moreAboutMe
+                interests = resolveInterestsWithDefaultEmojis(
+                    (envelope.interests ?: emptyList()).sortedBy { it.displayOrder ?: Int.MAX_VALUE }
+                ),
+                moreAboutMe = envelope.moreAboutMe,
+                isSubscribed = envelope.isSubscribed ?: profile?.isSubscribed ?: false,
+                headerName = headerName
             )
 
             if (parsed.fullName.isNotBlank()) sessionManager.setFullName(parsed.fullName)
@@ -365,7 +391,9 @@ class MainRepositoryImpl(
             profilePhotoUrl = sessionManager.getProfileImageUri().ifBlank { null },
             coverPhotoUrl = sessionManager.getCoverPhotoUrl().ifBlank { null },
             voiceIntroUrl = sessionManager.getAudioIntroUrl().ifBlank { null },
-            voiceDuration = sessionManager.getAudioIntroDuration()
+            voiceDuration = sessionManager.getAudioIntroDuration(),
+            isSubscribed = false,
+            isOfflineFallback = true
         )
         emit(Resource.Success(fallback))
     }.flowOn(Dispatchers.IO)

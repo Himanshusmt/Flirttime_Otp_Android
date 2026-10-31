@@ -224,15 +224,19 @@
 
         </LinearLayout>
 
-        <!-- 6. User Bio / Description (Reduced line spacing as requested) -->
+        <!-- 6. User Bio / Description (Reduced line spacing as requested, tap to expand/collapse) -->
         <TextView
             android:id="@+id/tvBio"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="28dp"
             android:layout_marginTop="14dp"
+            android:clickable="true"
+            android:ellipsize="end"
+            android:focusable="true"
             android:fontFamily="@font/fredokaregular"
             android:gravity="center"
+            android:maxLines="3"
             android:textColor="#3A3A3C"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -717,55 +721,61 @@
 
         </LinearLayout>
 
-        <!-- 10. Component: "Enjoy All Benefits" Premium Banner -->
-        <LinearLayout
-            android:id="@+id/cardPremiumBanner"
+        <!-- Quick Moments Hint (Shown when user has no moments yet, matching iOS) -->
+        <TextView
+            android:id="@+id/tvQuickMomentsHint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/bg_card_premium_banner"
-            android:clickable="true"
-            android:elevation="4dp"
-            android:focusable="true"
-            android:orientation="horizontal"
-            android:paddingHorizontal="18dp"
-            android:paddingVertical="18dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/fredokaregular"
+            android:text="Share a quick photo or thought. People can react and reply to it."
+            android:textColor="#757575"
+            android:textSize="13sp"
+            android:visibility="gone"
+            tools:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutQuickMomentsList">
+            app:layout_constraintTop_toBottomOf="@+id/layoutQuickMomentsList" />
 
-            <!-- Crown Icon with Concentric Rings -->
+        <!-- 10. Component: "My Coins" Card (Matching iOS ProfileCoinsCard) -->
+        <LinearLayout
+            android:id="@+id/cardCoins"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_card_coins"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvQuickMomentsHint">
+
+            <!-- White Circular Badge for Coin Icon (44dp x 44dp) -->
             <FrameLayout
-                android:layout_width="62dp"
-                android:layout_height="62dp"
-                android:layout_gravity="top"
-                android:background="@drawable/bg_circle_translucent_white">
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_circle_white_container">
 
-                <!-- Inner White Circle -->
-                <FrameLayout
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/bg_circle_white_container">
-
-                    <!-- Gold Crown Icon -->
-                    <ImageView
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="Premium Crown"
-                        android:src="@drawable/ic_crown_gold" />
-
-                </FrameLayout>
+                    android:contentDescription="Coin Icon"
+                    android:src="@drawable/ic_coin_profile" />
 
             </FrameLayout>
 
-            <!-- Banner Text Details & CTA Button -->
+            <!-- Texts: Title, Balance, Subtitle -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -773,42 +783,447 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/fredokabold"
-                    android:text="Enjoy All Benefits"
-                    android:textColor="@color/white"
-                    android:textSize="18.5sp"
+                    android:text="My Coins"
+                    android:textColor="#EA3355"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/fredokaregular"
-                    android:lineSpacingExtra="2dp"
-                    android:text="Unlimited swiping, see who likes you and match without ads."
-                    android:textColor="#F3FFFFFF"
-                    android:textSize="12.5sp" />
-
-                <!-- "Upgrade to premium" Pill Button -->
-                <TextView
-                    android:id="@+id/btnUpgradePremium"
+                    android:id="@+id/tvCoinsBalance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:background="@drawable/bg_btn_pill_white"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:fontFamily="@font/fredokasemibold"
-                    android:gravity="center"
-                    android:paddingHorizontal="24dp"
-                    android:paddingVertical="9dp"
-                    android:text="Upgrade to premium"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/fredokabold"
+                    android:text="0 coins"
                     android:textColor="#EA3355"
-                    android:textSize="14sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:text="For Super Likes, gifts and more"
+                    android:textColor="#757575"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
+            <!-- "Get coins" Pill Button -->
+            <TextView
+                android:id="@+id/btnGetCoins"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_btn_pill_red"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokabold"
+                android:gravity="center"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="9dp"
+                android:text="Get coins"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
         </LinearLayout>
+
+        <!-- 10.1 Component: Subscription Section (Either Premium Banner or Membership Card) -->
+        <FrameLayout
+            android:id="@+id/containerSubscription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardCoins">
+
+            <!-- State A: Active Membership Card (accordion, matches iOS membership card) -->
+            <LinearLayout
+                android:id="@+id/cardMembership"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/bg_card_coins"
+                android:orientation="vertical"
+                android:padding="14dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <!-- Header row (tap toggles details) -->
+                <LinearLayout
+                    android:id="@+id/layoutMembershipHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_circle_white_container">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Premium Crown"
+                            android:src="@drawable/ic_crown_gold" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredokabold"
+                                android:text="You're a Premium user"
+                                android:textColor="#EA3355"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvMembershipStatus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:background="@drawable/bg_chip_membership_active"
+                                android:fontFamily="@font/fredokabold"
+                                android:paddingHorizontal="6dp"
+                                android:paddingVertical="2dp"
+                                android:text="ACTIVE"
+                                android:textColor="#28A745"
+                                android:textSize="9.5sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvMembershipSubtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:fontFamily="@font/fredokaregular"
+                            android:text="Unlimited swiping and VIP features"
+                            android:textColor="#757575"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/ivMembershipChevron"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Toggle membership details"
+                        android:src="@drawable/ic_chevron_down_red" />
+                </LinearLayout>
+
+                <!-- Expandable details -->
+                <LinearLayout
+                    android:id="@+id/layoutMembershipDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvMembershipPlanName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredokabold"
+                        android:textColor="#2B2B2B"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:text="Weekly Premium" />
+
+                    <TextView
+                        android:id="@+id/tvMembershipPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:textColor="#EA3355"
+                        android:textSize="14sp"
+                        tools:text="₹199 / weekly" />
+
+                    <TextView
+                        android:id="@+id/tvMembershipAutoRenew"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/fredokaregular"
+                        android:textColor="#757575"
+                        android:textSize="12sp"
+                        tools:text="Auto-renewal On · Next on 7 Nov 2026" />
+
+                    <!-- Days-left banner (last 5 days only) -->
+                    <LinearLayout
+                        android:id="@+id/layoutMembershipDaysBanner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_membership_info_box"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tvMembershipDaysTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokabold"
+                            android:textColor="#EA3355"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            tools:text="3 days left" />
+
+                        <TextView
+                            android:id="@+id/tvMembershipDaysSubtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/fredokaregular"
+                            android:textColor="#757575"
+                            android:textSize="12sp"
+                            tools:text="Subscription ends soon" />
+                    </LinearLayout>
+
+                    <!-- Started / Renews | Expires -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/boxMembershipStarted"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_membership_info_box"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredokaregular"
+                                android:text="Started"
+                                android:textColor="#757575"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:id="@+id/tvMembershipStarted"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:fontFamily="@font/fredokasemibold"
+                                android:textColor="#2B2B2B"
+                                android:textSize="13sp"
+                                tools:text="31 Oct 2026" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/boxMembershipEnds"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_membership_info_box"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:id="@+id/tvMembershipEndsLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredokaregular"
+                                android:text="Expires"
+                                android:textColor="#757575"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:id="@+id/tvMembershipEnds"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:fontFamily="@font/fredokasemibold"
+                                android:textColor="#2B2B2B"
+                                android:textSize="13sp"
+                                tools:text="7 Nov 2026" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Benefits pill + Manage -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_btn_pill_outline_red"
+                            android:fontFamily="@font/fredokabold"
+                            android:gravity="center"
+                            android:paddingHorizontal="14dp"
+                            android:paddingVertical="7dp"
+                            android:text="Benefits"
+                            android:textColor="#EA3355"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/btnManageMembership"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_btn_pill_red"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:fontFamily="@font/fredokabold"
+                            android:gravity="center"
+                            android:paddingHorizontal="18dp"
+                            android:paddingVertical="9dp"
+                            android:text="Manage"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:fontFamily="@font/fredokabold"
+                        android:text="What you get"
+                        android:textColor="#2B2B2B"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutMembershipBenefits"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:orientation="vertical" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- State B: "Enjoy All Benefits" Premium Banner (When isSubscribed = false) -->
+            <LinearLayout
+                android:id="@+id/cardPremiumBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:background="@drawable/bg_card_premium_banner"
+                android:clickable="true"
+                android:elevation="4dp"
+                android:focusable="true"
+                android:orientation="horizontal"
+                android:paddingHorizontal="18dp"
+                android:paddingVertical="18dp"
+                android:visibility="visible">
+
+                <!-- Crown Icon with Concentric Rings -->
+                <FrameLayout
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"
+                    android:layout_gravity="top"
+                    android:background="@drawable/bg_circle_translucent_white">
+
+                    <!-- Inner White Circle -->
+                    <FrameLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_circle_white_container">
+
+                        <!-- Gold Crown Icon -->
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Premium Crown"
+                            android:src="@drawable/ic_crown_gold" />
+
+                    </FrameLayout>
+
+                </FrameLayout>
+
+                <!-- Banner Text Details & CTA Button -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredokabold"
+                        android:text="Enjoy All Benefits"
+                        android:textColor="@color/white"
+                        android:textSize="18.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/fredokaregular"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Unlimited swiping, see who likes you and match without ads."
+                        android:textColor="#F3FFFFFF"
+                        android:textSize="12.5sp" />
+
+                    <!-- "Upgrade to premium" Pill Button -->
+                    <TextView
+                        android:id="@+id/btnUpgradePremium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/bg_btn_pill_white"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:gravity="center"
+                        android:paddingHorizontal="24dp"
+                        android:paddingVertical="9dp"
+                        android:text="Upgrade to premium"
+                        android:textColor="#EA3355"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </FrameLayout>
 
         <!-- 11. Component: "My Interests" Header Row -->
         <LinearLayout
@@ -821,7 +1236,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardPremiumBanner">
+            app:layout_constraintTop_toBottomOf="@+id/containerSubscription">
 
             <TextView
                 android:layout_width="0dp"
@@ -931,7 +1346,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layoutMyMomentsHeader">
 
-            <!-- My Moments 2x2 Grid RecyclerView -->
+            <!-- My Moments 3-Column Grid RecyclerView (Matching iOS) -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMyMoments"
                 android:layout_width="match_parent"
@@ -939,10 +1354,10 @@
                 android:layout_marginHorizontal="15dp"
                 android:nestedScrollingEnabled="false"
                 android:overScrollMode="never"
-                tools:itemCount="4"
+                tools:itemCount="6"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:listitem="@layout/item_profile_moment"
-                tools:spanCount="2" />
+                tools:spanCount="3" />
 
             <!-- Empty State for My Moments (Shown if user has 0 moments) -->
             <LinearLayout
