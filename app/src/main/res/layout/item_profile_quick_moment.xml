@@ -10,44 +10,70 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
+    <!-- 70dp bubble: brand-gradient ring, 3dp white gap, 58dp content (matches iOS ProfileQuickMomentsView) -->
     <FrameLayout
-        android:layout_width="68dp"
-        android:layout_height="68dp">
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:clipChildren="false">
 
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/ivQuickMomentThumb"
-            android:layout_width="62dp"
-            android:layout_height="62dp"
-            android:layout_gravity="center"
-            android:contentDescription="Quick Moment"
-            app:actualImageScaleType="centerCrop"
-            app:placeholderImage="@drawable/ic_settings_person"
-            app:roundAsCircle="true"
-            app:roundingBorderColor="#EA3355"
-            app:roundingBorderWidth="2.5dp" />
-
-        <!-- Optional Floating View/Reaction Badge -->
         <FrameLayout
-            android:id="@+id/layoutBadge"
-            android:layout_width="wrap_content"
-            android:layout_height="18dp"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@drawable/bg_pill_pink_badge"
-            android:paddingHorizontal="6dp"
-            android:visibility="gone"
-            tools:visibility="visible">
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/bg_quick_moment_ring">
 
-            <TextView
-                android:id="@+id/tvBadgeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <FrameLayout
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:layout_gravity="center"
-                android:fontFamily="@font/fredokabold"
-                android:textColor="@color/white"
-                android:textSize="9sp"
-                tools:text="🔥 3" />
+                android:background="@drawable/bg_quick_moment_gap">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/ivQuickMomentThumb"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="Quick Moment"
+                    app:actualImageScaleType="centerCrop"
+                    app:placeholderImage="@drawable/ic_settings_person"
+                    app:roundAsCircle="true" />
+
+                <!-- Text quick moment: gradient/colour background with the text (iOS text bubble) -->
+                <TextView
+                    android:id="@+id/tvQuickMomentText"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/fredokabold"
+                    android:gravity="center"
+                    android:maxLines="3"
+                    android:padding="8dp"
+                    android:textColor="@color/white"
+                    android:textSize="9sp"
+                    android:visibility="gone"
+                    tools:text="Hello" />
+
+            </FrameLayout>
 
         </FrameLayout>
+
+        <!-- Activity badge: top reaction emoji + (reactions + replies) -->
+        <TextView
+            android:id="@+id/tvBadgeText"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="-8dp"
+            android:background="@drawable/bg_quick_moment_activity_badge"
+            android:fontFamily="@font/fredokabold"
+            android:gravity="center"
+            android:minWidth="36dp"
+            android:paddingHorizontal="6dp"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:visibility="gone"
+            tools:text="🔥 3"
+            tools:visibility="visible" />
 
     </FrameLayout>
 
@@ -55,13 +81,13 @@
         android:id="@+id/tvQuickMomentLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="10dp"
         android:ellipsize="end"
         android:fontFamily="@font/fredokamedium"
         android:maxLines="1"
-        android:maxWidth="72dp"
-        android:textColor="#595959"
+        android:maxWidth="74dp"
+        android:textColor="#757575"
         android:textSize="12sp"
-        tools:text="2h ago" />
+        tools:text="2h" />
 
 </LinearLayout>

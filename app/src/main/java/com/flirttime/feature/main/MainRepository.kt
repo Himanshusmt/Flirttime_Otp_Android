@@ -14,6 +14,7 @@ import com.flirttime.feature.profile.OtherUserProfileResponseData
 import com.flirttime.feature.profile.UpdateProfileRequest
 import com.flirttime.feature.profile.UserInterestDto
 import com.flirttime.feature.profile.UserPhotoDto
+import com.flirttime.feature.subscription.MySubscription
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -40,6 +41,9 @@ interface MainRepository {
     // 2. PROFILE DETAILS & MEDIA (ME)
     // ==========================================
     fun getMyFullProfile(): Flow<Resource<MyFullProfileData>>
+
+    /** `GET api/v1/subscriptions/my`. Emits `null` data-equivalent as `Success(null)` when the user has no membership. */
+    fun getMySubscription(): Flow<Resource<MySubscription?>>
 
     fun updateProfile(request: UpdateProfileRequest): Flow<Resource<AuthUserDto>>
 

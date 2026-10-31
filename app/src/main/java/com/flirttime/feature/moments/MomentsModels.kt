@@ -1,6 +1,7 @@
 package com.flirttime.feature.moments
 
 import com.flirttime.feature.moments.MomentPost
+import com.google.gson.JsonElement
 import com.google.gson.annotations.SerializedName
 
 data class MomentsFeedResponseData(
@@ -41,8 +42,17 @@ data class MomentDto(
     val timeAgo: String? = null,
     @SerializedName("locationLabel")
     val locationLabel: String? = null,
+    /** Plain string or `{ "name": "Mumbai" }` (iOS `MomentLocation`). */
     @SerializedName("location")
-    val location: MomentLocationDto? = null,
+    val location: JsonElement? = null,
+    @SerializedName("creatorId")
+    val creatorId: String? = null,
+    @SerializedName("createdAt")
+    val createdAt: String? = null,
+    @SerializedName("photo")
+    val photo: String? = null,
+    @SerializedName("totalMomentGifts")
+    val totalMomentGifts: Int? = null,
     @SerializedName("creator")
     val creator: MomentCreatorDto? = null,
     @SerializedName("media")
@@ -100,6 +110,18 @@ data class MomentDto(
     @SerializedName("viewerReaction")
     val viewerReaction: String? = null
 ) {
+    val locationName: String?
+        get() {
+            val element = location ?: return null
+            if (element.isJsonNull) return null
+            if (element.isJsonPrimitive) return element.asString.trim().takeIf { it.isNotEmpty() }
+            if (!element.isJsonObject) return null
+            val obj = element.asJsonObject
+            return listOf("name", "label", "city").firstNotNullOfOrNull { key ->
+                obj.get(key)?.takeIf { it.isJsonPrimitive }?.asString?.trim()?.takeIf { it.isNotEmpty() }
+            }
+        }
+
     val displayImageUrl: String?
         get() = firstImageUrl?.takeIf { it.isNotBlank() }
             ?: thumbnailUrl?.takeIf { it.isNotBlank() }
@@ -186,10 +208,16 @@ data class MomentMediaDto(
     val mediaUrl: String? = null,
     @SerializedName("thumbnailUrl")
     val thumbnailUrl: String? = null,
+    @SerializedName("publicUrl")
+    val publicUrl: String? = null,
+    @SerializedName("url")
+    val url: String? = null,
     @SerializedName("mediaType")
     val mediaType: String? = null,
     @SerializedName("displayOrder")
-    val displayOrder: Int? = null
+    val displayOrder: Int? = null,
+    @SerializedName("orderIndex")
+    val orderIndex: Int? = null
 )
 
 data class ToggleLikeRequest(
@@ -229,67 +257,78 @@ data class MomentsFeedResult(
     val totalCount: Int
 )
 
-fun MomentDto.toUiItem(): MomentPost {
-    val effectiveId = id ?: momentId.orEmpty()
-    val displayName = creator?.fullName?.takeIf { it.isNotBlank() }
+/**
+ * Maps an API moment onto the feed model exactly like iOS `MomentItem.vibe(fallbackAuthor:)`.
+ * `fallback*` values fill in moments that arrive without a `creator` (e.g. `moments/me`).
+ */
+fun MomentDto.toUiItem(
+    fallbackName: String? = null,
+    fallbackAvatarUrl: String? = null,
+    fallbackVerified: Boolean? = null,
+    fallbackLocation: String? = null,
+    fallbackUserId: String? = null
+): MomentPost {
+    val effectiveId = id?.takeIf { it.isNotBlank() } ?: momentId.orEmpty()
+
+    // iOS author.displayName: username first, then full name.
+    val displayName = creator?.username?.takeIf { it.isNotBlank() }
         ?: creator?.name?.takeIf { it.isNotBlank() }
-        ?: creator?.username?.takeIf { it.isNotBlank() }
+        ?: creator?.fullName?.takeIf { it.isNotBlank() }
+        ?: fallbackName?.takeIf { it.isNotBlank() }
         ?: "User"
 
     val avatar = creator?.profilePicture?.takeIf { it.isNotBlank() }
         ?: creator?.profilePhoto?.takeIf { it.isNotBlank() }
+        ?: fallbackAvatarUrl?.takeIf { it.isNotBlank() }
 
-    val verified = (creator?.isVerified == true) || (creator?.isFaceVerified == true)
+    val verified = creator?.isVerified ?: creator?.isFaceVerified ?: fallbackVerified ?: false
 
+    // Place tagged on the moment, then the author's own location.
     val loc = locationLabel?.takeIf { it.isNotBlank() }
-        ?: location?.name?.takeIf { it.isNotBlank() }
+        ?: locationName
         ?: creator?.city?.takeIf { it.isNotBlank() }
         ?: creator?.location?.takeIf { it.isNotBlank() }
+        ?: fallbackLocation?.takeIf { it.isNotBlank() }
 
-    val time = timeAgo?.takeIf { it.isNotBlank() }
-        ?: relativeAge?.takeIf { it.isNotBlank() }
+    // iOS shows its own relative time from createdAt ("now", "5m", "2h", "1d", "1w").
+    val time = com.flirttime.core.common.IsoDate.timeAgo(createdAt ?: publishedAt)
+        .ifBlank { timeAgo?.takeIf { it.isNotBlank() } ?: relativeAge?.takeIf { it.isNotBlank() }.orEmpty() }
 
     val locationAndTime = when {
-        loc != null && time != null -> "$loc · $time"
+        loc != null && time.isNotEmpty() -> "$loc · $time"
         loc != null -> loc
-        time != null -> time
-        else -> ""
+        else -> time
     }
 
     val extractedMediaUrls = media
-        ?.sortedBy { it.displayOrder ?: 0 }
-        ?.mapNotNull { it.imageUrl?.takeIf { url -> url.isNotBlank() } ?: it.mediaUrl?.takeIf { url -> url.isNotBlank() } }
+        ?.sortedBy { it.orderIndex ?: it.displayOrder ?: 0 }
+        ?.mapNotNull { item ->
+            listOf(item.imageUrl, item.mediaUrl, item.publicUrl, item.url, item.thumbnailUrl)
+                .firstOrNull { !it.isNullOrBlank() }
+        }
         ?: emptyList()
 
-    val fallbackMediaUrl = firstImageUrl?.takeIf { it.isNotBlank() }
-        ?: thumbnailUrl?.takeIf { it.isNotBlank() }
-        ?: imageUrl?.takeIf { it.isNotBlank() }
-        ?: mediaUrl?.takeIf { it.isNotBlank() }
+    val fallbackMediaUrl = listOf(imageUrl, photo, thumbnailUrl, firstImageUrl, mediaUrl)
+        .firstOrNull { !it.isNullOrBlank() }
     val finalMediaUrls = if (extractedMediaUrls.isNotEmpty()) extractedMediaUrls else listOfNotNull(fallbackMediaUrl)
 
-    val resolvedIsLiked = isLiked == true ||
-        hasLiked == true ||
-        isLike == true ||
-        isLikeSnake == true ||
-        isLikedByMe == true ||
-        likedByMe == true ||
-        liked == true ||
-        hasReacted == true ||
-        !viewerReaction.isNullOrBlank()
+    // iOS: isLiked ?? hasReacted ?? viewerReaction != nil
+    val resolvedIsLiked = isLiked ?: hasLiked ?: isLikedByMe ?: likedByMe ?: liked ?: isLike ?: isLikeSnake
+        ?: hasReacted ?: !viewerReaction.isNullOrBlank()
 
-    val resolvedLikes = likeCount ?: likesCount ?: likeCountSnake ?: likesCountSnake ?: 0
-    val resolvedComments = commentCount ?: commentsCount ?: commentCountSnake ?: 0
-    val resolvedGifts = giftsCount ?: giftCount ?: 0
+    val resolvedLikes = likesCount ?: likeCount ?: likeCountSnake ?: likesCountSnake ?: 0
+    val resolvedComments = commentsCount ?: commentCount ?: commentCountSnake ?: 0
+    val resolvedGifts = giftsCount ?: giftCount ?: totalMomentGifts ?: 0
 
     return MomentPost(
         id = effectiveId,
-        userId = creator?.userId ?: creator?.creatorId ?: creator?.id,
+        userId = creator?.userId ?: creator?.id ?: creator?.creatorId ?: creatorId ?: fallbackUserId,
         username = displayName,
         avatarUrl = avatar,
         avatarRes = null,
         isVerified = verified,
         locationAndTime = locationAndTime,
-        caption = caption.orEmpty(),
+        caption = caption?.trim().orEmpty(),
         mediaUrl = finalMediaUrls.firstOrNull(),
         mediaRes = null,
         mediaUrls = finalMediaUrls,
@@ -448,4 +487,42 @@ data class GiftSenderDto(
     @SerializedName("profilePicture") val profilePicture: String? = null,
     @SerializedName("profilePhoto") val profilePhoto: String? = null,
     @SerializedName("avatarUrl") val avatarUrl: String? = null
+)
+
+// ----------------- Moment likes (GET moments/{id}/likes) -----------------
+
+data class MomentLikePersonDto(
+    @SerializedName("id") val id: String? = null,
+    @SerializedName("userId") val userId: String? = null,
+    @SerializedName("name") val name: String? = null,
+    @SerializedName("username") val username: String? = null,
+    @SerializedName("fullName") val fullName: String? = null,
+    @SerializedName("profilePicture") val profilePicture: String? = null,
+    @SerializedName("profilePhoto") val profilePhoto: String? = null,
+    @SerializedName("profilePhotoUrl") val profilePhotoUrl: String? = null,
+    @SerializedName("avatar") val avatar: String? = null,
+    @SerializedName("isVerified") val isVerified: Boolean? = null,
+    @SerializedName("city") val city: String? = null
+) {
+    val displayName: String
+        get() = username?.takeIf { it.isNotBlank() } ?: name?.takeIf { it.isNotBlank() }
+            ?: fullName?.takeIf { it.isNotBlank() } ?: "Someone"
+
+    val photo: String?
+        get() = listOf(profilePicture, profilePhoto, profilePhotoUrl, avatar)
+            .firstOrNull { !it.isNullOrBlank() }?.trim()
+}
+
+data class MomentLikeDto(
+    @SerializedName("id") val id: String? = null,
+    @SerializedName("reaction") val reaction: String? = null,
+    @SerializedName("createdAt") val createdAt: String? = null,
+    @SerializedName("user") val user: MomentLikePersonDto? = null
+)
+
+data class MomentLikesResponseData(
+    @SerializedName("totalLikes") val totalLikes: Int? = null,
+    @SerializedName("page") val page: Int? = null,
+    @SerializedName("totalPages") val totalPages: Int? = null,
+    @SerializedName("likes") val likes: List<MomentLikeDto>? = null
 )

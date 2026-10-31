@@ -159,8 +159,51 @@ data class QuickMomentSlideDto(
     @SerializedName("reactionCount") val reactionCount: Int? = null,
     @SerializedName("repliesCount") val repliesCount: Int? = null,
     @SerializedName("replyCount") val replyCount: Int? = null,
-    @SerializedName("locationLabel") val locationLabel: String? = null
+    @SerializedName("locationLabel") val locationLabel: String? = null,
+    @SerializedName("totalReplies") val totalReplies: Int? = null,
+    /** `["😍"]`, `[{emoji, count}]` or `"😍🔥"` - same shapes iOS `QuickMoment.emojis(in:)` accepts. */
+    @SerializedName("topReactions", alternate = ["topEmojis"]) val topReactions: com.google.gson.JsonElement? = null
 ) {
+    /** Reactions + replies on the owner's own Quick Moment (iOS `activity` badge count). */
+    val activityCount: Int
+        get() = (reactionsCount ?: reactionCount ?: totalReactions ?: 0) +
+            (repliesCount ?: replyCount ?: totalReplies ?: 0)
+
+    /** Most used reaction emojis first. */
+    val topReactionEmojis: List<String>
+        get() {
+            val element = topReactions ?: return emptyList()
+            return when {
+                element.isJsonArray -> {
+                    val items = element.asJsonArray.toList()
+                    if (items.all { it.isJsonPrimitive }) {
+                        items.map { it.asString }.filter { it.isNotBlank() }
+                    } else {
+                        items.filter { it.isJsonObject }
+                            .map { it.asJsonObject }
+                            .sortedByDescending { it.get("count")?.takeIf { c -> c.isJsonPrimitive }?.asInt ?: 0 }
+                            .mapNotNull { (it.get("emoji") ?: it.get("reaction"))?.takeIf { e -> e.isJsonPrimitive }?.asString }
+                            .filter { it.isNotBlank() }
+                    }
+                }
+                element.isJsonPrimitive -> {
+                    val text = element.asString
+                    val result = mutableListOf<String>()
+                    var i = 0
+                    while (i < text.length) {
+                        val cp = text.codePointAt(i)
+                        val len = Character.charCount(cp)
+                        if (cp > 0x2000 && !Character.isLetterOrDigit(cp) && !Character.isWhitespace(cp)) {
+                            result.add(text.substring(i, i + len))
+                        }
+                        i += len
+                    }
+                    result
+                }
+                else -> emptyList()
+            }
+        }
+
     val displayImageUrl: String?
         get() = mediaUrl?.ifBlank { null } ?: imageUrl?.ifBlank { null } ?: thumbnailUrl?.ifBlank { null }
 
