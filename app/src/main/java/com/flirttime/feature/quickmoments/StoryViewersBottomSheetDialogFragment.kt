@@ -2,6 +2,7 @@ package com.flirttime.feature.quickmoments
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.flirttime.R
@@ -31,6 +35,12 @@ class StoryViewersBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private lateinit var viewersAdapter: StoryViewersAdapter
 
     private var momentId: String = ""
+    var onDismissListener: (() -> Unit)? = null
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismissListener?.invoke()
+    }
 
     override fun getTheme(): Int = R.style.TransparentBottomSheetDialogTheme
 
@@ -50,6 +60,15 @@ class StoryViewersBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val navBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            v.updatePadding(bottom = navBars.bottom + (16 * resources.displayMetrics.density).toInt())
+            insets
+        }
+        binding.root.post {
+            _binding?.root?.let { ViewCompat.requestApplyInsets(it) }
+        }
 
         viewersAdapter = StoryViewersAdapter(
             onViewerClick = { targetUserId ->

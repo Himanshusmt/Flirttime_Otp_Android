@@ -195,6 +195,17 @@
 
     <style name="TransparentBottomSheetDialogTheme" parent="FlirtTimeBottomSheetDialogTheme" />
 
+    <!-- Fullscreen Immersive Story Viewer Dialog Theme: Never shrinks or resizes on keyboard -->
+    <style name="FullScreenStoryDialogTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowSoftInputMode">adjustNothing</item>
+    </style>
+
     <!-- Full-Screen Immersive Quick Moments Story Dialog Theme -->
     <style name="FullScreenQuickMomentDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/FlirtTimeBottomSheetModal</item>

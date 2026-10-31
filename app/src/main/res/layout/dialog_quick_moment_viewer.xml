@@ -32,19 +32,83 @@
             android:gravity="center"
             android:paddingHorizontal="28dp"
             android:textColor="@color/white"
-            android:textSize="26sp"
+            android:textSize="28sp"
             android:textStyle="bold"
             tools:text="Hii" />
 
     </FrameLayout>
+
+    <!-- Floating Emojis Particles Container -->
+    <FrameLayout
+        android:id="@+id/layoutFloatingEmojisContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false" />
+
+    <!-- Navigation Arrow: Previous (<) -->
+    <ImageView
+        android:id="@+id/btnViewerPrev"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="14dp"
+        android:background="@drawable/bg_circle_translucent_action"
+        android:clickable="true"
+        android:contentDescription="Previous Story"
+        android:focusable="true"
+        android:padding="9dp"
+        android:src="@drawable/ic_chevron_back"
+        app:tint="@color/white" />
+
+    <!-- Navigation Arrow: Next (>) -->
+    <ImageView
+        android:id="@+id/btnViewerNext"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="14dp"
+        android:background="@drawable/bg_circle_translucent_action"
+        android:clickable="true"
+        android:contentDescription="Next Story"
+        android:focusable="true"
+        android:padding="9dp"
+        android:scaleX="-1"
+        android:src="@drawable/ic_chevron_back"
+        app:tint="@color/white" />
+
+    <!-- Floating "Emoji Sent to User" Pill -->
+    <LinearLayout
+        android:id="@+id/layoutReactionSentPill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="96dp"
+        android:background="@drawable/bg_pill_story_sent_reaction"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="7dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/tvReactionSentPillText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredokasemibold"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            tools:text="🔥 Sent to Tushar" />
+
+    </LinearLayout>
 
     <!-- Top Overlay: Progress Bar & Author Header -->
     <LinearLayout
         android:id="@+id/layoutViewerTopContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="12dp">
+        android:orientation="vertical">
 
         <!-- Progress Bar at very top (5-sec Story Timeline) -->
         <ProgressBar
@@ -52,18 +116,19 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="3dp"
-            android:layout_marginHorizontal="12dp"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginBottom="12dp"
             android:indeterminate="false"
             android:max="1000"
             android:progress="0"
             android:progressDrawable="@drawable/bg_story_progress_bar" />
 
-        <!-- Header: Avatar + Name + More Menu + Close -->
+        <!-- Header: Avatar + Name + More Menu (No Close Button) -->
         <RelativeLayout
+            android:id="@+id/layoutHeaderRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="12dp">
+            android:paddingHorizontal="16dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -119,37 +184,17 @@
 
             </LinearLayout>
 
-            <!-- Actions Container: Menu (...) + Close (X) -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <!-- Actions: Only Menu (...) Button (Cross Button Removed per request) -->
+            <ImageView
+                android:id="@+id/btnViewerMenu"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/btnViewerMenu"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="@drawable/bg_circle_translucent_action"
-                    android:contentDescription="More options"
-                    android:padding="7dp"
-                    android:src="@drawable/ic_more_dots"
-                    app:tint="@color/white" />
-
-                <ImageView
-                    android:id="@+id/btnViewerClose"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_circle_translucent_action"
-                    android:contentDescription="Close"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_close"
-                    app:tint="@color/white" />
-
-            </LinearLayout>
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="More options"
+                android:padding="6dp"
+                android:src="@drawable/ic_more_vert_white" />
 
         </RelativeLayout>
 
@@ -162,8 +207,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="24dp">
+        android:paddingHorizontal="16dp">
 
         <!-- ===================================================================== -->
         <!-- CASE A: OWN STORY ACTIONS (Bottom Views Element -> Opens Viewers Sheet)-->
@@ -229,71 +273,119 @@
                 android:orientation="horizontal"
                 android:weightSum="6">
 
-                <TextView
+                <!-- 1. Love -->
+                <FrameLayout
                     android:id="@+id/btnReactLove"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="44dp"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:focusable="true"
-                    android:gravity="center"
-                    android:text="&#128525;"
-                    android:textSize="28sp" />
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
 
-                <TextView
+                    <ImageView
+                        android:id="@+id/ivReactLove"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="React Love"
+                        android:src="@drawable/ic_emoji_heart_eyes" />
+                </FrameLayout>
+
+                <!-- 2. Fire -->
+                <FrameLayout
                     android:id="@+id/btnReactFire"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="44dp"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:focusable="true"
-                    android:gravity="center"
-                    android:text="&#128293;"
-                    android:textSize="28sp" />
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
 
-                <TextView
+                    <ImageView
+                        android:id="@+id/ivReactFire"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="React Fire"
+                        android:src="@drawable/ic_emoji_fire" />
+                </FrameLayout>
+
+                <!-- 3. Laugh -->
+                <FrameLayout
                     android:id="@+id/btnReactLaugh"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="44dp"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:focusable="true"
-                    android:gravity="center"
-                    android:text="&#128514;"
-                    android:textSize="28sp" />
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
 
-                <TextView
+                    <ImageView
+                        android:id="@+id/ivReactLaugh"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="React Laugh"
+                        android:src="@drawable/ic_emoji_laugh" />
+                </FrameLayout>
+
+                <!-- 4. Wow -->
+                <FrameLayout
                     android:id="@+id/btnReactWow"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="44dp"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:focusable="true"
-                    android:gravity="center"
-                    android:text="&#128558;"
-                    android:textSize="28sp" />
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
 
-                <TextView
+                    <ImageView
+                        android:id="@+id/ivReactWow"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="React Wow"
+                        android:src="@drawable/ic_emoji_wow" />
+                </FrameLayout>
+
+                <!-- 5. Clap -->
+                <FrameLayout
                     android:id="@+id/btnReactClap"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="44dp"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:focusable="true"
-                    android:gravity="center"
-                    android:text="&#128079;"
-                    android:textSize="28sp" />
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
 
-                <TextView
+                    <ImageView
+                        android:id="@+id/ivReactClap"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="React Clap"
+                        android:src="@drawable/ic_emoji_clap" />
+                </FrameLayout>
+
+                <!-- 6. Heart -->
+                <FrameLayout
                     android:id="@+id/btnReactHeart"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="44dp"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:focusable="true"
-                    android:gravity="center"
-                    android:text="&#10084;&#65039;"
-                    android:textSize="28sp" />
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
+
+                    <ImageView
+                        android:id="@+id/ivReactHeart"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="React Heart"
+                        android:src="@drawable/ic_emoji_heart" />
+                </FrameLayout>
 
             </LinearLayout>
 
