@@ -52,16 +52,20 @@ class OtherUserProfileActivity : AppCompatActivity() {
     private val momentsAdapter by lazy {
         OtherUserMomentsAdapter(
             onMomentClick = { moment ->
-                Toast.makeText(this, moment.caption ?: "Moment clicked", Toast.LENGTH_SHORT).show()
+                openMoments(focusMomentId = moment.id)
             },
             onSeeAllClick = {
-                Toast.makeText(this, "See all moments", Toast.LENGTH_SHORT).show()
+                openMoments(focusMomentId = null)
             }
         )
     }
 
     private var targetUserId: String = ""
     private var currentUserName: String = "User"
+    private var currentUserAvatar: String? = null
+    private var isCurrentUserVerified: Boolean = false
+    private var isMatchedWithUser: Boolean = false
+    private var currentMyAction: String? = null
 
     // Media Player for Voice Intro
     private var mediaPlayer: MediaPlayer? = null
@@ -99,6 +103,10 @@ class OtherUserProfileActivity : AppCompatActivity() {
         val coverUrl = intent.getStringExtra(AppNavigator.EXTRA_COVER_PHOTO_URL)
         val city = intent.getStringExtra(AppNavigator.EXTRA_CITY)
         val bio = intent.getStringExtra(AppNavigator.EXTRA_BIO)
+        currentUserAvatar = photoUrl
+        isMatchedWithUser = intent.getBooleanExtra(AppNavigator.EXTRA_IS_MATCHED, false)
+        currentMyAction = intent.getStringExtra(AppNavigator.EXTRA_MY_ACTION)
+        updateActionBar()
 
         val initialData = if (targetUserId.isNotEmpty() && (!username.isNullOrEmpty() || !name.isNullOrEmpty())) {
             UserSearchItemDto(
@@ -108,9 +116,11 @@ class OtherUserProfileActivity : AppCompatActivity() {
                 name = name,
                 age = age,
                 profilePhotoUrl = photoUrl,
-                coverPhotoUrl = coverUrl,
+                coverPhotoUrl = coverUrl?.takeIf { it.isNotBlank() } ?: photoUrl,
                 city = city,
-                about = bio
+                about = bio,
+                isMatched = isMatchedWithUser,
+                myAction = currentMyAction
             )
         } else null
 
@@ -153,6 +163,20 @@ class OtherUserProfileActivity : AppCompatActivity() {
             viewModel.submitAction(targetUserId, "nope")
         }
 
+        binding.btnSuperLike.setOnClickListener {
+            animateButtonClick(it)
+            currentMyAction = "super_like"
+            updateActionBar()
+            viewModel.submitAction(targetUserId, "super_like")
+        }
+
+        binding.btnLike.setOnClickListener {
+            animateButtonClick(it)
+            currentMyAction = "like"
+            updateActionBar()
+            viewModel.submitAction(targetUserId, "like")
+        }
+
         binding.btnChat.setOnClickListener {
             animateButtonClick(it)
             AppNavigator.navigateTo(
@@ -162,8 +186,33 @@ class OtherUserProfileActivity : AppCompatActivity() {
         }
 
         binding.btnSeeAllMoments.setOnClickListener {
-            Toast.makeText(this, "See all moments", Toast.LENGTH_SHORT).show()
+            openMoments(focusMomentId = null)
         }
+    }
+
+    private fun openMoments(focusMomentId: String? = null) {
+        AppNavigator.navigateTo(
+            context = this@OtherUserProfileActivity,
+            destination = Destination.UserMoments(
+                userId = targetUserId,
+                userName = currentUserName,
+                focusMomentId = focusMomentId,
+                userAvatar = currentUserAvatar,
+                isVerified = isCurrentUserVerified
+            )
+        )
+    }
+
+    private fun updateActionBar() {
+        val action = currentMyAction?.lowercase()
+        val hasSuperLiked = action == "super_like"
+        val hasLiked = action == "like" || hasSuperLiked
+        val isMatched = isMatchedWithUser
+
+        binding.btnNope.visibility = View.VISIBLE
+        binding.btnLike.visibility = if (hasLiked) View.GONE else View.VISIBLE
+        binding.btnSuperLike.visibility = if (hasSuperLiked) View.GONE else View.VISIBLE
+        binding.btnChat.visibility = if (isMatched) View.VISIBLE else View.GONE
     }
 
     private fun showActionSheet() {
@@ -227,12 +276,21 @@ class OtherUserProfileActivity : AppCompatActivity() {
                     }
                 }
 
-                // 3. Action Events (Nope)
+                // 3. Action Events (Nope, Like, SuperLike)
                 launch {
-                    viewModel.actionEvent.collect { (action, _) ->
+                    viewModel.actionEvent.collect { (action, data) ->
                         if (action == "nope") {
                             Toast.makeText(this@OtherUserProfileActivity, "Passed", Toast.LENGTH_SHORT).show()
                             finish()
+                        } else {
+                            val didMatch = data?.isMatched == true
+                            if (didMatch) {
+                                isMatchedWithUser = true
+                            }
+                            currentMyAction = action
+                            updateActionBar()
+                            val msg = data?.message ?: if (action == "super_like") "Super Liked!" else "Liked!"
+                            Toast.makeText(this@OtherUserProfileActivity, msg, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -288,6 +346,11 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
     private fun bindUserToUi(user: UserSearchItemDto) {
         currentUserName = user.effectiveName.ifBlank { "User" }
+        currentUserAvatar = user.effectivePhoto
+        isCurrentUserVerified = user.isVerified == true
+        isMatchedWithUser = user.resolveIsMatched(fallback = isMatchedWithUser)
+        currentMyAction = user.resolveMyAction(fallback = currentMyAction)
+        updateActionBar()
 
         // Name & Age
         val displayName = currentUserName
@@ -317,7 +380,11 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
         // Profile Photo & Cover (FAST LOADING - ZERO SHIMMER!)
         val photoUrl = user.effectivePhoto
-        val coverUrl = user.effectiveCover // Only real cover photo, does NOT fallback to avatar!
+        val coverUrl = user.effectiveCover.ifBlank {
+            user.coverPhotoUrl?.takeIf { it.isNotBlank() }
+                ?: user.photos?.firstOrNull()?.effectiveUrl?.takeIf { it.isNotBlank() }
+                ?: photoUrl
+        }
 
         FastImageHelper.loadDirect(
             draweeView = binding.ivAvatar,
@@ -328,7 +395,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
         FastImageHelper.loadDirect(
             draweeView = binding.ivCoverPhoto,
             url = coverUrl.takeIf { it.isNotBlank() },
-            fallbackRes = R.drawable.bg_cover_placeholder
+            fallbackRes = R.drawable.img_login
         )
 
         // Voice Intro (Matching iOS Image 1)

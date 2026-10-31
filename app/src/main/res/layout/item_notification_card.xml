@@ -32,6 +32,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
+            app:actualImageScaleType="centerCrop"
             app:roundAsCircle="true" />
 
         <!-- Fallback System FlirtTime Logo Avatar -->

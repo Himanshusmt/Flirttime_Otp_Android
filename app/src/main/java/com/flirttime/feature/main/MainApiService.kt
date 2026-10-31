@@ -13,6 +13,7 @@ import com.flirttime.feature.main.matches.UserLimitsResponseData
 import com.flirttime.feature.main.matches.WalletBalanceData
 import com.flirttime.feature.moments.MomentCommentsResponseData
 import com.flirttime.feature.moments.MomentGiftsCatalogResponseData
+import com.flirttime.feature.moments.MomentLikeResponseData
 import com.flirttime.feature.moments.MomentReceivedGiftsResponseData
 import com.flirttime.feature.moments.MomentsFeedResponseData
 import com.flirttime.feature.moments.PostCommentRequest
@@ -123,6 +124,10 @@ interface MainApiService {
     @GET("api/v1/wallet/balance")
     suspend fun getWalletBalance(): ApiResponse<WalletBalanceData>
 
+    /** The signed-in user's current Premium membership (iOS `AppEndPoint.mySubscription`). Parsed manually. */
+    @GET("api/v1/subscriptions/my")
+    suspend fun getMySubscription(): com.google.gson.JsonObject
+
     @GET("api/v1/notifications/counts")
     suspend fun getNotificationCounts(): ApiResponse<NotificationCountsResponseData>
 
@@ -181,11 +186,24 @@ interface MainApiService {
     suspend fun toggleLike(
         @Path("momentId") momentId: String,
         @Body request: ToggleLikeRequest? = null
-    ): ApiResponse<Any>
+    ): ApiResponse<MomentLikeResponseData>
+
+    @GET("api/v1/moments/{momentId}/likes")
+    suspend fun getMomentLikes(
+        @Path("momentId") momentId: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 30
+    ): ApiResponse<com.flirttime.feature.moments.MomentLikesResponseData>
 
     @DELETE("api/v1/moments/{momentId}")
     suspend fun deleteMoment(
         @Path("momentId") momentId: String
+    ): ApiResponse<Any>
+
+    @POST("api/v1/moments/{momentId}/report")
+    suspend fun reportMoment(
+        @Path("momentId") momentId: String,
+        @Body body: Map<String, String>
     ): ApiResponse<Any>
 
     @Multipart

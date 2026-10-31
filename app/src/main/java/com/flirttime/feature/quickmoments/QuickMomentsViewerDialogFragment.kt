@@ -62,6 +62,7 @@ class QuickMomentsViewerDialogFragment : DialogFragment() {
             WindowCompat.setDecorFitsSystemWindows(window, false)
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
             window.statusBarColor = Color.TRANSPARENT
+            @Suppress("DEPRECATION")
             window.navigationBarColor = Color.TRANSPARENT
         }
         return dialog

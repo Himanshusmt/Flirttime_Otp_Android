@@ -7,6 +7,7 @@ import com.flirttime.core.network.safeApiCall
 import com.flirttime.feature.moments.comments.CommentItem
 import com.flirttime.feature.moments.gift.GiftItem
 import com.flirttime.feature.moments.MomentsFeedResult
+import com.flirttime.feature.moments.MomentLikeResponseData
 import com.flirttime.feature.moments.MomentReceivedGiftsResponseData
 import com.flirttime.feature.quickmoments.MyQuickMomentsResponseData
 import com.flirttime.feature.moments.PostCommentRequest
@@ -97,13 +98,29 @@ class MomentsRepositoryImpl(
         }
     }.flowOn(Dispatchers.IO)
 
-    override fun toggleLike(momentId: String, isLiked: Boolean?): Flow<Resource<Unit>> = flow {
+    override fun toggleLike(momentId: String, isLiked: Boolean?): Flow<Resource<MomentLikeResponseData?>> = flow {
         val body = isLiked?.let { ToggleLikeRequest(isLiked = it) }
         val result = safeApiCall {
             mainApiService.toggleLike(momentId = momentId, request = body)
         }
         when (result) {
-            is Resource.Success -> emit(Resource.Success(Unit))
+            is Resource.Success -> emit(Resource.Success(result.data))
+            is Resource.Error -> emit(Resource.Error(message = result.message, code = result.code, cause = result.cause, errorBody = result.errorBody))
+            is Resource.Loading -> Unit
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun getMomentLikes(
+        momentId: String,
+        page: Int,
+        limit: Int
+    ): Flow<Resource<MomentLikesResponseData>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.getMomentLikes(momentId = momentId, page = page, limit = limit)
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(result.data))
             is Resource.Error -> emit(Resource.Error(message = result.message, code = result.code, cause = result.cause, errorBody = result.errorBody))
             is Resource.Loading -> Unit
         }
@@ -113,6 +130,41 @@ class MomentsRepositoryImpl(
         emit(Resource.Loading)
         val result = safeApiCall {
             mainApiService.deleteMoment(momentId = momentId)
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(Unit))
+            is Resource.Error -> emit(Resource.Error(message = result.message, code = result.code, cause = result.cause, errorBody = result.errorBody))
+            is Resource.Loading -> Unit
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun reportMoment(
+        momentId: String,
+        reason: String,
+        description: String?
+    ): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading)
+        val body = mutableMapOf("reason" to reason)
+        if (!description.isNullOrBlank()) {
+            body["description"] = description
+        }
+        val result = safeApiCall {
+            mainApiService.reportMoment(momentId = momentId, body = body)
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(Unit))
+            is Resource.Error -> emit(Resource.Error(message = result.message, code = result.code, cause = result.cause, errorBody = result.errorBody))
+            is Resource.Loading -> Unit
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun blockUser(
+        userId: String,
+        reason: String
+    ): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.blockUser(userId = userId, body = mapOf("reason" to reason))
         }
         when (result) {
             is Resource.Success -> emit(Resource.Success(Unit))

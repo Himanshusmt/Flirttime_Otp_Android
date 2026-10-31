@@ -101,6 +101,7 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         dialog.window?.let { window ->
             WindowCompat.setDecorFitsSystemWindows(window, false)
+            @Suppress("DEPRECATION")
             window.navigationBarColor = Color.TRANSPARENT
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 window.isNavigationBarContrastEnforced = false
@@ -226,7 +227,7 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private fun loadInterestsCatalog() {
         viewLifecycleOwner.lifecycleScope.launch {
             mainRepository.getInterestsCatalog().collect { resource ->
-                if (resource is Resource.Success && resource.data != null) {
+                if (resource is Resource.Success) {
                     availableInterests = resource.data
                     populateInterestsChips(availableInterests)
                 }
@@ -278,7 +279,7 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private fun loadSavedFiltersFromBackend() {
         viewLifecycleOwner.lifecycleScope.launch {
             matchesRepository.getDiscoveryFilters().collect { resource ->
-                if (resource is Resource.Success && resource.data != null) {
+                if (resource is Resource.Success) {
                     applyFiltersToUi(resource.data)
                 }
             }
@@ -386,7 +387,7 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
             matchesRepository.searchDiscoveryCards(page = 1, limit = 1, countOnly = true, filters = filters)
                 .collect { resource ->
                     if (_binding == null) return@collect
-                    if (resource is Resource.Success && resource.data != null) {
+                    if (resource is Resource.Success) {
                         val count = resource.data.pagination?.totalCount ?: 0
                         binding.btnShowMatches.text = if (count > 0) "Show $count matches" else "Show Matches"
                     }

@@ -23,6 +23,9 @@ import com.flirttime.feature.moments.comments.CommentsBottomSheetDialogFragment
 import com.flirttime.feature.moments.delete.DeleteMomentBottomSheetDialogFragment
 import com.flirttime.feature.moments.gift.ReceivedGiftsBottomSheetDialogFragment
 import com.flirttime.feature.moments.gift.SendGiftBottomSheetDialogFragment
+import com.flirttime.feature.moments.options.MomentMoreOptionsBottomSheetDialogFragment
+import com.flirttime.feature.moments.options.ReportMomentBottomSheetDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -115,16 +118,22 @@ class MomentsFragment : Fragment() {
             onMoreOptionsClick = { post ->
                 val currentUserId = sessionManager.getCachedUserId()
                 val isAuthor = post.isOwnMoment || (currentUserId.isNotBlank() && currentUserId == post.userId)
-                if (isAuthor) {
-                    val deleteSheet = DeleteMomentBottomSheetDialogFragment.newInstance(post.id)
-                    deleteSheet.onMomentDeleted = { deletedId ->
-                        momentsViewModel.removeMomentFromList(deletedId)
-                        momentsAdapter.removePost(deletedId)
-                    }
-                    deleteSheet.show(childFragmentManager, DeleteMomentBottomSheetDialogFragment.TAG)
-                } else {
-                    Toast.makeText(requireContext(), "Options for ${post.username}", Toast.LENGTH_SHORT).show()
+                val optionsSheet = MomentMoreOptionsBottomSheetDialogFragment.newInstance(
+                    momentId = post.id,
+                    authorId = post.userId,
+                    authorName = post.username,
+                    isOwnMoment = isAuthor
+                )
+                optionsSheet.onDeleteClick = {
+                    confirmDeleteMoment(post)
                 }
+                optionsSheet.onReportClick = {
+                    showReportReasons(post)
+                }
+                optionsSheet.onBlockClick = {
+                    confirmBlockAuthor(post)
+                }
+                optionsSheet.show(childFragmentManager, MomentMoreOptionsBottomSheetDialogFragment.TAG)
             },
             onUserClick = { post ->
                 val targetId = post.userId ?: post.id
@@ -233,6 +242,63 @@ class MomentsFragment : Fragment() {
             binding.tvEmptyTitle.text = "No moments yet"
             binding.tvEmptySubtitle.text = "Be the first to share what's on your mind!"
         }
+    }
+
+    private fun confirmDeleteMoment(post: MomentPost) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Delete this moment?")
+            .setMessage("It will be removed for everyone. This can't be undone.")
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Delete") { _, _ ->
+                momentsViewModel.deleteMoment(post.id) { success, errorMsg ->
+                    if (success) {
+                        momentsAdapter.removePost(post.id)
+                        Toast.makeText(requireContext(), "Moment deleted", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), errorMsg ?: "Unable to delete moment", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .show()
+    }
+
+    private fun showReportReasons(post: MomentPost) {
+        val reportSheet = ReportMomentBottomSheetDialogFragment.newInstance(post.id)
+        reportSheet.onReasonSelected = { reasonTitle, reasonCode ->
+            momentsViewModel.reportMoment(
+                momentId = post.id,
+                reason = reasonCode,
+                description = reasonTitle
+            ) { success, errorMsg ->
+                if (success) {
+                    momentsAdapter.removePost(post.id)
+                    Toast.makeText(requireContext(), "Thanks for reporting. We'll review this moment.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), errorMsg ?: "Unable to report moment", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        reportSheet.show(childFragmentManager, ReportMomentBottomSheetDialogFragment.TAG)
+    }
+
+    private fun confirmBlockAuthor(post: MomentPost) {
+        val name = post.username.ifBlank { "this user" }
+        val authorId = post.userId ?: post.id
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Block $name?")
+            .setMessage("They won't be able to see your profile or contact you, and you won't see their moments.")
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Block") { _, _ ->
+                momentsViewModel.blockUser(authorId) { success, errorMsg ->
+                    if (success) {
+                        momentsAdapter.removePostsByAuthor(authorId)
+                        Toast.makeText(requireContext(), "$name has been blocked", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), errorMsg ?: "Unable to block this user", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .show()
     }
 
     override fun onDestroyView() {

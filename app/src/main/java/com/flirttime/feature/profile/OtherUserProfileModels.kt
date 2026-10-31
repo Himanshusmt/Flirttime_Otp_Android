@@ -19,6 +19,11 @@ fun extractStringFromJsonElement(element: JsonElement?): String? {
             ?: obj.get("imageUrl")?.let { if (it.isJsonPrimitive) it.asString else null }
             ?: obj.get("key")?.let { if (it.isJsonPrimitive) it.asString else null }
             ?: obj.get("imageKey")?.let { if (it.isJsonPrimitive) it.asString else null }
+            ?: obj.get("fileUrl")?.let { if (it.isJsonPrimitive) it.asString else null }
+            ?: obj.get("file_url")?.let { if (it.isJsonPrimitive) it.asString else null }
+            ?: obj.get("path")?.let { if (it.isJsonPrimitive) it.asString else null }
+            ?: obj.get("bestURL")?.let { if (it.isJsonPrimitive) it.asString else null }
+            ?: obj.get("location")?.let { if (it.isJsonPrimitive) it.asString else null }
         return if (url.isNullOrBlank() || url.equals("null", ignoreCase = true)) null else url
     }
     return null
@@ -64,9 +69,17 @@ data class UserSearchItemDto(
     @SerializedName("profilePhotoUrl") val profilePhotoUrl: String? = null,
     @SerializedName("avatar") val avatar: String? = null,
     @SerializedName("coverPhoto") val coverPhoto: JsonElement? = null,
+    @SerializedName("cover_photo") val coverPhotoSnake: JsonElement? = null,
     @SerializedName("coverPhotoUrl") val coverPhotoUrl: String? = null,
+    @SerializedName("cover_photo_url") val coverPhotoUrlSnake: String? = null,
     @SerializedName("coverPicture") val coverPicture: String? = null,
+    @SerializedName("cover_picture") val coverPictureSnake: String? = null,
     @SerializedName("banner") val banner: String? = null,
+    @SerializedName("banner_image") val bannerImage: String? = null,
+    @SerializedName("banner_url") val bannerUrl: String? = null,
+    @SerializedName("cover") val cover: JsonElement? = null,
+    @SerializedName("coverUrl") val coverUrl: String? = null,
+    @SerializedName("cover_url") val coverUrlSnake: String? = null,
     @SerializedName("isVerified") val isVerified: Boolean? = null,
     @SerializedName("isSubscribed") val isSubscribed: Boolean? = null,
     @SerializedName("isOnline") val isOnline: Boolean? = null,
@@ -106,8 +119,29 @@ data class UserSearchItemDto(
     @SerializedName("education") val education: String? = null,
     @SerializedName("relationshipStatus") val relationshipStatus: String? = null,
     @SerializedName("relationship") val relationship: String? = null,
-    @SerializedName("children") val children: String? = null
+    @SerializedName("children") val children: String? = null,
+    @SerializedName("myAction") val myAction: String? = null,
+    @SerializedName("action") val action: String? = null,
+    @SerializedName("isMatched") val isMatched: Boolean? = null,
+    @SerializedName("hasLiked") val hasLiked: Boolean? = null,
+    @SerializedName("isSuperLike") val isSuperLike: Boolean? = null,
+    @SerializedName("matchStatus") val matchStatus: String? = null
 ) {
+    fun resolveIsMatched(fallback: Boolean? = null): Boolean {
+        if (isMatched == true) return true
+        val status = matchStatus?.lowercase()
+        if (status == "matched" || status == "accepted" || status == "connected") return true
+        return fallback == true
+    }
+
+    fun resolveMyAction(fallback: String? = null): String? {
+        val raw = (myAction ?: action)?.lowercase()
+        if (raw == "super_like" || raw == "like" || raw == "nope") return raw
+        if (isSuperLike == true) return "super_like"
+        if (hasLiked == true) return if (fallback == "super_like") "super_like" else "like"
+        return fallback
+    }
+
     val effectiveId: String
         get() = userId ?: id.orEmpty()
 
@@ -123,7 +157,18 @@ data class UserSearchItemDto(
 
     val effectiveCover: String
         get() {
-            val raw = coverPhotoUrl ?: extractStringFromJsonElement(coverPhoto) ?: coverPicture ?: banner
+            val raw = coverPhotoUrl
+                ?: coverPhotoUrlSnake
+                ?: extractStringFromJsonElement(coverPhoto)
+                ?: extractStringFromJsonElement(coverPhotoSnake)
+                ?: extractStringFromJsonElement(cover)
+                ?: coverUrl
+                ?: coverUrlSnake
+                ?: coverPicture
+                ?: coverPictureSnake
+                ?: banner
+                ?: bannerImage
+                ?: bannerUrl
             if (raw.isNullOrBlank()) return ""
             return if (raw.startsWith("http://") || raw.startsWith("https://")) raw else "${MediaUrlHelper.S3_MEDIA_BASE_URL}${raw.removePrefix("/")}"
         }
@@ -265,9 +310,17 @@ data class OtherUserProfileResponseData(
     @SerializedName("profileThumbnail") val profileThumbnail: String? = null,
     @SerializedName("avatar") val avatar: String? = null,
     @SerializedName("coverPhoto") val coverPhoto: JsonElement? = null,
+    @SerializedName("cover_photo") val coverPhotoSnake: JsonElement? = null,
     @SerializedName("coverPhotoUrl") val coverPhotoUrl: String? = null,
+    @SerializedName("cover_photo_url") val coverPhotoUrlSnake: String? = null,
     @SerializedName("coverPicture") val coverPicture: String? = null,
+    @SerializedName("cover_picture") val coverPictureSnake: String? = null,
     @SerializedName("banner") val banner: String? = null,
+    @SerializedName("banner_image") val bannerImage: String? = null,
+    @SerializedName("banner_url") val bannerUrl: String? = null,
+    @SerializedName("cover") val cover: JsonElement? = null,
+    @SerializedName("coverUrl") val coverUrl: String? = null,
+    @SerializedName("cover_url") val coverUrlSnake: String? = null,
     @SerializedName("bio") val bio: String? = null,
     @SerializedName("about") val about: String? = null,
     @SerializedName("voiceIntro") val voiceIntro: OtherUserVoiceIntroDto? = null,
@@ -300,6 +353,9 @@ data class OtherUserProfileResponseData(
     @SerializedName("action") val action: String? = null,
     @SerializedName("myAction") val myAction: String? = null,
     @SerializedName("isMatched") val isMatched: Boolean? = null,
+    @SerializedName("hasLiked") val hasLiked: Boolean? = null,
+    @SerializedName("isSuperLike") val isSuperLike: Boolean? = null,
+    @SerializedName("matchStatus") val matchStatus: String? = null,
     @SerializedName("canConnect") val canConnect: Boolean? = null,
     @SerializedName("canChat") val canChat: Boolean? = null,
     @SerializedName("conversationId") val conversationId: String? = null,
@@ -313,9 +369,17 @@ data class OtherUserProfileResponseData(
         get() {
             val src = profile ?: user ?: targetUserObj ?: data ?: this
             val resolvedCover = extractStringFromJsonElement(src.coverPhoto)
+                ?: extractStringFromJsonElement(src.coverPhotoSnake)
+                ?: extractStringFromJsonElement(src.cover)
                 ?: src.coverPhotoUrl
+                ?: src.coverPhotoUrlSnake
+                ?: src.coverUrl
+                ?: src.coverUrlSnake
                 ?: src.coverPicture
+                ?: src.coverPictureSnake
                 ?: src.banner
+                ?: src.bannerImage
+                ?: src.bannerUrl
 
             val resolvedPhoto = extractStringFromJsonElement(src.profilePhoto)
                 ?: src.profilePhotoUrl
@@ -407,7 +471,13 @@ data class OtherUserProfileResponseData(
                 religion = src.religion,
                 education = src.education,
                 relationshipStatus = src.relationshipStatus ?: src.relationship,
-                children = src.children
+                children = src.children,
+                myAction = src.myAction ?: src.action,
+                action = src.action ?: src.myAction,
+                isMatched = src.isMatched,
+                hasLiked = src.hasLiked,
+                isSuperLike = src.isSuperLike,
+                matchStatus = src.matchStatus
             )
         }
 

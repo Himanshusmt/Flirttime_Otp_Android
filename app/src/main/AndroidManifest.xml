@@ -175,6 +175,12 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Full-screen moment photo viewer -->
+        <activity
+            android:name=".feature.moments.MomentMediaViewerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FlirtTime" />
+
         <!-- Reusable Image Crop Activity -->
         <activity
             android:name=".core.image.CropActivity"

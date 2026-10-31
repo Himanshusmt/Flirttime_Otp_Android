@@ -25,7 +25,7 @@
                 android:id="@+id/coverContainer"
                 android:layout_width="match_parent"
                 android:layout_height="260dp"
-                android:background="#222226"
+                android:background="#FFE8EC"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.facebook.drawee.view.SimpleDraweeView
@@ -506,7 +506,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 11. Floating Bottom Action Bar (Pass 'X' & Chat Bubble) -->
+    <!-- 11. Floating Bottom Action Bar (Pass 'X', Super Like, Like, Chat) -->
     <LinearLayout
         android:id="@+id/layoutBottomActions"
         android:layout_width="wrap_content"
@@ -518,11 +518,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- Action: Pass / Cross -->
+        <!-- Action: Pass / Not Interested -->
         <FrameLayout
             android:id="@+id/btnNope"
-            android:layout_width="54dp"
-            android:layout_height="54dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginHorizontal="9dp"
             android:background="@drawable/bg_floating_action_white"
             android:clickable="true"
             android:elevation="6dp"
@@ -532,29 +533,64 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
-                android:contentDescription="Pass"
+                android:contentDescription="Not interested"
                 android:src="@drawable/ic_action_cross" />
 
         </FrameLayout>
 
-        <!-- Gap between action buttons -->
-        <View
-            android:layout_width="18dp"
-            android:layout_height="1dp" />
+        <!-- Action: Super Like -->
+        <FrameLayout
+            android:id="@+id/btnSuperLike"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_marginHorizontal="9dp"
+            android:background="@drawable/bg_floating_action_white"
+            android:clickable="true"
+            android:elevation="8dp"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="Super like"
+                android:src="@drawable/ic_super_like_action" />
+
+        </FrameLayout>
+
+        <!-- Action: Like -->
+        <FrameLayout
+            android:id="@+id/btnLike"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginHorizontal="9dp"
+            android:background="@drawable/bg_floating_action_red"
+            android:clickable="true"
+            android:elevation="6dp"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:contentDescription="Like"
+                android:src="@drawable/ic_heart_action_white" />
+
+        </FrameLayout>
 
         <!-- Action: Chat / Message Bubble -->
         <FrameLayout
             android:id="@+id/btnChat"
-            android:layout_width="54dp"
-            android:layout_height="54dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginHorizontal="9dp"
             android:background="@drawable/bg_floating_action_white"
             android:clickable="true"
             android:elevation="6dp"
             android:focusable="true">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
                 android:layout_gravity="center"
                 android:contentDescription="Chat"
                 android:src="@drawable/ic_chat_bubble_red" />
