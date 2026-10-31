@@ -1,11 +1,16 @@
 package com.flirttime.feature.quickmoments
 
+import android.content.DialogInterface
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.flirttime.R
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
@@ -24,6 +29,12 @@ class StoryMenuBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     var onDeleteConfirmed: ((storyId: String) -> Unit)? = null
     var onReportConfirmed: ((storyId: String) -> Unit)? = null
+    var onDismissListener: (() -> Unit)? = null
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismissListener?.invoke()
+    }
 
     override fun getTheme(): Int = R.style.TransparentBottomSheetDialogTheme
 
@@ -47,21 +58,33 @@ class StoryMenuBottomSheetDialogFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Prevent bottom sheet from overlapping the Android system navigation bar
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val navBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            binding.root.updatePadding(bottom = navBars.bottom + dpToPx(24))
+            insets
+        }
+        binding.root.post {
+            _binding?.root?.requestApplyInsets()
+        }
+
         if (isOwnStory) {
-            // Own story: Show "Delete Story" and "Cancel"
-            binding.btnMenuDeleteStory.visibility = View.VISIBLE
-            binding.btnMenuViewProfile.visibility = View.GONE
-            binding.btnMenuReport.visibility = View.GONE
+            // Own Story: Case A (Delete + Cancel side-by-side)
+            binding.layoutOwnStoryMenu.visibility = View.VISIBLE
+            binding.layoutOtherStoryMenu.visibility = View.GONE
 
             binding.btnMenuDeleteStory.setOnClickListener {
                 dismiss()
                 onDeleteConfirmed?.invoke(storyId)
             }
+
+            binding.btnMenuCancelOwn.setOnClickListener {
+                dismiss()
+            }
         } else {
-            // Other user story: Show "View Profile", "Report Moment", and "Cancel"
-            binding.btnMenuDeleteStory.visibility = View.GONE
-            binding.btnMenuViewProfile.visibility = View.VISIBLE
-            binding.btnMenuReport.visibility = View.VISIBLE
+            // Other User Story: Case B (Primary: View Profile, Secondary: Report + Cancel)
+            binding.layoutOwnStoryMenu.visibility = View.GONE
+            binding.layoutOtherStoryMenu.visibility = View.VISIBLE
 
             binding.tvMenuViewProfileLabel.text = if (userName.isNotBlank()) {
                 "View $userName's Profile"
@@ -86,11 +109,19 @@ class StoryMenuBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 onReportConfirmed?.invoke(storyId)
                 Toast.makeText(requireContext(), "Report submitted. Thank you for keeping our community safe.", Toast.LENGTH_SHORT).show()
             }
-        }
 
-        binding.btnMenuCancel.setOnClickListener {
-            dismiss()
+            binding.btnMenuCancelOther.setOnClickListener {
+                dismiss()
+            }
         }
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp.toFloat(),
+            resources.displayMetrics
+        ).toInt()
     }
 
     override fun onDestroyView() {

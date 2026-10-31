@@ -30,6 +30,7 @@ import com.flirttime.feature.main.matches.interest.InterestAdapter
 import com.flirttime.feature.main.matches.interest.InterestPeopleAdapter
 import com.flirttime.feature.main.matches.interest.MockInterestsProvider
 import com.flirttime.feature.quickmoments.AddNewMomentBottomSheetDialogFragment
+import com.flirttime.feature.quickmoments.QuickMomentCardItem
 import com.flirttime.feature.quickmoments.QuickMomentsCardAdapter
 import com.flirttime.feature.quickmoments.QuickMomentsViewerDialogFragment
 import kotlinx.coroutines.flow.collectLatest
@@ -46,17 +47,6 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
     private lateinit var interestAdapter: InterestAdapter
     private lateinit var interestPeopleAdapter: InterestPeopleAdapter
     private lateinit var quickMomentsAdapter: QuickMomentsCardAdapter
-    private lateinit var cropperHelper: ImageCropperHelper
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        cropperHelper = ImageCropperHelper.register(this) { result ->
-            if (result is CropResult.Success) {
-                Toast.makeText(requireContext(), "Uploading story...", Toast.LENGTH_SHORT).show()
-                viewModel.createImageQuickMoment(requireContext(), result.croppedUri)
-            }
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -96,7 +86,12 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
                 showAddQuickMomentBottomSheet()
             },
             onStoryClick = { storyCard ->
-                val viewer = QuickMomentsViewerDialogFragment.newInstance(storyCard)
+                val allStories = quickMomentsAdapter.currentList.filterIsInstance<QuickMomentCardItem.StoryCard>()
+                val initialIndex = allStories.indexOf(storyCard).coerceAtLeast(0)
+                val viewer = QuickMomentsViewerDialogFragment.newInstance(
+                    storyList = if (allStories.isNotEmpty()) allStories else listOf(storyCard),
+                    initialIndex = initialIndex
+                )
                 viewer.onDeleteClick = { storyId ->
                     viewModel.deleteQuickMoment(storyId) {
                         Toast.makeText(requireContext(), "Story deleted", Toast.LENGTH_SHORT).show()

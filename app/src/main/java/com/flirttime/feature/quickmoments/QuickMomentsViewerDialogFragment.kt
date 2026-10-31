@@ -14,6 +14,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
 import android.view.animation.LinearInterpolator
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
@@ -38,6 +39,12 @@ class QuickMomentsViewerDialogFragment : DialogFragment() {
 
     private val matchesRepository: MatchesRepository by inject()
 
+    var storyList: List<QuickMomentCardItem.StoryCard> = emptyList()
+    var currentStoryIndex: Int = 0
+
+    val currentStoryCard: QuickMomentCardItem.StoryCard?
+        get() = storyList.getOrNull(currentStoryIndex) ?: storyCard
+
     var storyCard: QuickMomentCardItem.StoryCard? = null
     var onDeleteClick: ((String) -> Unit)? = null
     var onReactClick: ((storyId: String, emoji: String) -> Unit)? = null
@@ -53,6 +60,7 @@ class QuickMomentsViewerDialogFragment : DialogFragment() {
             window.setBackgroundDrawable(ColorDrawable(Color.BLACK))
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             WindowCompat.setDecorFitsSystemWindows(window, false)
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
             window.statusBarColor = Color.TRANSPARENT
             window.navigationBarColor = Color.TRANSPARENT
         }
@@ -76,30 +84,72 @@ class QuickMomentsViewerDialogFragment : DialogFragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val item = storyCard ?: run {
-            dismiss()
-            return
-        }
 
-        // Apply Window Insets so top bar/avatar are not cut off by status bar/notch
+        // Apply Window Insets: top bar avoids status bar/notch, bottom container avoids nav bar / keyboard
         ViewCompat.setOnApplyWindowInsetsListener(binding.rootViewer) { _, windowInsets ->
             val statusBarInset = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars()).top
             val navBarInset = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            val imeInset = windowInsets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             val density = resources.displayMetrics.density
             val extraTopPad = (8 * density).toInt()
             val extraBottomPad = (16 * density).toInt()
 
             binding.layoutViewerTopContainer.updatePadding(top = statusBarInset + extraTopPad)
-            binding.layoutViewerBottomContainer.updatePadding(bottom = navBarInset + extraBottomPad)
+            val effectiveBottomInset = maxOf(navBarInset, imeInset)
+            binding.layoutViewerBottomContainer.updatePadding(bottom = effectiveBottomInset + extraBottomPad)
             windowInsets
         }
 
-        binding.btnViewerClose.setOnClickListener {
-            stopStoryTimeline()
-            dismiss()
+        // Left / Right Arrow Navigation
+        binding.btnViewerPrev.setOnClickListener {
+            navigateToStory(currentStoryIndex - 1)
+        }
+        binding.btnViewerNext.setOnClickListener {
+            navigateToStory(currentStoryIndex + 1)
         }
 
-        // Author Header
+        // Pause/Resume on screen touch and hold
+        binding.rootViewer.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    pauseStoryTimeline()
+                    false
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    resumeStoryTimeline()
+                    false
+                }
+                else -> false
+            }
+        }
+
+        val initialCard = currentStoryCard ?: run {
+            dismiss()
+            return
+        }
+        bindStory(initialCard)
+    }
+
+    private fun navigateToStory(newIndex: Int) {
+        if (storyList.isNotEmpty()) {
+            if (newIndex in storyList.indices) {
+                currentStoryIndex = newIndex
+                val nextStory = storyList[newIndex]
+                storyCard = nextStory
+                bindStory(nextStory)
+            } else if (newIndex >= storyList.size) {
+                stopStoryTimeline()
+                dismissAllowingStateLoss()
+            }
+        }
+    }
+
+    private fun bindStory(item: QuickMomentCardItem.StoryCard) {
+        // 1. Left / Right Arrow Visibility based on available stories
+        binding.btnViewerPrev.visibility = if (currentStoryIndex > 0) View.VISIBLE else View.GONE
+        binding.btnViewerNext.visibility = if (currentStoryIndex < storyList.size - 1) View.VISIBLE else View.GONE
+
+        // 2. Author Header
         binding.tvViewerAuthorName.text = item.userName
         binding.tvViewerStoryTime.text = "${item.relativeAge ?: "1m"} ago"
         val resolvedAvatar = MediaUrlHelper.resolveMediaUrl(item.userAvatar)
@@ -109,7 +159,7 @@ class QuickMomentsViewerDialogFragment : DialogFragment() {
             binding.ivViewerAuthorAvatar.setActualImageResource(R.drawable.ic_settings_person)
         }
 
-        // Story Content
+        // 3. Story Media / Text Content
         val resolvedMedia = MediaUrlHelper.resolveMediaUrl(item.mediaUrl)
         if (!resolvedMedia.isNullOrBlank()) {
             binding.ivViewerMedia.visibility = View.VISIBLE
@@ -136,7 +186,7 @@ class QuickMomentsViewerDialogFragment : DialogFragment() {
             }
         }
 
-        // Top 3-Dots Menu (...)
+        // 4. Top 3-Dots Menu (...)
         binding.btnViewerMenu.setOnClickListener {
             pauseStoryTimeline()
             val menuSheet = StoryMenuBottomSheetDialogFragment.newInstance(
@@ -149,26 +199,27 @@ class QuickMomentsViewerDialogFragment : DialogFragment() {
                     onDeleteClick?.invoke(sId)
                     this@QuickMomentsViewerDialogFragment.dismiss()
                 }
-            }
-            menuSheet.dialog?.setOnDismissListener {
-                resumeStoryTimeline()
+                onDismissListener = {
+                    resumeStoryTimeline()
+                }
             }
             menuSheet.show(childFragmentManager, "story_menu")
         }
 
-        // Bottom Actions based on Own Story vs Other User Story
+        // 5. Bottom Actions based on Own Story vs Other User Story
         if (item.isOwnStory) {
             binding.layoutOwnStoryActions.visibility = View.VISIBLE
             binding.layoutOtherStoryActions.visibility = View.GONE
 
-            val views = item.viewCount ?: item.originalSlide?.viewsCount ?: item.originalSlide?.viewsCount ?: 0
+            val views = item.viewCount ?: item.originalSlide?.viewsCount ?: 0
             binding.tvStoryViewersCount.text = "$views views"
 
             binding.btnStoryViewers.setOnClickListener {
                 pauseStoryTimeline()
-                val viewersSheet = StoryViewersBottomSheetDialogFragment.newInstance(item.storyId)
-                viewersSheet.dialog?.setOnDismissListener {
-                    resumeStoryTimeline()
+                val viewersSheet = StoryViewersBottomSheetDialogFragment.newInstance(item.storyId).apply {
+                    onDismissListener = {
+                        resumeStoryTimeline()
+                    }
                 }
                 viewersSheet.show(childFragmentManager, "story_viewers")
             }
@@ -178,12 +229,26 @@ class QuickMomentsViewerDialogFragment : DialogFragment() {
 
             binding.etReplyMessage.hint = "Reply to ${item.userName}..."
 
+            fun showReactionSentPill(emoji: String) {
+                binding.tvReactionSentPillText.text = "$emoji Sent to ${item.userName}"
+                binding.layoutReactionSentPill.visibility = View.VISIBLE
+                binding.layoutReactionSentPill.alpha = 1f
+                binding.layoutReactionSentPill.animate()
+                    .alpha(0f)
+                    .setStartDelay(1800)
+                    .setDuration(300)
+                    .withEndAction {
+                        _binding?.layoutReactionSentPill?.visibility = View.GONE
+                    }
+                    .start()
+            }
+
             fun sendReaction(emoji: String) {
                 onReactClick?.invoke(item.storyId, emoji)
                 viewLifecycleOwner.lifecycleScope.launch {
                     matchesRepository.reactToQuickMoment(item.storyId, emoji).collectLatest { }
                 }
-                Toast.makeText(requireContext(), "Reacted $emoji", Toast.LENGTH_SHORT).show()
+                showReactionSentPill(emoji)
             }
 
             fun sendReply() {
@@ -219,22 +284,7 @@ class QuickMomentsViewerDialogFragment : DialogFragment() {
             }
         }
 
-        // Pause/Resume on screen touch and hold
-        binding.rootViewer.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    pauseStoryTimeline()
-                    false
-                }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    resumeStoryTimeline()
-                    false
-                }
-                else -> false
-            }
-        }
-
-        // Start 5-second story timeline bar
+        // 6. Reset & Start 5-second story timeline bar for the current story
         startStoryTimeline()
     }
 
@@ -252,7 +302,11 @@ class QuickMomentsViewerDialogFragment : DialogFragment() {
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     if (isAdded && !isStateSaved) {
-                        dismissAllowingStateLoss()
+                        if (storyList.isNotEmpty() && currentStoryIndex < storyList.size - 1) {
+                            navigateToStory(currentStoryIndex + 1)
+                        } else {
+                            dismissAllowingStateLoss()
+                        }
                     }
                 }
             })
@@ -302,6 +356,19 @@ class QuickMomentsViewerDialogFragment : DialogFragment() {
         fun newInstance(card: QuickMomentCardItem.StoryCard): QuickMomentsViewerDialogFragment {
             return QuickMomentsViewerDialogFragment().apply {
                 this.storyCard = card
+                this.storyList = listOf(card)
+                this.currentStoryIndex = 0
+            }
+        }
+
+        fun newInstance(
+            storyList: List<QuickMomentCardItem.StoryCard>,
+            initialIndex: Int = 0
+        ): QuickMomentsViewerDialogFragment {
+            return QuickMomentsViewerDialogFragment().apply {
+                this.storyList = storyList
+                this.currentStoryIndex = initialIndex.coerceIn(0, (storyList.size - 1).coerceAtLeast(0))
+                this.storyCard = storyList.getOrNull(this.currentStoryIndex)
             }
         }
     }
