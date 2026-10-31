@@ -67,14 +67,38 @@ data class MomentDto(
     val likesCount: Int? = null,
     @SerializedName("likeCount")
     val likeCount: Int? = null,
+    @SerializedName("like_count")
+    val likeCountSnake: Int? = null,
+    @SerializedName("likes_count")
+    val likesCountSnake: Int? = null,
     @SerializedName("commentsCount")
     val commentsCount: Int? = null,
     @SerializedName("commentCount")
     val commentCount: Int? = null,
+    @SerializedName("comment_count")
+    val commentCountSnake: Int? = null,
     @SerializedName("giftsCount")
     val giftsCount: Int? = null,
+    @SerializedName("giftCount")
+    val giftCount: Int? = null,
     @SerializedName("isLiked")
-    val isLiked: Boolean? = null
+    val isLiked: Boolean? = null,
+    @SerializedName("hasLiked")
+    val hasLiked: Boolean? = null,
+    @SerializedName("isLike")
+    val isLike: Boolean? = null,
+    @SerializedName("is_like")
+    val isLikeSnake: Boolean? = null,
+    @SerializedName("isLikedByMe")
+    val isLikedByMe: Boolean? = null,
+    @SerializedName("likedByMe")
+    val likedByMe: Boolean? = null,
+    @SerializedName("liked")
+    val liked: Boolean? = null,
+    @SerializedName("hasReacted")
+    val hasReacted: Boolean? = null,
+    @SerializedName("viewerReaction")
+    val viewerReaction: String? = null
 ) {
     val displayImageUrl: String?
         get() = firstImageUrl?.takeIf { it.isNotBlank() }
@@ -84,10 +108,10 @@ data class MomentDto(
             ?: media?.firstOrNull()?.let { it.imageUrl ?: it.mediaUrl ?: it.thumbnailUrl }
 
     val effectiveLikes: Int
-        get() = likeCount ?: likesCount ?: 0
+        get() = likeCount ?: likesCount ?: likeCountSnake ?: likesCountSnake ?: 0
 
     val effectiveComments: Int
-        get() = commentCount ?: commentsCount ?: 0
+        get() = commentCount ?: commentsCount ?: commentCountSnake ?: 0
 
     val isMultiMedia: Boolean
         get() = hasMultipleImages == true || hasMultipleMedia == true || (imageCount ?: mediaCount ?: (media?.size ?: 0)) > 1
@@ -173,6 +197,31 @@ data class ToggleLikeRequest(
     val isLiked: Boolean? = null
 )
 
+data class MomentLikeResponseData(
+    @SerializedName("isLiked")
+    val isLiked: Boolean? = null,
+    @SerializedName("hasLiked")
+    val hasLiked: Boolean? = null,
+    @SerializedName("liked")
+    val liked: Boolean? = null,
+    @SerializedName("is_like")
+    val isLikeSnake: Boolean? = null,
+    @SerializedName("likesCount")
+    val likesCount: Int? = null,
+    @SerializedName("likeCount")
+    val likeCount: Int? = null,
+    @SerializedName("likes_count")
+    val likesCountSnake: Int? = null,
+    @SerializedName("like_count")
+    val likeCountSnake: Int? = null
+) {
+    val effectiveIsLiked: Boolean?
+        get() = isLiked ?: hasLiked ?: liked ?: isLikeSnake
+
+    val effectiveLikeCount: Int?
+        get() = likesCount ?: likeCount ?: likesCountSnake ?: likeCountSnake
+}
+
 data class MomentsFeedResult(
     val moments: List<MomentPost>,
     val page: Int,
@@ -218,6 +267,20 @@ fun MomentDto.toUiItem(): MomentPost {
         ?: mediaUrl?.takeIf { it.isNotBlank() }
     val finalMediaUrls = if (extractedMediaUrls.isNotEmpty()) extractedMediaUrls else listOfNotNull(fallbackMediaUrl)
 
+    val resolvedIsLiked = isLiked == true ||
+        hasLiked == true ||
+        isLike == true ||
+        isLikeSnake == true ||
+        isLikedByMe == true ||
+        likedByMe == true ||
+        liked == true ||
+        hasReacted == true ||
+        !viewerReaction.isNullOrBlank()
+
+    val resolvedLikes = likeCount ?: likesCount ?: likeCountSnake ?: likesCountSnake ?: 0
+    val resolvedComments = commentCount ?: commentsCount ?: commentCountSnake ?: 0
+    val resolvedGifts = giftsCount ?: giftCount ?: 0
+
     return MomentPost(
         id = effectiveId,
         userId = creator?.userId ?: creator?.creatorId ?: creator?.id,
@@ -231,10 +294,10 @@ fun MomentDto.toUiItem(): MomentPost {
         mediaRes = null,
         mediaUrls = finalMediaUrls,
         currentMediaIndex = 0,
-        likeCount = likeCount ?: likesCount ?: 0,
-        isLiked = isLiked ?: false,
-        commentCount = commentCount ?: commentsCount ?: 0,
-        giftCount = giftsCount ?: 0
+        likeCount = resolvedLikes,
+        isLiked = resolvedIsLiked,
+        commentCount = resolvedComments,
+        giftCount = resolvedGifts
     )
 }
 

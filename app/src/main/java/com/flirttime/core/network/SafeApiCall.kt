@@ -17,9 +17,10 @@ suspend fun <T> safeApiCall(
     return withContext(dispatcher) {
         try {
             val response = apiCall()
-            if (response.success && response.data != null) {
+            val successful = response.isSuccess
+            if (successful && response.data != null) {
                 Resource.Success(response.data)
-            } else if (response.success && response.data == null) {
+            } else if (successful) {
                 @Suppress("UNCHECKED_CAST")
                 Resource.Success(Unit as T)
             } else {

@@ -190,8 +190,56 @@ class MomentsViewModel(
         }
     }
 
+    fun reportMoment(
+        momentId: String,
+        reason: String,
+        description: String? = null,
+        onResult: ((Boolean, String?) -> Unit)? = null
+    ) {
+        viewModelScope.launch {
+            momentsRepository.reportMoment(momentId = momentId, reason = reason, description = description).collect { resource ->
+                when (resource) {
+                    is Resource.Success -> {
+                        removeMomentFromList(momentId)
+                        onResult?.invoke(true, null)
+                    }
+                    is Resource.Error -> {
+                        onResult?.invoke(false, resource.message)
+                    }
+                    is Resource.Loading -> Unit
+                }
+            }
+        }
+    }
+
+    fun blockUser(
+        userId: String,
+        reason: String = "Blocked from Moments",
+        onResult: ((Boolean, String?) -> Unit)? = null
+    ) {
+        viewModelScope.launch {
+            momentsRepository.blockUser(userId = userId, reason = reason).collect { resource ->
+                when (resource) {
+                    is Resource.Success -> {
+                        removeMomentsByAuthor(userId)
+                        onResult?.invoke(true, null)
+                    }
+                    is Resource.Error -> {
+                        onResult?.invoke(false, resource.message)
+                    }
+                    is Resource.Loading -> Unit
+                }
+            }
+        }
+    }
+
     fun removeMomentFromList(momentId: String) {
         accumulatedMoments.removeAll { it.id == momentId }
+        _momentsState.value = Resource.Success(accumulatedMoments.toList())
+    }
+
+    fun removeMomentsByAuthor(authorId: String) {
+        accumulatedMoments.removeAll { it.userId == authorId }
         _momentsState.value = Resource.Success(accumulatedMoments.toList())
     }
 }
