@@ -1,6 +1,7 @@
 package com.flirttime.di
 
 import com.flirttime.core.common.NetworkConnectivityObserver
+import org.koin.android.ext.koin.androidContext
 import com.flirttime.core.database.SessionManager
 import com.flirttime.core.network.ApiService
 import com.flirttime.core.network.NetworkModuleProvider
@@ -11,6 +12,17 @@ import com.flirttime.feature.auth.email.EmailVerifyViewModel
 import com.flirttime.feature.auth.login.LoginViewModel
 import com.flirttime.feature.auth.otp.OtpViewModel
 import com.flirttime.feature.auth.phone.PhoneInputViewModel
+import com.flirttime.feature.chat.ChatApiService
+import com.flirttime.feature.chat.ChatRepository
+import com.flirttime.feature.chat.ChatRepositoryImpl
+import com.flirttime.feature.chat.cache.ChatCacheStore
+import com.flirttime.feature.chat.cache.ChatDraftStore
+import com.flirttime.feature.chat.detail.ChatDetailViewModel
+import com.flirttime.feature.chat.detail.ForwardPickerViewModel
+import com.flirttime.feature.chat.detail.ThreadSettings
+import com.flirttime.feature.chat.list.ChatListViewModel
+import com.flirttime.feature.chat.media.ChatMediaUploader
+import com.flirttime.feature.chat.socket.ChatSocketManager
 import com.flirttime.feature.moments.MomentsViewModel
 import com.flirttime.feature.moments.add.AddMomentViewModel
 import com.flirttime.feature.main.MainApiService
@@ -37,6 +49,7 @@ import com.flirttime.feature.profile.edit.EditProfileViewModel
 import com.flirttime.feature.profile.otherUser.OtherUserProfileViewModel
 import com.flirttime.feature.profile.settings.SettingsViewModel
 import com.flirttime.feature.splash.SplashViewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -56,6 +69,7 @@ val appModule = module {
     single<MainApiService> { get<Retrofit>().create(MainApiService::class.java) }
     single<UserApiService> { get<Retrofit>().create(UserApiService::class.java) }
     single<NotificationApiService> { get<Retrofit>().create(NotificationApiService::class.java) }
+    single<ChatApiService> { get<Retrofit>().create(ChatApiService::class.java) }
 
     // Auth Feature
     single<AuthRepository> { AuthRepositoryImpl(get(), get(), get()) }
@@ -99,4 +113,16 @@ val appModule = module {
 
     // Explore Feature
     viewModelOf(::ExploreViewModel)
+
+    // Chat Feature
+    single { ChatMediaUploader(get()) }
+    single<ChatRepository> { ChatRepositoryImpl(get(), get()) }
+    single { ChatCacheStore(get()) }
+    single { ChatDraftStore(androidContext()) }
+    single { ChatSocketManager(get(), get()) }
+    viewModel { ChatListViewModel(get(), get(), get(), get(), androidContext()) }
+    viewModel { (conversationId: String, peerUserId: String, settings: ThreadSettings) ->
+        ChatDetailViewModel(conversationId, peerUserId, settings, get(), get(), get(), get())
+    }
+    viewModelOf(::ForwardPickerViewModel)
 }

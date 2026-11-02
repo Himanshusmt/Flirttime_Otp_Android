@@ -2,4 +2,9 @@
 <resources>
     <!-- Standard fixed height for upload card & selected gallery in Add Moment screen -->
     <dimen name="add_moment_media_card_height">400dp</dimen>
+
+    <!-- Chat attachment bubbles: fixed width, aspect-derived height clamped to these bounds -->
+    <dimen name="chat_media_width">210dp</dimen>
+    <dimen name="chat_media_min_height">140dp</dimen>
+    <dimen name="chat_media_max_height">300dp</dimen>
 </resources>

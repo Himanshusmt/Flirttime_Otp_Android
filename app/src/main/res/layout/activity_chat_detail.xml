@@ -1,0 +1,841 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootChatDetail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <!-- Conversation Header -->
+    <LinearLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Back"
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_chat_back" />
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ivAvatar"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="6dp"
+            app:actualImageScaleType="centerCrop"
+            app:roundAsCircle="true" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="#18181B"
+                    android:textSize="16sp"
+                    tools:text="Sophia Carter" />
+
+                <ImageView
+                    android:id="@+id/ivHeaderVerified"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="5dp"
+                    android:contentDescription="Verified"
+                    android:src="@drawable/verified_badge"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/fredokaregular"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/text_tertiary"
+                android:textSize="12sp"
+                android:visibility="gone"
+                tools:text="typing…"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btnSearch"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Search in conversation"
+            android:focusable="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_search_gray"
+            app:tint="#18181B" />
+
+        <ImageView
+            android:id="@+id/btnMore"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Chat settings"
+            android:focusable="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_more_dots"
+            app:tint="#18181B" />
+
+    </LinearLayout>
+
+    <!-- Multi-select toolbar (replaces the conversation header while selecting) -->
+    <LinearLayout
+        android:id="@+id/layoutSelectionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/btnCancelSelection"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Cancel selection"
+            android:focusable="true"
+            android:padding="9dp"
+            android:src="@drawable/ic_action_cross"
+            app:tint="#18181B" />
+
+        <TextView
+            android:id="@+id/tvSelectionCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/fredokasemibold"
+            android:includeFontPadding="false"
+            android:textColor="#18181B"
+            android:textSize="16sp"
+            tools:text="3 selected" />
+
+        <ImageView
+            android:id="@+id/btnSelectionCopy"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Copy selected messages"
+            android:focusable="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_action_copy"
+            app:tint="#18181B" />
+
+        <ImageView
+            android:id="@+id/btnSelectionForward"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Forward selected messages"
+            android:focusable="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_action_forward"
+            app:tint="#18181B" />
+
+        <ImageView
+            android:id="@+id/btnSelectionDelete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Delete selected messages"
+            android:focusable="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_action_delete"
+            app:tint="@color/brand_primary" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/border_subtle" />
+
+    <!-- Connection / reconnect state (hidden while the socket is up) -->
+    <LinearLayout
+        android:id="@+id/layoutConnectionBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_connection_banner"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/tvConnectionText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/fredokaregular"
+            android:includeFontPadding="false"
+            android:text="You're offline — messages will send when you reconnect"
+            android:textColor="@color/text_secondary"
+            android:textSize="12.5sp" />
+
+        <TextView
+            android:id="@+id/btnConnectionRetry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/fredokasemibold"
+            android:includeFontPadding="false"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:text="Retry"
+            android:textColor="@color/brand_primary"
+            android:textSize="12.5sp" />
+
+    </LinearLayout>
+
+    <!-- Pinned message banner -->
+    <LinearLayout
+        android:id="@+id/layoutPinnedBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_pinned_banner"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="8dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:contentDescription="Pinned"
+            android:src="@drawable/ic_action_pin"
+            app:tint="@color/brand_primary" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokasemibold"
+                android:includeFontPadding="false"
+                android:text="Pinned message"
+                android:textColor="@color/brand_primary"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tvPinnedText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="#18181B"
+                android:textSize="12.5sp"
+                tools:text="See you at 8 pm tonight" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btnUnpin"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Unpin message"
+            android:focusable="true"
+            android:padding="7dp"
+            android:src="@drawable/ic_action_unpin" />
+
+    </LinearLayout>
+
+    <!-- Messages -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMessages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingVertical="8dp"
+            tools:listitem="@layout/item_message" />
+
+        <ProgressBar
+            android:id="@+id/progressBarTop"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="6dp"
+            android:indeterminateTint="@color/text_tertiary"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/brand_primary"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/layoutEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="32dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvEmptyTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokasemibold"
+                android:text="Say hi!"
+                android:textColor="#18181B"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvEmptyMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/fredokaregular"
+                android:gravity="center"
+                android:text="No messages yet — start the conversation."
+                android:textColor="@color/text_tertiary"
+                android:textSize="13.5sp" />
+
+        </LinearLayout>
+
+        <!-- "N new messages" jump pill, mirrors the iOS scrollDownButton + badge -->
+        <FrameLayout
+            android:id="@+id/layoutJumpToLatest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="12dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/btnJumpToLatest"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_jump_to_latest"
+                android:clickable="true"
+                android:contentDescription="Jump to latest messages"
+                android:focusable="true"
+                android:padding="9dp"
+                android:src="@drawable/ic_chevron_down"
+                app:tint="@color/brand_primary" />
+
+            <TextView
+                android:id="@+id/tvNewMessagesCount"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_gravity="top|end"
+                android:background="@drawable/bg_unread_badge_red"
+                android:fontFamily="@font/fredokasemibold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:minWidth="18dp"
+                android:paddingHorizontal="5dp"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:visibility="gone"
+                tools:text="3"
+                tools:visibility="visible" />
+
+        </FrameLayout>
+
+        <!-- In-thread search: covers the message list while open -->
+        <LinearLayout
+            android:id="@+id/layoutSearchPanel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Close search"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_chat_back" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_search_pill_gray"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="Search"
+                        android:src="@drawable/ic_search_gray"
+                        app:tint="#8E8E93" />
+
+                    <EditText
+                        android:id="@+id/etSearchMessages"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:fontFamily="@font/fredokaregular"
+                        android:hint="Search in conversation"
+                        android:imeOptions="actionSearch"
+                        android:importantForAutofill="no"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="#18181B"
+                        android:textColorHint="#8E8E93"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/btnClearMessageSearch"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:contentDescription="Clear search"
+                        android:focusable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_close_white"
+                        android:visibility="gone"
+                        app:tint="#8E8E93" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvSearchSummary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokaregular"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="20dp"
+                android:paddingBottom="8dp"
+                android:text="Search this conversation"
+                android:textColor="@color/text_tertiary"
+                android:textSize="12.5sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/border_subtle" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvSearchResults"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:paddingBottom="16dp"
+                    tools:listitem="@layout/item_chat_search_result" />
+
+                <ProgressBar
+                    android:id="@+id/progressSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="@color/brand_primary"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/layoutSearchEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="32dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvSearchEmptyTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredokasemibold"
+                        android:text="No messages found"
+                        android:textColor="#18181B"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvSearchEmptyMessage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="@font/fredokaregular"
+                        android:gravity="center"
+                        android:text="Try a different keyword"
+                        android:textColor="@color/text_tertiary"
+                        android:textSize="13.5sp" />
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/border_subtle" />
+
+    <!-- Composer -->
+    <LinearLayout
+        android:id="@+id/layoutComposer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp">
+
+        <!-- Reply / edit context banner shown above the input row -->
+        <LinearLayout
+            android:id="@+id/layoutComposerBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_composer_banner"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <View
+                android:layout_width="3dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="8dp"
+                android:background="@color/brand_primary" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingVertical="8dp">
+
+                <TextView
+                    android:id="@+id/tvComposerBannerTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/brand_primary"
+                    android:textSize="12sp"
+                    tools:text="Replying to Sophia" />
+
+                <TextView
+                    android:id="@+id/tvComposerBannerBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="#4B5563"
+                    android:textSize="12.5sp"
+                    tools:text="See you at 8 pm tonight" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/btnBannerClose"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="Cancel"
+                android:focusable="true"
+                android:padding="9dp"
+                android:src="@drawable/ic_close_dark" />
+
+        </LinearLayout>
+
+        <!-- Blocked state: the composer is replaced by an unblock prompt -->
+        <LinearLayout
+            android:id="@+id/layoutBlockedBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokasemibold"
+                android:includeFontPadding="false"
+                android:text="You blocked this user"
+                android:textColor="#18181B"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/btnUnblock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokaregular"
+                android:includeFontPadding="false"
+                android:text="Unblock to send messages"
+                android:textColor="@color/brand_primary"
+                android:textSize="13.5sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutComposerRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/btnAttach"
+                android:layout_width="40dp"
+                android:layout_height="46dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="Attach photo"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_plus_red" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_chat_input_pill"
+                android:gravity="center_vertical"
+                android:minHeight="46dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="6dp">
+
+                <EditText
+                    android:id="@+id/etMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:fontFamily="@font/fredokaregular"
+                    android:hint="Message"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:maxLines="4"
+                    android:minHeight="30dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="#18181B"
+                    android:textColorHint="#9CA3AF"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/btnMic"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="6dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="Record voice note"
+                android:focusable="true"
+                android:padding="12dp"
+                android:src="@drawable/ic_mic_red"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/btnSend"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_send_button"
+                android:clickable="true"
+                android:contentDescription="Send"
+                android:focusable="true"
+                android:padding="12dp"
+                android:src="@drawable/ic_send_white"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Voice note recorder: replaces the text row while recording -->
+        <LinearLayout
+            android:id="@+id/layoutRecording"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chat_input_pill"
+            android:gravity="center_vertical"
+            android:minHeight="46dp"
+            android:orientation="horizontal"
+            android:paddingStart="6dp"
+            android:paddingEnd="4dp"
+            android:paddingVertical="4dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/btnCancelRecording"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="Cancel recording"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_close_dark" />
+
+            <View
+                android:id="@+id/viewRecordingDot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_record_dot" />
+
+            <TextView
+                android:id="@+id/tvRecordingTimer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/fredokaregular"
+                android:includeFontPadding="false"
+                android:text="0:00"
+                android:textColor="#18181B"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tvRecordingHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:fontFamily="@font/fredokaregular"
+                android:includeFontPadding="false"
+                android:text="Recording…"
+                android:textColor="@color/brand_primary"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/btnSendRecording"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/bg_send_button"
+                android:clickable="true"
+                android:contentDescription="Send voice note"
+                android:focusable="true"
+                android:padding="11dp"
+                android:src="@drawable/ic_send_white" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

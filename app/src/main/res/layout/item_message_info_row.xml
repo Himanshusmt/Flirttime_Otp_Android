@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="8dp">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/ivInfoAvatar"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        app:actualImageScaleType="centerCrop"
+        app:placeholderImage="@drawable/img_login"
+        app:roundAsCircle="true" />
+
+    <TextView
+        android:id="@+id/tvInfoName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:fontFamily="@font/fredokasemibold"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textColor="#18181B"
+        android:textSize="14.5sp"
+        tools:text="Sophia Carter" />
+
+    <ImageView
+        android:id="@+id/ivInfoStatusIcon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:contentDescription="Delivery status"
+        android:src="@drawable/ic_action_check_circle"
+        app:tint="@color/brand_primary" />
+
+    <TextView
+        android:id="@+id/tvInfoStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:fontFamily="@font/fredokaregular"
+        android:includeFontPadding="false"
+        android:textColor="@color/text_tertiary"
+        android:textSize="12.5sp"
+        tools:text="Read" />
+
+</LinearLayout>

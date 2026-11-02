@@ -13,6 +13,18 @@ import com.flirttime.feature.onboarding.Intro2Activity
 import com.flirttime.feature.onboarding.Intro3Activity
 import com.flirttime.feature.onboarding.PermissionActivity
 import com.flirttime.feature.splash.SplashActivity
+import com.google.gson.Gson
+
+/**
+ * One member of a group thread, carried through the navigation intent so the member sheet
+ * renders instantly (iOS passes `groupParticipants` the same way).
+ */
+data class ChatMember(
+    val userId: String,
+    val name: String,
+    val avatarUrl: String? = null,
+    val isVerified: Boolean = false
+)
 
 /**
  * Type-Safe Navigation Destinations and Router.
@@ -70,9 +82,28 @@ sealed class Destination {
         val city: String? = null,
         val bio: String? = null
     ) : Destination()
+
+    data class ChatDetail(
+        val conversationId: String,
+        val title: String? = null,
+        val avatarUrl: String? = null,
+        val isGroup: Boolean = false,
+        val isVerified: Boolean = false,
+        /** Group participants, when the caller already knows them (inbox row). */
+        val members: List<ChatMember> = emptyList(),
+        /** Peer of a direct chat — enables the block action without an extra fetch. */
+        val peerUserId: String? = null,
+        val peerUsername: String? = null,
+        val isPinned: Boolean = false,
+        val isMuted: Boolean = false,
+        val isArchived: Boolean = false,
+        val isBlocked: Boolean = false
+    ) : Destination()
 }
 
 object AppNavigator {
+
+    private val gson = Gson()
 
     const val EXTRA_OTP_FROM = "extra_otp_from"
     const val EXTRA_PREFILLED_PHONE = "extra_prefilled_phone"
@@ -91,6 +122,18 @@ object AppNavigator {
     const val EXTRA_PROFILE_PHOTO_URL = "extra_profile_photo_url"
     const val EXTRA_CITY = "extra_city"
     const val EXTRA_BIO = "extra_bio"
+    const val EXTRA_CONVERSATION_ID = "extra_conversation_id"
+    const val EXTRA_CHAT_TITLE = "extra_chat_title"
+    const val EXTRA_CHAT_AVATAR = "extra_chat_avatar"
+    const val EXTRA_CHAT_IS_GROUP = "extra_chat_is_group"
+    const val EXTRA_CHAT_IS_VERIFIED = "extra_chat_is_verified"
+    const val EXTRA_CHAT_MEMBERS = "extra_chat_members"
+    const val EXTRA_CHAT_PEER_USER_ID = "extra_chat_peer_user_id"
+    const val EXTRA_CHAT_PEER_USERNAME = "extra_chat_peer_username"
+    const val EXTRA_CHAT_IS_PINNED = "extra_chat_is_pinned"
+    const val EXTRA_CHAT_IS_MUTED = "extra_chat_is_muted"
+    const val EXTRA_CHAT_IS_ARCHIVED = "extra_chat_is_archived"
+    const val EXTRA_CHAT_IS_BLOCKED = "extra_chat_is_blocked"
 
     fun navigateTo(
         context: Context,
@@ -124,6 +167,7 @@ object AppNavigator {
             is Destination.BlockedReported -> com.flirttime.feature.profile.settings.BlockedReportedActivity::class.java
             is Destination.EditProfile -> com.flirttime.feature.profile.edit.EditProfileActivity::class.java
             is Destination.UserProfile -> com.flirttime.feature.profile.otherUser.OtherUserProfileActivity::class.java
+            is Destination.ChatDetail -> com.flirttime.feature.chat.detail.ChatDetailActivity::class.java
         }
 
         val intent = Intent(context, targetClass).apply {
@@ -156,6 +200,22 @@ object AppNavigator {
                     destination.profilePhotoUrl?.let { putExtra(EXTRA_PROFILE_PHOTO_URL, it) }
                     destination.city?.let { putExtra(EXTRA_CITY, it) }
                     destination.bio?.let { putExtra(EXTRA_BIO, it) }
+                }
+                is Destination.ChatDetail -> {
+                    putExtra(EXTRA_CONVERSATION_ID, destination.conversationId)
+                    destination.title?.let { putExtra(EXTRA_CHAT_TITLE, it) }
+                    destination.avatarUrl?.let { putExtra(EXTRA_CHAT_AVATAR, it) }
+                    putExtra(EXTRA_CHAT_IS_GROUP, destination.isGroup)
+                    putExtra(EXTRA_CHAT_IS_VERIFIED, destination.isVerified)
+                    if (destination.members.isNotEmpty()) {
+                        putExtra(EXTRA_CHAT_MEMBERS, gson.toJson(destination.members))
+                    }
+                    destination.peerUserId?.let { putExtra(EXTRA_CHAT_PEER_USER_ID, it) }
+                    destination.peerUsername?.let { putExtra(EXTRA_CHAT_PEER_USERNAME, it) }
+                    putExtra(EXTRA_CHAT_IS_PINNED, destination.isPinned)
+                    putExtra(EXTRA_CHAT_IS_MUTED, destination.isMuted)
+                    putExtra(EXTRA_CHAT_IS_ARCHIVED, destination.isArchived)
+                    putExtra(EXTRA_CHAT_IS_BLOCKED, destination.isBlocked)
                 }
                 else -> Unit
             }

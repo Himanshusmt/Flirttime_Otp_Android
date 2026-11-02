@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="14dp"
+    android:paddingVertical="3dp">
+
+    <!-- Incoming bubble (left aligned) -->
+    <LinearLayout
+        android:id="@+id/layoutIncoming"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <!-- Sender row: avatar (group threads only) + display name -->
+        <LinearLayout
+            android:id="@+id/layoutSenderHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginBottom="3dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/ivSenderAvatar"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="5dp"
+                android:visibility="gone"
+                app:actualImageScaleType="centerCrop"
+                app:placeholderImage="@drawable/img_login"
+                app:roundAsCircle="true"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tvSenderName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokasemibold"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/brand_primary"
+                android:textSize="11.5sp"
+                android:visibility="gone"
+                tools:text="Sophia"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+        <!-- Quoted message this bubble replies to -->
+        <LinearLayout
+            android:id="@+id/layoutIncomingReply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:background="@drawable/bg_reply_preview_incoming"
+            android:minHeight="34dp"
+            android:orientation="horizontal"
+            android:paddingEnd="10dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <View
+                android:layout_width="3dp"
+                android:layout_height="match_parent"
+                android:background="@color/brand_primary" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvIncomingReplySender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/brand_primary"
+                    android:textSize="11sp"
+                    tools:text="Sophia" />
+
+                <TextView
+                    android:id="@+id/tvIncomingReplyBody"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/fredokaregular"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:maxWidth="240dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    tools:text="Are we still on for tonight?" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Incoming image / video thumbnail -->
+        <FrameLayout
+            android:id="@+id/frameIncomingMedia"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/ivIncomingImage"
+                android:layout_width="match_parent"
+                android:layout_height="190dp"
+                app:actualImageScaleType="centerCrop"
+                app:fadeDuration="150"
+                app:placeholderImage="@color/brand_primary_subtle"
+                app:roundedCornerRadius="16dp" />
+
+            <ImageView
+                android:id="@+id/ivIncomingPlay"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_play_overlay_circle"
+                android:contentDescription="Play video"
+                android:padding="13dp"
+                android:src="@drawable/ic_play_white"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvIncomingMediaDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="8dp"
+                android:background="@drawable/bg_media_duration_chip"
+                android:fontFamily="@font/fredokasemibold"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="3dp"
+                android:textColor="@color/white"
+                android:textSize="10.5sp"
+                android:visibility="gone"
+                tools:text="0:12"
+                tools:visibility="visible" />
+
+        </FrameLayout>
+
+        <!-- Incoming voice note -->
+        <LinearLayout
+            android:id="@+id/layoutIncomingAudio"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_bubble_incoming"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="9dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/ivIncomingAudioPlay"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_audio_play_tint"
+                android:contentDescription="Play voice note"
+                android:padding="8dp"
+                android:src="@drawable/ic_play_white" />
+
+            <com.flirttime.feature.main.profile.widget.AudioWaveformView
+                android:id="@+id/waveIncoming"
+                android:layout_width="0dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/tvIncomingAudioDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/fredokaregular"
+                android:includeFontPadding="false"
+                android:textColor="@color/text_tertiary"
+                android:textSize="11sp"
+                tools:text="0:12" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvIncomingBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_bubble_incoming"
+            android:fontFamily="@font/fredokaregular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="2dp"
+            android:maxWidth="272dp"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp"
+            android:textColor="#18181B"
+            android:textSize="15sp"
+            android:textIsSelectable="true"
+            tools:text="Hey! Are we still on for tonight?" />
+
+        <LinearLayout
+            android:id="@+id/layoutIncomingReactions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="3dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivIncomingPinned"
+                android:layout_width="11dp"
+                android:layout_height="11dp"
+                android:layout_marginEnd="4dp"
+                android:contentDescription="Pinned message"
+                android:src="@drawable/ic_action_pin"
+                android:visibility="gone"
+                app:tint="@color/text_tertiary" />
+
+            <TextView
+                android:id="@+id/tvIncomingTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokaregular"
+                android:includeFontPadding="false"
+                android:textColor="@color/text_tertiary"
+                android:textSize="10.5sp"
+                tools:text="21:04" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Outgoing bubble (right aligned) -->
+    <LinearLayout
+        android:id="@+id/layoutOutgoing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:gravity="end"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <!-- Quoted message this bubble replies to -->
+        <LinearLayout
+            android:id="@+id/layoutOutgoingReply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:background="@drawable/bg_reply_preview_outgoing"
+            android:minHeight="34dp"
+            android:orientation="horizontal"
+            android:paddingEnd="10dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <View
+                android:layout_width="3dp"
+                android:layout_height="match_parent"
+                android:background="@color/brand_primary" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvOutgoingReplySender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/brand_primary"
+                    android:textSize="11sp"
+                    tools:text="You" />
+
+                <TextView
+                    android:id="@+id/tvOutgoingReplyBody"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/fredokaregular"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:maxWidth="240dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    tools:text="Yes! Booking the table now." />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Outgoing image / video thumbnail -->
+        <FrameLayout
+            android:id="@+id/frameOutgoingMedia"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/ivOutgoingImage"
+                android:layout_width="match_parent"
+                android:layout_height="190dp"
+                app:actualImageScaleType="centerCrop"
+                app:fadeDuration="150"
+                app:placeholderImage="@color/brand_primary_subtle"
+                app:roundedCornerRadius="16dp" />
+
+            <ImageView
+                android:id="@+id/ivOutgoingPlay"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_play_overlay_circle"
+                android:contentDescription="Play video"
+                android:padding="13dp"
+                android:src="@drawable/ic_play_white"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvOutgoingMediaDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="8dp"
+                android:background="@drawable/bg_media_duration_chip"
+                android:fontFamily="@font/fredokasemibold"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="3dp"
+                android:textColor="@color/white"
+                android:textSize="10.5sp"
+                android:visibility="gone"
+                tools:text="0:12"
+                tools:visibility="visible" />
+
+        </FrameLayout>
+
+        <!-- Outgoing voice note -->
+        <LinearLayout
+            android:id="@+id/layoutOutgoingAudio"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_bubble_outgoing"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="9dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/ivOutgoingAudioPlay"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_audio_play_white"
+                android:contentDescription="Play voice note"
+                android:padding="8dp"
+                android:src="@drawable/ic_play_white"
+                app:tint="@color/brand_primary" />
+
+            <com.flirttime.feature.main.profile.widget.AudioWaveformView
+                android:id="@+id/waveOutgoing"
+                android:layout_width="0dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/tvOutgoingAudioDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/fredokaregular"
+                android:includeFontPadding="false"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                tools:text="0:12" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvOutgoingBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_bubble_outgoing"
+            android:fontFamily="@font/fredokaregular"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="2dp"
+            android:maxWidth="272dp"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp"
+            android:textColor="@color/white"
+            android:textIsSelectable="true"
+            android:textSize="15sp"
+            tools:text="Yes! Booking the table now." />
+
+        <LinearLayout
+            android:id="@+id/layoutOutgoingReactions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="6dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivOutgoingPinned"
+                android:layout_width="11dp"
+                android:layout_height="11dp"
+                android:layout_marginEnd="4dp"
+                android:contentDescription="Pinned message"
+                android:src="@drawable/ic_action_pin"
+                android:visibility="gone"
+                app:tint="@color/text_tertiary" />
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:fontFamily="@font/fredokaregular"
+                android:includeFontPadding="false"
+                android:textColor="@color/text_tertiary"
+                android:textSize="10.5sp"
+                tools:text="✓✓" />
+
+            <TextView
+                android:id="@+id/tvOutgoingTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokaregular"
+                android:includeFontPadding="false"
+                android:textColor="@color/text_tertiary"
+                android:textSize="10.5sp"
+                tools:text="21:05" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Centred system notice -->
+    <TextView
+        android:id="@+id/tvSystemMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginVertical="4dp"
+        android:background="@drawable/bg_date_separator_pill"
+        android:fontFamily="@font/fredokaregular"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:maxWidth="280dp"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:textColor="@color/text_tertiary"
+        android:textSize="12sp"
+        android:textAlignment="center"
+        android:visibility="gone"
+        tools:text="You matched with Sophia"
+        tools:visibility="gone" />
+
+    <!-- Multi-select overlay: dims the row and shows the check control -->
+    <FrameLayout
+        android:id="@+id/frameSelection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CCFFFFFF"
+        android:clickable="true"
+        android:focusable="false"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/ivSelectionCheck"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="Select message"
+            android:src="@drawable/ic_action_circle_outline"
+            app:tint="@color/brand_primary" />
+
+    </FrameLayout>
+
+</FrameLayout>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="9dp">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/ivMemberAvatar"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        app:actualImageScaleType="centerCrop"
+        app:placeholderImage="@drawable/img_login"
+        app:roundAsCircle="true" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvMemberName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/fredokasemibold"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="#18181B"
+                android:textSize="14.5sp"
+                tools:text="Sophia Carter" />
+
+            <ImageView
+                android:id="@+id/ivMemberVerified"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_marginStart="4dp"
+                android:contentDescription="Verified"
+                android:src="@drawable/verified_badge"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tvMemberYou"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_pill_pink_badge"
+                android:fontFamily="@font/fredokasemibold"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="1dp"
+                android:text="You"
+                android:textColor="@color/brand_primary"
+                android:textSize="10sp"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvMemberRole"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/fredokaregular"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="@color/text_tertiary"
+            android:textSize="12sp"
+            tools:text="Member" />
+
+    </LinearLayout>
+
+</LinearLayout>

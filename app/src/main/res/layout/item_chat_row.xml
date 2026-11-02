@@ -113,6 +113,17 @@
         android:gravity="end|center_vertical"
         android:orientation="vertical">
 
+        <ImageView
+            android:id="@+id/ivMuted"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_gravity="end"
+            android:layout_marginBottom="2dp"
+            android:contentDescription="Muted"
+            android:src="@drawable/ic_chat_muted"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
         <TextView
             android:id="@+id/tvTimestamp"
             android:layout_width="wrap_content"
@@ -140,5 +151,17 @@
             tools:visibility="visible" />
 
     </LinearLayout>
+
+    <!-- Selection check (multi-select mode only) -->
+    <ImageView
+        android:id="@+id/ivSelected"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="6dp"
+        android:contentDescription="Selected"
+        android:src="@drawable/ic_action_circle_outline"
+        android:visibility="gone"
+        app:tint="@color/brand_primary"
+        tools:visibility="visible" />
 
 </LinearLayout>

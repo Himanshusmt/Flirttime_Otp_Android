@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/navigation_chat"
-        android:name="com.flirttime.feature.main.chat.ChatFragment"
+        android:name="com.flirttime.feature.chat.list.ChatListFragment"
         android:label="Messages"
         tools:layout="@layout/fragment_chat" />
 

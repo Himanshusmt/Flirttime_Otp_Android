@@ -22,6 +22,7 @@ lottie = "6.6.7"
 fresco = "3.6.0"
 imageCropper = "4.7.0"
 swiperefreshlayout = "1.1.0"
+socketio = "2.1.1"
 
 [libraries]
 android-image-cropper = { group = "com.vanniktech", name = "android-image-cropper", version.ref = "imageCropper" }
@@ -62,6 +63,9 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 sdp-android = { group = "com.intuit.sdp", name = "sdp-android", version.ref = "sdp" }
 ssp-android = { group = "com.intuit.ssp", name = "ssp-android", version.ref = "ssp" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
+# Socket.IO (chat realtime)
+socket-io-client = { group = "io.socket", name = "socket.io-client", version.ref = "socketio" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

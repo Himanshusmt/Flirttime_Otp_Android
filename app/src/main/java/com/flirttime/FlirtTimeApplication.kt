@@ -1,6 +1,7 @@
 package com.flirttime
 
 import android.app.Application
+import com.flirttime.core.common.AppForegroundTracker
 import com.flirttime.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -19,5 +20,8 @@ class FlirtTimeApplication : Application() {
         }
 
         com.facebook.drawee.backends.pipeline.Fresco.initialize(this)
+
+        // Chat notifications are suppressed while a screen is in front.
+        AppForegroundTracker.register(this)
     }
 }

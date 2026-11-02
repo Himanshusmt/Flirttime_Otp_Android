@@ -35,6 +35,13 @@ class AudioWaveformView @JvmOverloads constructor(
         invalidate()
     }
 
+    /** Overrides the bar colours, e.g. for waveforms drawn on a coloured bubble. */
+    fun setWaveColors(inactiveColor: Int, activeColor: Int) {
+        barPaint.color = inactiveColor
+        activeBarPaint.color = activeColor
+        invalidate()
+    }
+
     // Relative amplitude levels matching audio visual pattern
     private val amplitudes = floatArrayOf(
         0.35f, 0.70f, 0.45f, 0.90f, 0.55f, 0.30f, 0.85f, 0.60f,

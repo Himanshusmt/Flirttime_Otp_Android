@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvSender"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/fredokasemibold"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="#18181B"
+            android:textSize="13.5sp"
+            tools:text="Sophia Carter" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/fredokaregular"
+            android:includeFontPadding="false"
+            android:textColor="@color/text_tertiary"
+            android:textSize="11.5sp"
+            tools:text="12 Mar, 4:20 PM" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvSnippet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/fredokaregular"
+        android:maxLines="2"
+        android:textColor="#3F3F46"
+        android:textSize="13.5sp"
+        tools:text="Hey! Are we still meeting for coffee tomorrow?" />
+
+</LinearLayout>

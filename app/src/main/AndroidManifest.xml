@@ -218,6 +218,31 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Chat Conversation Screen: also the push / deep-link target -->
+        <activity
+            android:name=".feature.chat.detail.ChatDetailActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="chat"
+                    android:scheme="flirttime" />
+            </intent-filter>
+        </activity>
+
+        <!-- Chat push payloads: turns a data push into a deep-linked notification -->
+        <receiver
+            android:name=".feature.chat.notification.ChatPushReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.flirttime.action.CHAT_PUSH" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

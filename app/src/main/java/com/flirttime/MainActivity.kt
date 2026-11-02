@@ -1,5 +1,6 @@
 package com.flirttime
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.navOptions
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.databinding.ActivityMainBinding
+import com.flirttime.feature.chat.notification.ChatDeepLink
 
 class MainActivity : AppCompatActivity() {
 
@@ -169,7 +171,16 @@ class MainActivity : AppCompatActivity() {
         binding.linearProfile.alpha = if (isProfile) 1.0f else 0.85f
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIncomingIntent()
+    }
+
     private fun handleIncomingIntent() {
+        // Push / deep link: open the exact thread instead of the tab shell.
+        if (ChatDeepLink.openFromIntent(this, intent)) return
+
         if (intent.hasExtra(AppNavigator.EXTRA_TARGET_TAB)) {
             val targetTab = intent.getIntExtra(AppNavigator.EXTRA_TARGET_TAB, 2)
             when (targetTab) {
