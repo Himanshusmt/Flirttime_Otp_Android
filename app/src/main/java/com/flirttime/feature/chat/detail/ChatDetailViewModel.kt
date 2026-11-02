@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flirttime.Resource
 import com.flirttime.core.database.SessionManager
+import com.flirttime.feature.main.matches.FreeTierLimitsStore
 import com.flirttime.core.navigation.ChatMember
 import com.flirttime.feature.chat.ChatRepository
 import com.flirttime.feature.chat.cache.ChatCacheStore
@@ -63,7 +64,8 @@ class ChatDetailViewModel(
     private val repository: ChatRepository,
     private val socketManager: ChatSocketManager,
     private val sessionManager: SessionManager,
-    private val cache: ChatCacheStore
+    private val cache: ChatCacheStore,
+    private val limitsStore: FreeTierLimitsStore
 ) : ViewModel() {
 
     private val _rows = MutableStateFlow<List<MessageRow>>(emptyList())
@@ -103,6 +105,9 @@ class ChatDetailViewModel(
 
     private val _errorMessage = MutableSharedFlow<String>(extraBufferCapacity = 4)
     val errorMessage: SharedFlow<String> = _errorMessage.asSharedFlow()
+
+    private val _matchRequiredToChat = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val matchRequiredToChat: SharedFlow<Unit> = _matchRequiredToChat.asSharedFlow()
 
     /** Emitted whenever a new message should scroll the list to the bottom. */
     private val _scrollToBottom = MutableSharedFlow<Unit>(extraBufferCapacity = 8)
@@ -529,6 +534,14 @@ class ChatDetailViewModel(
                             return@launch
                         }
                         is Resource.Error -> {
+                            if (isMatchRequired(result)) {
+                                cache.removeFromOutbox(entry.tempId)
+                                markFailed(entry.tempId)
+                                if (!limitsStore.isPremium) {
+                                    _matchRequiredToChat.tryEmit(Unit)
+                                }
+                                return@launch
+                            }
                             attempt++
                             cache.markAttempt(entry.tempId)
                             val canRetry = attempt <= MAX_AUTO_RETRIES &&
@@ -1560,6 +1573,15 @@ class ChatDetailViewModel(
         pendingMedia.clear()
         stopTyping()
         super.onCleared()
+    }
+
+    private fun isMatchRequired(error: Resource.Error): Boolean {
+        val haystack = listOf(error.message, error.errorBody, error.cause?.message)
+            .filterNotNull()
+            .joinToString(" ")
+            .uppercase()
+            .replace(" ", "_")
+        return haystack.contains("MATCH_REQUIRED_TO_CHAT")
     }
 
     private companion object {

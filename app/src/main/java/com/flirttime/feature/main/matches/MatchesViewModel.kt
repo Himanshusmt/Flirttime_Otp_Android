@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flirttime.Resource
 import com.flirttime.core.database.SessionManager
+import com.flirttime.feature.coins.CoinWallet
 import com.flirttime.feature.main.matches.interest.InterestPersonItem
 import com.flirttime.feature.profile.DiscoveryActionResponseData
 import com.flirttime.feature.quickmoments.QuickMomentCardItem
@@ -41,7 +42,9 @@ data class DiscoveryDeckState(
 
 class MatchesViewModel(
     private val matchesRepository: MatchesRepository,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val coinWallet: CoinWallet,
+    private val limitsStore: FreeTierLimitsStore
 ) : ViewModel() {
 
     // 1. Candidate profiles for Swipe Cards (People Tab)
@@ -72,8 +75,7 @@ class MatchesViewModel(
     val quickMomentCreationState: SharedFlow<Resource<QuickMomentSlideDto>> = _quickMomentCreationState.asSharedFlow()
 
     // 5. Header Quick Info States
-    private val _coinBalanceState = MutableStateFlow<Int>(40)
-    val coinBalanceState: StateFlow<Int> = _coinBalanceState.asStateFlow()
+    val coinBalanceState: StateFlow<Int> = coinWallet.balance
 
     private val _notificationCountState = MutableStateFlow<Int>(0)
     val notificationCountState: StateFlow<Int> = _notificationCountState.asStateFlow()
@@ -95,6 +97,7 @@ class MatchesViewModel(
         loadQuickMomentsCards()
         loadHeaderInfo()
         loadSavedFilters()
+        limitsStore.refresh()
     }
 
     private fun loadSavedFilters() {
@@ -125,12 +128,9 @@ class MatchesViewModel(
      */
     fun loadHeaderInfo() {
         viewModelScope.launch {
-            matchesRepository.getWalletBalance().collectLatest { res ->
-                if (res is Resource.Success) {
-                    _coinBalanceState.value = res.data.balance
-                }
-            }
+            coinWallet.refresh()
         }
+        limitsStore.refresh()
         viewModelScope.launch {
             matchesRepository.getNotificationCounts().collectLatest { res ->
                 if (res is Resource.Success) {
@@ -519,15 +519,36 @@ class MatchesViewModel(
             else -> rawAction
         }
 
+        if (normalizedAction == "like" && !limitsStore.canLike) {
+            viewModelScope.launch {
+                _actionErrorEvent.emit(
+                    DiscoveryActionError.DailyLikesExceeded(
+                        profile,
+                        "You have reached your daily like limit. Upgrade to continue liking!"
+                    )
+                )
+            }
+            return
+        }
+        if (normalizedAction == "super_like" && !limitsStore.canSuperLike) {
+            viewModelScope.launch {
+                _actionErrorEvent.emit(
+                    DiscoveryActionError.InsufficientCoins(
+                        profile,
+                        "You need more coins to send a Super Like!"
+                    )
+                )
+            }
+            return
+        }
+
         viewModelScope.launch {
             matchesRepository.submitDiscoveryAction(profile.id, normalizedAction).collect { resource ->
                 when (resource) {
                     is Resource.Success -> {
                         val data = resource.data
-                        // Update coins if provided
-                        data.remainingCoins?.let { coins ->
-                            _coinBalanceState.value = coins
-                        }
+                        data.remainingCoins?.let { coinWallet.update(it) }
+                        limitsStore.refresh()
 
                         // Check Match Celebration
                         if (data.isMatched == true) {

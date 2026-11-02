@@ -736,6 +736,14 @@ class ChatDetailActivity : AppCompatActivity() {
                     }
                 }
                 launch {
+                    viewModel.matchRequiredToChat.collect {
+                        com.flirttime.feature.subscription.SubscriptionPopUp.show(
+                            this@ChatDetailActivity,
+                            com.flirttime.feature.subscription.SubscriptionPopUpType.CHAT
+                        )
+                    }
+                }
+                launch {
                     viewModel.replyTarget.collect { target ->
                         renderComposerBanner(viewModel.editTarget.value, target)
                     }

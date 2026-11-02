@@ -15,7 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ExploreViewModel(
-    private val mainRepository: MainRepository
+    private val mainRepository: MainRepository,
+    private val limitsStore: com.flirttime.feature.main.matches.FreeTierLimitsStore
 ) : ViewModel() {
 
     companion object {
@@ -135,7 +136,7 @@ class ExploreViewModel(
                     is Resource.Success -> {
                         if (tabGenerations[tab] != nextGen) return@collect
                         val data = resource.data
-                        val isLocked = data.effectiveIsLocked
+                        val isLocked = data.effectiveIsLocked || limitsStore.isTabLocked(tab)
                         val rawItems = data.effectiveItems
                         val nextCursor = data.pagination?.effectiveCursor
                         val hasMore = data.pagination?.effectiveHasMore ?: (nextCursor != null)
@@ -192,7 +193,7 @@ class ExploreViewModel(
                 when (resource) {
                     is Resource.Success -> {
                         val data = resource.data
-                        val isLocked = data.effectiveIsLocked
+                        val isLocked = data.effectiveIsLocked || limitsStore.isTabLocked(tab)
                         val rawItems = data.effectiveItems
                         val nextCursor = data.pagination?.effectiveCursor
                         val newHasMore = data.pagination?.effectiveHasMore ?: (nextCursor != null)
@@ -238,8 +239,13 @@ class ExploreViewModel(
         }
     }
 
+    fun refreshLimits() {
+        limitsStore.refresh()
+        updateUpsellAndLockState(_currentTab.value)
+    }
+
     private fun updateUpsellAndLockState(tab: ExploreTab) {
-        val isLocked = persistentIsLocked[tab] ?: false
+        val isLocked = (persistentIsLocked[tab] ?: false) || limitsStore.isTabLocked(tab)
         _isCurrentTabLocked.value = isLocked
 
         _upsellText.value = when {

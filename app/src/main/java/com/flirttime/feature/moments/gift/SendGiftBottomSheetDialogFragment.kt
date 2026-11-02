@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.flirttime.R
 import com.flirttime.Resource
 import com.flirttime.databinding.BottomSheetSendGiftBinding
+import com.flirttime.core.navigation.AppNavigator
+import com.flirttime.core.navigation.Destination
+import com.flirttime.feature.coins.CoinWallet
 import com.flirttime.feature.moments.MomentsRepository
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -36,7 +39,7 @@ class SendGiftBottomSheetDialogFragment : BottomSheetDialogFragment() {
             recipientName: String,
             recipientId: String? = null,
             momentId: String = recipientId.orEmpty(),
-            currentCoins: Int = 500
+            currentCoins: Int = 0
         ): SendGiftBottomSheetDialogFragment {
             return SendGiftBottomSheetDialogFragment().apply {
                 arguments = Bundle().apply {
@@ -53,11 +56,12 @@ class SendGiftBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     private val momentsRepository: MomentsRepository by inject()
+    private val coinWallet: CoinWallet by inject()
 
     private var recipientName: String = "User"
     private var recipientId: String? = null
     private var momentId: String = ""
-    private var userCoins: Int = 500
+    private var userCoins: Int = 0
     private var selectedGift: GiftItem? = null
     private lateinit var giftAdapter: GiftAdapter
     private val giftsList = mutableListOf<GiftItem>()
@@ -69,7 +73,7 @@ class SendGiftBottomSheetDialogFragment : BottomSheetDialogFragment() {
         recipientName = arguments?.getString(ARG_RECIPIENT_NAME) ?: "User"
         recipientId = arguments?.getString(ARG_RECIPIENT_ID)
         momentId = arguments?.getString(ARG_MOMENT_ID) ?: recipientId.orEmpty()
-        userCoins = arguments?.getInt(ARG_CURRENT_COINS, 500) ?: 500
+        userCoins = arguments?.getInt(ARG_CURRENT_COINS, 0) ?: coinWallet.current
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -102,7 +106,17 @@ class SendGiftBottomSheetDialogFragment : BottomSheetDialogFragment() {
         setupHeaders()
         setupGiftGrid()
         setupSendButton()
+        binding.btnAddCoins.setOnClickListener {
+            AppNavigator.navigateTo(requireContext(), Destination.CoinShop)
+        }
         loadGiftsCatalog()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        userCoins = coinWallet.current
+        updateBalanceUi()
+        updateSendButtonState(selectedGift)
     }
 
     private fun setupHeaders() {
@@ -134,7 +148,8 @@ class SendGiftBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 when (resource) {
                     is Resource.Success -> {
                         val (balance, serverGifts) = resource.data
-                        userCoins = balance
+                        userCoins = if (balance > 0) balance else coinWallet.current
+                        coinWallet.update(userCoins)
                         updateBalanceUi()
 
                         giftsList.clear()
@@ -149,11 +164,16 @@ class SendGiftBottomSheetDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun updateSendButtonState(gift: GiftItem?) {
-        if (gift != null) {
+        if (gift != null && userCoins >= gift.coinPrice) {
             binding.btnSendGift.isEnabled = true
             binding.btnSendGift.setBackgroundResource(R.drawable.bg_btn_pill_red)
             binding.btnSendGift.setTextColor(Color.WHITE)
             binding.btnSendGift.text = "Send Gift (${gift.coinPrice} coins)"
+        } else if (gift != null) {
+            binding.btnSendGift.isEnabled = false
+            binding.btnSendGift.setBackgroundResource(R.drawable.bg_btn_pill_disabled_gray)
+            binding.btnSendGift.setTextColor(Color.parseColor("#A0A0A0"))
+            binding.btnSendGift.text = "Not enough coins"
         } else {
             binding.btnSendGift.isEnabled = false
             binding.btnSendGift.setBackgroundResource(R.drawable.bg_btn_pill_disabled_gray)
@@ -167,11 +187,7 @@ class SendGiftBottomSheetDialogFragment : BottomSheetDialogFragment() {
             val gift = selectedGift ?: return@setOnClickListener
 
             if (userCoins < gift.coinPrice) {
-                Toast.makeText(
-                    requireContext(),
-                    "Insufficient coins. Please recharge your balance.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                AppNavigator.navigateTo(requireContext(), Destination.CoinShop)
                 return@setOnClickListener
             }
 
@@ -190,6 +206,7 @@ class SendGiftBottomSheetDialogFragment : BottomSheetDialogFragment() {
                         is Resource.Success -> {
                             val remaining = resource.data.remainingCoins ?: (userCoins - gift.coinPrice)
                             userCoins = remaining
+                            coinWallet.update(remaining)
                             updateBalanceUi()
 
                             Toast.makeText(

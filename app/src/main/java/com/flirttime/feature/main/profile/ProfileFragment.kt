@@ -411,10 +411,10 @@ class ProfileFragment : Fragment() {
 
         // My Coins Card & Get Coins CTA (Matching iOS openCoinShop)
         binding.cardCoins.setOnClickListener {
-            showCoinShopDialog()
+            AppNavigator.navigateTo(requireContext(), Destination.CoinShop)
         }
         binding.btnGetCoins.setOnClickListener {
-            showCoinShopDialog()
+            AppNavigator.navigateTo(requireContext(), Destination.CoinShop)
         }
 
         // Premium Benefit Banner (Matching iOS openPremium)

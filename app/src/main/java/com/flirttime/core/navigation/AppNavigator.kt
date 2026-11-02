@@ -66,6 +66,7 @@ sealed class Destination {
     data object GestureVerification : Destination()
     data object VerificationProcess : Destination()
     data object Notification : Destination()
+    data object CoinShop : Destination()
     data object AddMoment : Destination()
     data object MyMoments : Destination()
     data class UserMoments(
@@ -178,6 +179,7 @@ object AppNavigator {
             is Destination.GestureVerification -> com.flirttime.feature.onboarding.GestureVerificationActivity::class.java
             is Destination.VerificationProcess -> com.flirttime.feature.onboarding.VerificationProcessActivity::class.java
             is Destination.Notification -> com.flirttime.feature.notification.NotificationActivity::class.java
+            is Destination.CoinShop -> com.flirttime.feature.coins.CoinsActivity::class.java
             is Destination.AddMoment -> com.flirttime.feature.moments.add.AddMomentActivity::class.java
             is Destination.MyMoments -> com.flirttime.feature.main.profile.MyMomentsActivity::class.java
             is Destination.UserMoments -> com.flirttime.feature.main.profile.MyMomentsActivity::class.java

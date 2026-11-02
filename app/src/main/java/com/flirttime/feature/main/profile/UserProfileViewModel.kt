@@ -12,6 +12,7 @@ import com.flirttime.feature.main.MainRepository
 import com.flirttime.feature.moments.MomentDto
 import com.flirttime.feature.moments.UserMomentsResponseData
 import com.flirttime.feature.moments.MomentsRepository
+import com.flirttime.feature.coins.CoinWallet
 import com.flirttime.feature.main.matches.MatchesRepository
 import com.flirttime.feature.profile.AudioIntroDto
 import com.flirttime.feature.profile.MoreAboutMeResponseData
@@ -46,7 +47,8 @@ class UserProfileViewModel(
     private val matchesRepository: MatchesRepository,
     private val momentsRepository: MomentsRepository,
     private val mainRepository: MainRepository,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val coinWallet: CoinWallet
 ) : ViewModel() {
 
     private companion object {
@@ -90,8 +92,7 @@ class UserProfileViewModel(
     private val _myQuickMomentsState = MutableStateFlow<Resource<com.flirttime.feature.quickmoments.MyQuickMomentsResponseData>?>(null)
     val myQuickMomentsState: StateFlow<Resource<com.flirttime.feature.quickmoments.MyQuickMomentsResponseData>?> = _myQuickMomentsState.asStateFlow()
 
-    private val _coinBalanceState = MutableStateFlow<Int>(0)
-    val coinBalanceState: StateFlow<Int> = _coinBalanceState.asStateFlow()
+    val coinBalanceState: StateFlow<Int> = coinWallet.balance
 
     /** Cached `GET subscriptions/my` (iOS `SubscriptionMembershipStore.membership`). `null` until loaded / no membership. */
     private val _membershipState = MutableStateFlow<MySubscription?>(null)
@@ -355,11 +356,11 @@ class UserProfileViewModel(
     }
 
     private suspend fun awaitWalletBalance() {
-        matchesRepository.getWalletBalance().collectLatest { res ->
-            if (res is Resource.Success) {
-                _coinBalanceState.value = res.data.balance
-            }
-        }
+        coinWallet.refresh()
+    }
+
+    fun applySubscriptionStatus(subscribed: Boolean) {
+        _userProfileState.value = _userProfileState.value?.copy(isSubscribed = subscribed)
     }
 
     /**

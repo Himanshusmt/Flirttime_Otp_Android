@@ -58,6 +58,17 @@
             android:textColor="@color/text_secondary"
             android:textSize="13sp"
             tools:text="" />
+
+        <TextView
+            android:id="@+id/btnAddCoins"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/fredokasemibold"
+            android:padding="4dp"
+            android:text="Add Coins"
+            android:textColor="@color/brand_red"
+            android:textSize="13sp" />
     </LinearLayout>
 
     <!-- 4-Column Gift Grid -->

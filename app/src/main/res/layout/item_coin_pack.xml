@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootPack"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="6dp"
+    android:background="@drawable/bg_settings_card"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingHorizontal="8dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="12dp">
+
+    <TextView
+        android:id="@+id/tvTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_pill_profile_complete"
+        android:fontFamily="@font/fredokamedium"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="2dp"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:visibility="gone"
+        tools:text="Popular"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tvCoins"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/fredokasemibold"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        tools:text="100" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/fredokaregular"
+        android:text="coins"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tvBonus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:fontFamily="@font/fredokamedium"
+        android:textColor="@color/brand_red"
+        android:textSize="11sp"
+        android:visibility="gone"
+        tools:text="+20 bonus"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tvPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/fredokasemibold"
+        android:textColor="@color/brand_red"
+        android:textSize="14sp"
+        tools:text="₹99" />
+
+    <ProgressBar
+        android:id="@+id/progressBuy"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:indeterminateTint="@color/brand_red"
+        android:visibility="gone" />
+</LinearLayout>

@@ -10,6 +10,9 @@ import com.flirttime.feature.main.matches.DiscoveryFiltersResponseData
 import com.flirttime.feature.main.matches.DiscoverySearchRequest
 import com.flirttime.feature.main.matches.DiscoverySearchResponseData
 import com.flirttime.feature.main.matches.UserLimitsResponseData
+import com.flirttime.feature.coins.CoinPackDto
+import com.flirttime.feature.coins.CoinPurchaseData
+import com.flirttime.feature.coins.CoinPurchaseVerifyRequest
 import com.flirttime.feature.main.matches.WalletBalanceData
 import com.flirttime.feature.moments.MomentCommentsResponseData
 import com.flirttime.feature.moments.MomentGiftsCatalogResponseData
@@ -129,6 +132,17 @@ interface MainApiService {
 
     @GET("api/v1/wallet/balance")
     suspend fun getWalletBalance(): ApiResponse<WalletBalanceData>
+
+    @GET("api/v1/coin-packages")
+    suspend fun getCoinPackages(
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 50
+    ): ApiResponse<List<CoinPackDto>>
+
+    @POST("api/v1/coins/purchase/verify")
+    suspend fun verifyCoinPurchase(
+        @Body body: CoinPurchaseVerifyRequest
+    ): ApiResponse<CoinPurchaseData>
 
     /** The signed-in user's current Premium membership (iOS `AppEndPoint.mySubscription`). Parsed manually. */
     @GET("api/v1/subscriptions/my")

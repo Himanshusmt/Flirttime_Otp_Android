@@ -280,8 +280,7 @@ class PremiumActivity : AppCompatActivity() {
         binding.btnRetryPlans.setOnClickListener { viewModel.retry() }
         binding.btnContinue.setOnClickListener { continueTapped() }
         binding.cardShop.setOnClickListener {
-            // iOS `openCoinShop()`; the Android coin shop isn't ported yet.
-            Toast.makeText(this, "Redirecting to Coin Shop...", Toast.LENGTH_SHORT).show()
+            AppNavigator.navigateTo(this, Destination.CoinShop)
         }
         binding.btnPrivacy.setOnClickListener {
             AppNavigator.navigateTo(this, Destination.Webview("Privacy Policy", "https://flirttime.in/page/privacy-policy"))

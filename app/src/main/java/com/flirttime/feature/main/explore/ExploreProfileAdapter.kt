@@ -74,7 +74,7 @@ class ExploreProfileAdapter(
             binding.dotOnlineNextToName.visibility = if (showOnline) View.VISIBLE else View.GONE
 
             // 6. SuperLike Badge
-            binding.ivSuperLikeBadge.visibility = if (item.isSuperLike && !item.isLocked) View.VISIBLE else View.GONE
+            binding.ivSuperLikeBadge.visibility = if (item.isSuperLike) View.VISIBLE else View.GONE
 
             // 7. Walk Distance (e.g. "7 km away", "Nearby")
             if (!item.distance.isNullOrBlank()) {

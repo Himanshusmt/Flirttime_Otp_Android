@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.android.billingclient.api.AcknowledgePurchaseParams
+import com.android.billingclient.api.ConsumeParams
+import com.android.billingclient.api.consumePurchase
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingFlowParams
@@ -60,14 +62,14 @@ class PlayBillingManager(context: Context) : PurchasesUpdatedListener {
     }
 
     /** iOS `StoreManager.products(for:)`. Empty when Play can't be reached or the SKUs aren't published. */
-    suspend fun products(ids: List<String>): List<ProductDetails> {
+    suspend fun products(ids: List<String>, productType: String = BillingClient.ProductType.SUBS): List<ProductDetails> {
         if (ids.isEmpty() || !ensureConnected()) return emptyList()
         val params = QueryProductDetailsParams.newBuilder()
             .setProductList(
                 ids.distinct().map {
                     QueryProductDetailsParams.Product.newBuilder()
                         .setProductId(it)
-                        .setProductType(BillingClient.ProductType.SUBS)
+                        .setProductType(productType)
                         .build()
                 }
             )
@@ -79,16 +81,16 @@ class PlayBillingManager(context: Context) : PurchasesUpdatedListener {
         return result.productDetailsList.orEmpty()
     }
 
+    suspend fun inAppProducts(ids: List<String>): List<ProductDetails> =
+        products(ids, BillingClient.ProductType.INAPP)
+
     /** iOS `StoreManager.purchase(_:)`. */
     suspend fun purchase(activity: Activity, details: ProductDetails): PurchaseOutcome {
         if (!ensureConnected()) return PurchaseOutcome.Failed("Google Play isn't available on this device right now.")
-        val offerToken = details.subscriptionOfferDetails?.firstOrNull()?.offerToken
-            ?: return PurchaseOutcome.Failed(PRODUCT_UNAVAILABLE)
-
-        val productParams = BillingFlowParams.ProductDetailsParams.newBuilder()
+        val builder = BillingFlowParams.ProductDetailsParams.newBuilder()
             .setProductDetails(details)
-            .setOfferToken(offerToken)
-            .build()
+        details.subscriptionOfferDetails?.firstOrNull()?.offerToken?.let { builder.setOfferToken(it) }
+        val productParams = builder.build()
         val flowParams = BillingFlowParams.newBuilder()
             .setProductDetailsParamsList(listOf(productParams))
             .build()
@@ -131,6 +133,17 @@ class PlayBillingManager(context: Context) : PurchasesUpdatedListener {
             .filter { it.purchaseState == Purchase.PurchaseState.PURCHASED }
             .filter { productIds.isEmpty() || it.products.any(productIds::contains) }
             .maxByOrNull { it.purchaseTime }
+    }
+
+    /** Consumes an INAPP coin pack after the backend credited the wallet. */
+    suspend fun consume(purchase: Purchase) {
+        if (!ensureConnected()) return
+        val result = client.consumePurchase(
+            ConsumeParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
+        )
+        if (result.billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
+            Log.w(TAG, "consumePurchase failed: ${result.billingResult.debugMessage}")
+        }
     }
 
     /** Google refunds un-acknowledged purchases after 3 days, so only acknowledge once the backend activated Premium. */

@@ -88,6 +88,15 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
         binding.btnFilter.setOnClickListener {
             showFiltersBottomSheet()
         }
+
+        binding.btnCoins.setOnClickListener {
+            AppNavigator.navigateTo(requireContext(), Destination.CoinShop)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadHeaderInfo()
     }
 
     private fun setupQuickMomentsSection() {
@@ -313,16 +322,9 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
                                 }
                             }
                             is DiscoveryActionError.InsufficientCoins -> {
-                                CommonConfirmationDialog.show(
-                                    context = requireContext(),
-                                    title = "Insufficient Coins",
-                                    message = errorEvent.message,
-                                    positiveText = "Get Coins",
-                                    negativeText = "Cancel",
-                                    onPositiveClick = {
-                                        Toast.makeText(requireContext(), "Redirecting to Coin Shop...", Toast.LENGTH_SHORT).show()
-                                    }
-                                )
+                                if (!PremiumStatus.isPremium(userProfileViewModel)) {
+                                    SubscriptionPopUp.show(requireContext(), SubscriptionPopUpType.SUPER_LIKE)
+                                }
                             }
                             is DiscoveryActionError.SwipeFailed -> {
                                 Toast.makeText(requireContext(), errorEvent.message, Toast.LENGTH_SHORT).show()

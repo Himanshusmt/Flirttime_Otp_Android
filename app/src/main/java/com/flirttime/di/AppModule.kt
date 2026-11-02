@@ -28,6 +28,10 @@ import com.flirttime.feature.moments.add.AddMomentViewModel
 import com.flirttime.feature.main.MainApiService
 import com.flirttime.feature.main.MainRepository
 import com.flirttime.feature.main.MainRepositoryImpl
+import com.flirttime.feature.coins.CoinRepository
+import com.flirttime.feature.coins.CoinWallet
+import com.flirttime.feature.coins.CoinsViewModel
+import com.flirttime.feature.main.matches.FreeTierLimitsStore
 import com.flirttime.feature.main.matches.MatchesRepository
 import com.flirttime.feature.main.matches.MatchesRepositoryImpl
 import com.flirttime.feature.main.profile.UserProfileViewModel
@@ -100,7 +104,10 @@ val appModule = module {
     single { MomentsUploadStore(androidContext(), get()) }
     viewModelOf(::MomentsViewModel)
     viewModelOf(::AddMomentViewModel)
-    single { UserProfileViewModel(get(), get(), get(), get(), get()) }
+    single { CoinWallet(get()) }
+    single { CoinRepository(get()) }
+    single { UserProfileViewModel(get(), get(), get(), get(), get(), get()) }
+    single { FreeTierLimitsStore(get(), get(), get(), get()) }
 
     // Notification Feature
     single<NotificationRepository> { NotificationRepositoryImpl(get()) }
@@ -132,7 +139,7 @@ val appModule = module {
     single { NotificationBadgeStore(get(), get(), get()) }
     viewModel { ChatListViewModel(get(), get(), get(), get(), androidContext()) }
     viewModel { (conversationId: String, peerUserId: String, settings: ThreadSettings) ->
-        ChatDetailViewModel(conversationId, peerUserId, settings, get(), get(), get(), get())
+        ChatDetailViewModel(conversationId, peerUserId, settings, get(), get(), get(), get(), get())
     }
     viewModelOf(::ForwardPickerViewModel)
 
@@ -141,4 +148,5 @@ val appModule = module {
     single { PlayBillingManager(get()) }
     single { SubscriptionPlanStore(get(), get()) }
     viewModelOf(::PremiumViewModel)
+    viewModelOf(::CoinsViewModel)
 }

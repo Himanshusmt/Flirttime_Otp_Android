@@ -7,6 +7,7 @@ import com.flirttime.core.database.SessionManager
 import com.flirttime.core.navigation.Destination
 import com.flirttime.feature.auth.AuthRepository
 import com.flirttime.feature.main.MainRepository
+import com.flirttime.feature.main.matches.FreeTierLimitsStore
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -16,7 +17,8 @@ import kotlinx.coroutines.launch
 class SplashViewModel(
     private val authRepository: AuthRepository,
     private val sessionManager: SessionManager,
-    private val mainRepository: MainRepository
+    private val mainRepository: MainRepository,
+    private val limitsStore: FreeTierLimitsStore
 ) : ViewModel() {
 
     private val _navigationEvent = MutableSharedFlow<Destination>(replay = 1)
@@ -46,6 +48,7 @@ class SplashViewModel(
                         // Register FCM device token with backend
                         authRepository.registerDevice().launchIn(viewModelScope)
 
+                        limitsStore.refresh()
                         if (user.isProfileComplete == true) {
                             _navigationEvent.emit(Destination.Main(targetTab = 0))
                         } else {

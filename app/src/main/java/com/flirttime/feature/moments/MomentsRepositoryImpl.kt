@@ -344,7 +344,7 @@ class MomentsRepositoryImpl(
         when (result) {
             is Resource.Success -> {
                 val data = result.data
-                val balance = data.coinBalance ?: data.coins ?: data.balance ?: 500
+                val balance = data.coinBalance ?: data.coins ?: data.balance ?: 0
                 val serverGifts = data.gifts.orEmpty().mapNotNull { dto ->
                     val code = dto.giftCode ?: dto.code ?: return@mapNotNull null
                     val name = dto.name ?: code.replaceFirstChar { it.uppercase() }
@@ -365,9 +365,7 @@ class MomentsRepositoryImpl(
                 val finalGifts = if (serverGifts.isNotEmpty()) serverGifts else defaultGifts
                 emit(Resource.Success(Pair(balance, finalGifts)))
             }
-            is Resource.Error -> {
-                emit(Resource.Success(Pair(500, defaultGifts)))
-            }
+            is Resource.Error -> emit(Resource.Error(result.message, result.code, result.cause, result.errorBody))
             is Resource.Loading -> Unit
         }
     }.flowOn(Dispatchers.IO)

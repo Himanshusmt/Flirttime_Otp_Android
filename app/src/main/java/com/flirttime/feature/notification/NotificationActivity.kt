@@ -57,6 +57,7 @@ class NotificationActivity : AppCompatActivity() {
     private fun setupViews() {
         notificationsAdapter = NotificationsAdapter { item ->
             viewModel.onNotificationClicked(item)
+            NotificationRouter.open(this@NotificationActivity, item)
         }
 
         binding.rvNotifications.apply {

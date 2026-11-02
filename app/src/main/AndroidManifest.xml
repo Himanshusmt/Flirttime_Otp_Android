@@ -191,6 +191,11 @@
             android:exported="false"
             android:theme="@style/Theme.FlirtTime" />
 
+        <activity
+            android:name=".feature.coins.CoinsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FlirtTime" />
+
         <!-- Reusable Image Crop Activity -->
         <activity
             android:name=".core.image.CropActivity"

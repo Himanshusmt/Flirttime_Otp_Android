@@ -32,6 +32,11 @@ import com.flirttime.feature.profile.AttributesCatalog
 import com.flirttime.feature.profile.MoreAboutMeItemDto
 import com.flirttime.feature.profile.UserInterestDto
 import com.flirttime.feature.profile.UserSearchItemDto
+import com.flirttime.feature.main.profile.UserProfileViewModel
+import com.flirttime.feature.subscription.PremiumStatus
+import com.flirttime.feature.subscription.SubscriptionPopUp
+import com.flirttime.feature.subscription.SubscriptionPopUpType
+import org.koin.android.ext.android.inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -42,6 +47,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOtherUserProfileBinding
     private val viewModel: OtherUserProfileViewModel by viewModel()
+    private val userProfileViewModel: UserProfileViewModel by inject()
 
     private val photosAdapter by lazy {
         OtherUserPhotosAdapter { _, pos ->
@@ -67,6 +73,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
     private var isCurrentUserVerified: Boolean = false
     private var isMatchedWithUser: Boolean = false
     private var currentMyAction: String? = null
+    private var actionBeforeOptimistic: String? = null
 
     // Media Player for Voice Intro
     private var mediaPlayer: MediaPlayer? = null
@@ -166,6 +173,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
         binding.btnSuperLike.setOnClickListener {
             animateButtonClick(it)
+            actionBeforeOptimistic = currentMyAction
             currentMyAction = "super_like"
             updateActionBar()
             viewModel.submitAction(targetUserId, "super_like")
@@ -173,6 +181,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
         binding.btnLike.setOnClickListener {
             animateButtonClick(it)
+            actionBeforeOptimistic = currentMyAction
             currentMyAction = "like"
             updateActionBar()
             viewModel.submitAction(targetUserId, "like")
@@ -366,6 +375,20 @@ class OtherUserProfileActivity : AppCompatActivity() {
                 launch {
                     viewModel.errorMessage.collect { msg ->
                         Toast.makeText(this@OtherUserProfileActivity, msg, Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                launch {
+                    viewModel.actionGate.collect { gate ->
+                        currentMyAction = actionBeforeOptimistic
+                        updateActionBar()
+                        if (PremiumStatus.isPremium(userProfileViewModel)) return@collect
+                        when (gate) {
+                            OtherUserActionGate.LikeLimit ->
+                                SubscriptionPopUp.show(this@OtherUserProfileActivity, SubscriptionPopUpType.UNLIMITED_SWIPES)
+                            OtherUserActionGate.InsufficientCoins ->
+                                SubscriptionPopUp.show(this@OtherUserProfileActivity, SubscriptionPopUpType.SUPER_LIKE)
+                        }
                     }
                 }
             }

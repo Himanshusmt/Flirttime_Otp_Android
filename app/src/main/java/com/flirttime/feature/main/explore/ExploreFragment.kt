@@ -86,6 +86,7 @@ class ExploreFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.loadCounts()
+        viewModel.refreshLimits()
     }
 
     private fun setupHeaderActions() {
@@ -130,8 +131,8 @@ class ExploreFragment : Fragment() {
 
     private fun setupGrid() {
         profileAdapter = ExploreProfileAdapter { profile ->
-            if (profile.isLocked) {
-                // iOS: likes → .superLike popup, compliments → .chat popup (skipped for Premium members).
+            val tabLocked = currentTab == ExploreTab.LIKES || currentTab == ExploreTab.COMPLIMENTS
+            if (tabLocked && profile.isLocked) {
                 if (!PremiumStatus.isPremium(userProfileViewModel)) {
                     SubscriptionPopUp.show(
                         requireContext(),

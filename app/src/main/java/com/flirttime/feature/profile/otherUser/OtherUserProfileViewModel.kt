@@ -3,7 +3,9 @@ package com.flirttime.feature.profile.otherUser
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flirttime.Resource
+import com.flirttime.feature.coins.CoinWallet
 import com.flirttime.feature.main.MainRepository
+import com.flirttime.feature.main.matches.FreeTierLimitsStore
 import com.flirttime.feature.main.matches.MatchesRepository
 import com.flirttime.feature.moments.MomentDto
 import com.flirttime.feature.moments.MomentsRepository
@@ -17,10 +19,17 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+sealed class OtherUserActionGate {
+    data object LikeLimit : OtherUserActionGate()
+    data object InsufficientCoins : OtherUserActionGate()
+}
+
 class OtherUserProfileViewModel(
     private val mainRepository: MainRepository,
     private val momentsRepository: MomentsRepository,
-    private val matchesRepository: MatchesRepository
+    private val matchesRepository: MatchesRepository,
+    private val limitsStore: FreeTierLimitsStore,
+    private val coinWallet: CoinWallet
 ) : ViewModel() {
 
     private val _profileState = MutableStateFlow<Resource<UserSearchItemDto>>(Resource.Loading)
@@ -40,6 +49,9 @@ class OtherUserProfileViewModel(
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage: SharedFlow<String> = _errorMessage.asSharedFlow()
+
+    private val _actionGate = MutableSharedFlow<OtherUserActionGate>()
+    val actionGate: SharedFlow<OtherUserActionGate> = _actionGate.asSharedFlow()
 
     fun loadProfile(userId: String, initialData: UserSearchItemDto? = null) {
         if (initialData != null) {
@@ -89,14 +101,38 @@ class OtherUserProfileViewModel(
     }
 
     fun submitAction(targetUserId: String, action: String) {
+        val normalized = action.lowercase()
+        if (normalized == "like" && !limitsStore.canLike) {
+            viewModelScope.launch { _actionGate.emit(OtherUserActionGate.LikeLimit) }
+            return
+        }
+        if (normalized == "super_like" && !limitsStore.canSuperLike) {
+            viewModelScope.launch { _actionGate.emit(OtherUserActionGate.InsufficientCoins) }
+            return
+        }
         viewModelScope.launch {
             mainRepository.submitDiscoveryAction(targetUserId = targetUserId, action = action).collect { resource ->
                 when (resource) {
                     is Resource.Success -> {
+                        resource.data?.remainingCoins?.let { coinWallet.update(it) }
+                        limitsStore.refresh()
                         _actionEvent.emit(action to resource.data)
                     }
                     is Resource.Error -> {
-                        _errorMessage.emit(resource.message ?: "Failed to perform action")
+                        val msg = resource.message.orEmpty()
+                        val body = resource.errorBody.orEmpty()
+                        val isDailyLimit = resource.code == 429 ||
+                            msg.contains("DAILY_LIKE_LIMIT_REACHED", ignoreCase = true) ||
+                            body.contains("DAILY_LIKE_LIMIT_REACHED", ignoreCase = true) ||
+                            msg.contains("DAILY_SWIPE_LIMIT_REACHED", ignoreCase = true)
+                        val isCoins = resource.code == 402 || resource.code == 403 ||
+                            msg.contains("INSUFFICIENT_COINS", ignoreCase = true) ||
+                            body.contains("INSUFFICIENT_COINS", ignoreCase = true)
+                        when {
+                            isDailyLimit -> _actionGate.emit(OtherUserActionGate.LikeLimit)
+                            isCoins -> _actionGate.emit(OtherUserActionGate.InsufficientCoins)
+                            else -> _errorMessage.emit(resource.message ?: "Failed to perform action")
+                        }
                     }
                     is Resource.Loading -> Unit
                 }

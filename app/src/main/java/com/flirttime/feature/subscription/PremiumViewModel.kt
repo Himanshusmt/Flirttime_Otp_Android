@@ -303,7 +303,12 @@ class PremiumViewModel(
 
 /** iOS `FreeTierLimitsStore.shared.isPremium`: the server `isSubscribed` flag / active membership. */
 object PremiumStatus {
-    fun isPremium(userProfile: UserProfileViewModel): Boolean =
-        userProfile.membershipState.value?.isCurrentlyActive == true ||
+    fun isPremium(userProfile: UserProfileViewModel): Boolean {
+        val storePremium = runCatching {
+            org.koin.core.context.GlobalContext.get().get<com.flirttime.feature.main.matches.FreeTierLimitsStore>().isPremium
+        }.getOrNull()
+        return storePremium == true ||
+            userProfile.membershipState.value?.isCurrentlyActive == true ||
             userProfile.userProfileState.value?.isSubscribed == true
+    }
 }

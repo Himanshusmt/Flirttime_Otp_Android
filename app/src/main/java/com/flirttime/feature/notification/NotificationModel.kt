@@ -76,7 +76,9 @@ data class NotificationItem(
     val timestamp: String,
     val avatarUrl: String? = null,
     val isRead: Boolean = false,
-    val section: NotificationSection
+    val section: NotificationSection,
+    val routeType: NotificationRouteType = NotificationRouteType.UNKNOWN,
+    val payload: Map<String, String> = emptyMap()
 )
 
 /**
@@ -119,7 +121,15 @@ data class NotificationItemDto(
     @SerializedName("image") val image: String? = null,
     @SerializedName("avatarUrl") val avatarUrl: String? = null,
     @SerializedName("actor") val actor: NotificationActorDto? = null,
-    @SerializedName("sender") val sender: NotificationSenderDto? = null
+    @SerializedName("sender") val sender: NotificationSenderDto? = null,
+    @SerializedName("payload") val payload: Map<String, Any?>? = null,
+    @SerializedName("data") val data: Map<String, Any?>? = null,
+    @SerializedName("route") val route: String? = null,
+    @SerializedName("action") val action: String? = null,
+    @SerializedName("target") val target: String? = null,
+    @SerializedName("targetId") val targetId: String? = null,
+    @SerializedName("targetType") val targetType: String? = null,
+    @SerializedName("entityId") val entityId: String? = null
 ) {
     fun toDomain(section: NotificationSection): NotificationItem {
         val resolvedAvatar = actor?.profilePhoto?.takeIf { it.isNotBlank() }
@@ -141,6 +151,75 @@ data class NotificationItemDto(
         val resolvedDesc = body?.takeIf { it.isNotBlank() } ?: description.orEmpty()
         val formattedTime = formatRelativeTime(createdAt)
 
+        val resolvedPayload = mutableMapOf<String, String>()
+        val putMap: (Map<String, Any?>?) -> Unit = { map ->
+            map?.forEach { (k, v) ->
+                if (v != null) resolvedPayload[k] = v.toString()
+            }
+        }
+        putMap(data)
+        putMap(payload)
+
+        actor?.id?.let {
+            if (!resolvedPayload.containsKey("actor_id")) resolvedPayload["actor_id"] = it
+            if (!resolvedPayload.containsKey("senderId")) resolvedPayload["senderId"] = it
+        }
+        actor?.name?.let {
+            if (!resolvedPayload.containsKey("senderName")) resolvedPayload["senderName"] = it
+            if (!resolvedPayload.containsKey("visitorName")) resolvedPayload["visitorName"] = it
+        }
+        sender?.id?.let {
+            if (!resolvedPayload.containsKey("senderId")) resolvedPayload["senderId"] = it
+        }
+        sender?.name?.let {
+            if (!resolvedPayload.containsKey("senderName")) resolvedPayload["senderName"] = it
+        }
+        targetId?.let {
+            if (!resolvedPayload.containsKey("navTargetId")) resolvedPayload["navTargetId"] = it
+            if (!resolvedPayload.containsKey("entityId")) resolvedPayload["entityId"] = it
+        }
+        entityId?.let {
+            if (!resolvedPayload.containsKey("entityId")) resolvedPayload["entityId"] = it
+        }
+        target?.let {
+            if (!resolvedPayload.containsKey("target")) resolvedPayload["target"] = it
+        }
+        action?.let {
+            if (!resolvedPayload.containsKey("action")) resolvedPayload["action"] = it
+        }
+        route?.let {
+            if (!resolvedPayload.containsKey("route")) resolvedPayload["route"] = it
+        }
+
+        var routeEnum = NotificationRouteType.fromPayload(
+            listOf(
+                route,
+                targetType,
+                type,
+                action,
+                target,
+                resolvedPayload["routeType"],
+                resolvedPayload["route"],
+                resolvedPayload["type"],
+                resolvedPayload["targetType"]
+            )
+        )
+        if (routeEnum == NotificationRouteType.UNKNOWN) {
+            val domainType = NotificationType.fromString(type)
+            routeEnum = when (domainType) {
+                NotificationType.MATCH -> NotificationRouteType.MATCH
+                NotificationType.LIKE -> NotificationRouteType.LIKE
+                NotificationType.COMPLIMENT -> NotificationRouteType.COMPLIMENT
+                NotificationType.SUPER_LIKE -> NotificationRouteType.FAVORITE
+                NotificationType.MESSAGE -> NotificationRouteType.MESSAGE
+                NotificationType.PROFILE_VISIT -> NotificationRouteType.PROFILE_VISIT
+                NotificationType.MOMENT_COMMENT_REPLY -> NotificationRouteType.MOMENT_COMMENT
+                NotificationType.MOMENT_COMMENT_LIKE -> NotificationRouteType.MOMENT_COMMENT_LIKE
+                NotificationType.PROFILE_VERIFIED -> NotificationRouteType.PROFILE_IMAGE_VERIFIED
+                NotificationType.PHOTO_NOT_APPROVED -> NotificationRouteType.IMAGE_UNVERIFIED
+            }
+        }
+
         return NotificationItem(
             id = id,
             type = NotificationType.fromString(type),
@@ -149,7 +228,9 @@ data class NotificationItemDto(
             timestamp = formattedTime,
             avatarUrl = resolvedAvatar,
             isRead = isRead ?: false,
-            section = section
+            section = section,
+            routeType = routeEnum,
+            payload = resolvedPayload
         )
     }
 

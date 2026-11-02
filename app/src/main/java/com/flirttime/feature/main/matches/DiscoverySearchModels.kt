@@ -207,32 +207,58 @@ data class ConnectionResponseData(
     @SerializedName("reason") val reason: String? = null
 )
 
-// 4. User Limits & Quotas
+// 4. User Limits & Quotas (iOS FreeTierLimits.swift)
 data class UserLimitsResponseData(
-    @SerializedName("isSubscribed") val isSubscribed: Boolean? = null,
+    @SerializedName(value = "isSubscribed", alternate = ["is_subscribed"])
+    val isSubscribed: Boolean? = null,
     @SerializedName("likes") val likes: LimitDetailsDto? = null,
     @SerializedName("nopes") val nopes: NopesLimitDto? = null,
-    @SerializedName("superLikes") val superLikes: SuperLikesLimitDto? = null,
-    @SerializedName("tabs") val tabs: Map<String, Boolean>? = null,
-    @SerializedName("chat") val chat: Map<String, Boolean>? = null
+    @SerializedName(value = "superLikes", alternate = ["super_likes"])
+    val superLikes: SuperLikesLimitDto? = null,
+    @SerializedName("tabs") val tabs: TabLocksDto? = null,
+    @SerializedName("chat") val chat: ChatAccessDto? = null
 )
 
 data class LimitDetailsDto(
     @SerializedName("limit") val limit: Int? = null,
     @SerializedName("used") val used: Int? = null,
     @SerializedName("remaining") val remaining: Int? = null,
-    @SerializedName("resetsAt") val resetsAt: String? = null
+    @SerializedName(value = "resetsAt", alternate = ["resets_at"])
+    val resetsAt: String? = null
 )
 
 data class NopesLimitDto(
-    @SerializedName("isUnlimited") val isUnlimited: Boolean? = null
+    @SerializedName(value = "isUnlimited", alternate = ["is_unlimited"])
+    val isUnlimited: Boolean? = null
 )
 
 data class SuperLikesLimitDto(
-    @SerializedName("hasFree") val hasFree: Boolean? = null,
-    @SerializedName("freeRemaining") val freeRemaining: Int? = null,
-    @SerializedName("costInCoins") val costInCoins: Int? = null,
-    @SerializedName("userCoins") val userCoins: Int? = null
+    @SerializedName(value = "hasFree", alternate = ["has_free"])
+    val hasFree: Boolean? = null,
+    @SerializedName(value = "freeRemaining", alternate = ["free_remaining"])
+    val freeRemaining: Int? = null,
+    @SerializedName(value = "costInCoins", alternate = ["cost_in_coins"])
+    val costInCoins: Int? = null,
+    @SerializedName(value = "userCoins", alternate = ["user_coins", "userCoinBalance"])
+    val userCoins: Int? = null
+)
+
+data class TabLocksDto(
+    @SerializedName(value = "likesTabLocked", alternate = ["likes_tab_locked"])
+    val likesTabLocked: Boolean? = null,
+    @SerializedName(value = "complimentsTabLocked", alternate = ["compliments_tab_locked"])
+    val complimentsTabLocked: Boolean? = null,
+    @SerializedName(value = "youLikedTabLocked", alternate = ["you_liked_tab_locked"])
+    val youLikedTabLocked: Boolean? = null,
+    @SerializedName(value = "matchesTabLocked", alternate = ["matches_tab_locked"])
+    val matchesTabLocked: Boolean? = null
+)
+
+data class ChatAccessDto(
+    @SerializedName(value = "canChatWithoutMatch", alternate = ["can_chat_without_match"])
+    val canChatWithoutMatch: Boolean? = null,
+    @SerializedName(value = "requiresMatch", alternate = ["requires_match"])
+    val requiresMatch: Boolean? = null
 )
 
 // 5. Wallet Balance (GET /api/v1/wallet/balance)
