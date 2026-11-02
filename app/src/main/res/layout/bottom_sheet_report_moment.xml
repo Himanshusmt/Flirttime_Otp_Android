@@ -36,11 +36,10 @@
                     android:id="@+id/tvReportTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredokabold"
+                    android:fontFamily="@font/fredokasemibold"
                     android:text="Report moment"
                     android:textColor="#1A1A1A"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
+                    android:textSize="17sp" />
 
                 <TextView
                     android:id="@+id/tvReportSubtitle"

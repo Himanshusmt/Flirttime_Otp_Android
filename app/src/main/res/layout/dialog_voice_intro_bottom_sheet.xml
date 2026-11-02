@@ -43,11 +43,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:fontFamily="@font/fredokabold"
+        android:fontFamily="@font/fredokasemibold"
         android:text="Your voice intro"
         android:textColor="#1A1A1A"
         android:textSize="22sp"
-        android:textStyle="bold" />
+        />
 
     <!-- Subtitle -->
     <TextView
@@ -76,12 +76,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/fredokabold"
+            android:fontFamily="@font/fredokasemibold"
             android:letterSpacing="0.04"
             android:text="NEED AN IDEA?"
             android:textColor="#E53935"
             android:textSize="11sp"
-            android:textStyle="bold" />
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -129,11 +129,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/fredokabold"
+        android:fontFamily="@font/fredokasemibold"
         android:text="0:00 / 0:30"
         android:textColor="#1A1A1A"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        />
 
     <!-- State 1: Record Mode (Big Mic Button) -->
     <FrameLayout

@@ -65,7 +65,6 @@ class VerificationProcessActivity : AppCompatActivity() {
         binding.tvContinue.setOnClickListener {
             lifecycleScope.launch {
                 sessionManager.setPageRedirect("home")
-                sessionManager.setVerified(true)
 
                 AppNavigator.navigateTo(
                     context = this@VerificationProcessActivity,

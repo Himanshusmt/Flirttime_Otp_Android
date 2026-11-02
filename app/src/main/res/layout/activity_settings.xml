@@ -25,7 +25,7 @@
             android:background="@drawable/bg_settings_back_btn"
             android:contentDescription="Back"
             android:scaleType="center"
-            android:src="@drawable/ic_chevron_left_orange" />
+            android:src="@drawable/ic_chevron_back" />
 
         <TextView
             android:id="@+id/tvHeaderTitle"
@@ -37,7 +37,7 @@
             android:fontFamily="@font/fredokasemibold"
             android:text="Settings"
             android:textColor="@color/text_primary"
-            android:textSize="18sp" />
+            android:textSize="20sp" />
 
     </RelativeLayout>
 
@@ -148,7 +148,7 @@
                             android:gravity="center"
                             android:paddingHorizontal="14dp"
                             android:text="Edit profile"
-                            android:textColor="#EA3355"
+                            android:textColor="#D92B2B"
                             android:textSize="13sp" />
 
                     </LinearLayout>

@@ -29,7 +29,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:includeFontPadding="false"
                 android:text="Chats"
                 android:textColor="#18181B"

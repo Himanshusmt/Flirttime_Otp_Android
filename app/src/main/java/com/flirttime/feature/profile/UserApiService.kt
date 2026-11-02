@@ -1,7 +1,7 @@
 package com.flirttime.feature.profile
 
 import com.flirttime.core.network.ApiResponse
-import com.flirttime.feature.auth.AuthUserDto
+import com.flirttime.feature.onboarding.GestureVerificationDto
 import com.flirttime.feature.auth.NotificationSettingsDto
 import com.flirttime.feature.auth.NotificationSettingsResponseData
 import okhttp3.MultipartBody
@@ -112,5 +112,5 @@ interface UserApiService {
     suspend fun uploadGesturePhoto(
         @Part selfie_image: MultipartBody.Part,
         @Part("verification_type") verificationType: RequestBody
-    ): ApiResponse<AuthUserDto>
+    ): ApiResponse<GestureVerificationDto>
 }

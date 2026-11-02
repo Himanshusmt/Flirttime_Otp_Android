@@ -72,7 +72,7 @@
                     android:contentDescription="More options"
                     android:focusable="true"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_moment_more"
+                    android:src="@drawable/ic_ios_ellipsis"
                     app:tint="#252525" />
             </LinearLayout>
 

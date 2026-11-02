@@ -91,7 +91,7 @@
                             android:layout_height="20dp"
                             android:layout_gravity="center"
                             android:contentDescription="More Options"
-                            android:src="@drawable/ic_more_dots"
+                            android:src="@drawable/ic_ios_ellipsis"
                             app:tint="@color/white" />
 
                     </FrameLayout>
@@ -143,7 +143,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/fredokasemibold"
                     android:textColor="#1A1A1A"
-                    android:textSize="22sp"
+                    android:textSize="26sp"
                     tools:text="sarfe, 18" />
 
                 <!-- Red iOS Verified Checkmark Badge -->
@@ -308,7 +308,7 @@
                     android:fontFamily="@font/fredokasemibold"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="2dp"
-                    android:textColor="#DE2D2D"
+                    android:textColor="#D92B2B"
                     android:textSize="11sp"
                     tools:text="4" />
 
@@ -360,7 +360,7 @@
                     android:fontFamily="@font/fredokasemibold"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="4dp"
-                    android:textColor="#DE2D2D"
+                    android:textColor="#D92B2B"
                     android:textSize="11.5sp"
                     android:visibility="gone"
                     tools:text="💖 1 in common" />
@@ -415,7 +415,7 @@
                         android:fontFamily="@font/fredokasemibold"
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="4dp"
-                        android:textColor="#DE2D2D"
+                        android:textColor="#D92B2B"
                         android:textSize="11.5sp"
                         android:visibility="gone"
                         tools:text="85% Match" />
@@ -501,7 +501,7 @@
                     android:fontFamily="@font/fredokasemibold"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="2dp"
-                    android:textColor="#DE2D2D"
+                    android:textColor="#D92B2B"
                     android:textSize="11sp"
                     tools:text="9" />
 
@@ -521,7 +521,7 @@
                     android:fontFamily="@font/fredokamedium"
                     android:padding="4dp"
                     android:text="See all"
-                    android:textColor="#DE2D2D"
+                    android:textColor="#D92B2B"
                     android:textSize="13.5sp" />
 
             </LinearLayout>

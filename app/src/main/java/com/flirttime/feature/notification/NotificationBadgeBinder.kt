@@ -1,7 +1,6 @@
 package com.flirttime.feature.notification
 
 import android.graphics.Color
-import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.util.TypedValue
 import android.view.Gravity
@@ -9,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.flirttime.R
 import kotlinx.coroutines.launch
 
 object NotificationBadgeBinder {
@@ -64,7 +65,7 @@ object NotificationBadgeBinder {
             tag = BADGE_TAG
             setTextColor(Color.WHITE)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 9f)
-            typeface = Typeface.DEFAULT_BOLD
+            typeface = ResourcesCompat.getFont(anchor.context, R.font.fredokasemibold)
             gravity = Gravity.CENTER
             minWidth = (16 * density).toInt()
             minHeight = (16 * density).toInt()
@@ -73,7 +74,7 @@ object NotificationBadgeBinder {
             background = GradientDrawable().apply {
                 shape = GradientDrawable.RECTANGLE
                 cornerRadius = 8 * density
-                setColor(Color.parseColor("#DE2D2B"))
+                setColor(Color.parseColor("#D92B2B"))
             }
             visibility = View.GONE
             layoutParams = FrameLayout.LayoutParams(

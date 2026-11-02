@@ -22,11 +22,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
-        android:fontFamily="@font/fredokabold"
+        android:fontFamily="@font/fredokasemibold"
         android:text="Gifts received"
         android:textColor="#1A1A1A"
         android:textSize="18.5sp"
-        android:textStyle="bold" />
+        />
 
     <!-- Subtitle: 1 gift   1 coins -->
     <TextView
@@ -91,7 +91,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:text="No gifts received yet"
                 android:textColor="#222222"
                 android:textSize="15sp" />

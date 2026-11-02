@@ -23,11 +23,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/fredokabold"
+        android:fontFamily="@font/fredokasemibold"
         android:text="Delete Moment?"
         android:textColor="#1A1A1A"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        />
 
     <!-- Subtitle / Warning message -->
     <TextView

@@ -5,10 +5,10 @@
     <!-- ========================================================================= -->
 
     <!-- Brand / Theme Primary Colors -->
-    <color name="brand_primary">#EA3355</color>
-    <color name="brand_primary_dark">#C9223D</color>
-    <color name="brand_primary_light">#F8CCD3</color>
-    <color name="brand_primary_subtle">#FDECEF</color>
+    <color name="brand_primary">#D92B2B</color>
+    <color name="brand_primary_dark">#AA2222</color>
+    <color name="brand_primary_light">#FFECEF</color>
+    <color name="brand_primary_subtle">#FFF2F2</color>
 
     <!-- Surfaces & Backgrounds -->
     <color name="bg_app_primary">#FAF6F6</color>
@@ -21,7 +21,7 @@
     <color name="text_secondary">#555555</color>
     <color name="text_tertiary">#8E8E93</color>
     <color name="text_on_brand">#FFFFFFFF</color>
-    <color name="text_brand">#EA3355</color>
+    <color name="text_brand">#D92B2B</color>
 
     <!-- Borders & Dividers -->
     <color name="border_subtle">#EFEFEF</color>
@@ -34,7 +34,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="screen_bg">#FAF6F6</color>
-    <color name="brand_red">#DE2D2D</color>
+    <color name="brand_red">#D92B2B</color>
     <color name="text_gry">#252525</color>
     <color name="btn_border">#D92B2B</color>
     <color name="border_light_gry">#E3E5E5</color>

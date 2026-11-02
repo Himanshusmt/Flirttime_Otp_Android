@@ -34,6 +34,8 @@ import com.flirttime.feature.profile.InterestsCatalogResponseData
 import com.flirttime.feature.profile.MoreAboutMeResponseData
 import com.flirttime.feature.profile.MyProfileEnvelopeData
 import com.flirttime.feature.profile.NotificationCountsResponseData
+import com.flirttime.feature.onboarding.OnboardingProgressData
+import com.flirttime.feature.onboarding.OnboardingStepRequest
 import com.flirttime.feature.profile.OnboardingInterestsResponseData
 import com.flirttime.feature.profile.OtherUserProfileResponseData
 import com.flirttime.feature.profile.PresignedUrlResponseData
@@ -375,6 +377,14 @@ interface MainApiService {
     suspend fun getOtherUserProfile(
         @Path("userId") userId: String
     ): ApiResponse<OtherUserProfileResponseData>
+
+    @GET("api/v1/onboarding/progress")
+    suspend fun getOnboardingProgress(): ApiResponse<OnboardingProgressData>
+
+    @PATCH("api/v1/onboarding/step")
+    suspend fun updateOnboardingStep(
+        @Body body: OnboardingStepRequest
+    ): ApiResponse<Any>
 
     // Profile Photos
     @GET("api/v1/onboarding/photos")

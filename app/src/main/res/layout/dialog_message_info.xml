@@ -25,7 +25,7 @@
             android:id="@+id/tvInfoTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/fredokabold"
+            android:fontFamily="@font/fredokasemibold"
             android:includeFontPadding="false"
             android:text="Message Info"
             android:textColor="#18181B"

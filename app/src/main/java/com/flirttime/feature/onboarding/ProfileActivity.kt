@@ -22,7 +22,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flirttime.R
 import com.flirttime.Resource
-import com.flirttime.core.database.SessionManager
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
 import com.flirttime.databinding.ActivityProfileBinding
@@ -31,13 +30,11 @@ import com.flirttime.feature.onboarding.dialog.GenderSelectionDialog
 import com.flirttime.feature.onboarding.dialog.OnDateSelectedListener
 import com.flirttime.feature.onboarding.dialog.OnGenderSelectedListener
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProfileActivity : AppCompatActivity(), OnGenderSelectedListener, OnDateSelectedListener {
 
     private lateinit var binding: ActivityProfileBinding
-    private val sessionManager: SessionManager by inject()
     private val viewModel: ProfileViewModel by viewModel()
     private lateinit var genderDialog: GenderSelectionDialog
     private lateinit var dobDialog: DobDialogNew
@@ -58,6 +55,7 @@ class ProfileActivity : AppCompatActivity(), OnGenderSelectedListener, OnDateSel
         setupClickListeners()
         validateForm()
         observeViewModel()
+        viewModel.reportScreenOpened()
     }
 
     private fun initHeader() {
@@ -147,7 +145,7 @@ class ProfileActivity : AppCompatActivity(), OnGenderSelectedListener, OnDateSel
         binding.etNickName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.textErrorNN.isVisible = false
+                viewModel.onDisplayNameChanged(s?.toString().orEmpty())
                 validateForm()
             }
             override fun afterTextChanged(s: Editable?) {}
@@ -179,10 +177,8 @@ class ProfileActivity : AppCompatActivity(), OnGenderSelectedListener, OnDateSel
 
         binding.tvContinue.setOnClickListener {
             if (performValidation()) {
-                val rawName = binding.etFirstName.text?.toString()?.trim().orEmpty()
-                val nameParts = rawName.split("\\s+".toRegex(), limit = 2)
-                val firstName = nameParts.getOrNull(0).orEmpty()
-                val lastName = if (nameParts.size > 1) nameParts[1] else ""
+                val firstName = binding.etFirstName.text?.toString()?.trim().orEmpty()
+                val lastName = binding.etLastName.text?.toString()?.trim().orEmpty()
                 val nickName = binding.etNickName.text?.toString()?.trim().orEmpty()
                 val about = binding.etAbout.text?.toString()?.trim().orEmpty()
 
@@ -206,6 +202,20 @@ class ProfileActivity : AppCompatActivity(), OnGenderSelectedListener, OnDateSel
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.usernameError.collect { error ->
+                        if (error.isNullOrBlank()) {
+                            binding.textErrorNN.isVisible = false
+                        } else {
+                            binding.textErrorNN.text = error
+                            binding.textErrorNN.isVisible = true
+                        }
+                        validateForm()
+                    }
+                }
+                launch {
+                    viewModel.usernameValid.collect { validateForm() }
+                }
                 viewModel.updateProfileState.collect { resource ->
                     when (resource) {
                         is Resource.Loading -> {
@@ -284,10 +294,11 @@ class ProfileActivity : AppCompatActivity(), OnGenderSelectedListener, OnDateSel
 
         val nickName = binding.etNickName.text?.toString()?.trim().orEmpty()
         if (nickName.isEmpty()) {
+            binding.textErrorNN.text = "Display name is required"
             binding.textErrorNN.isVisible = true
             isValid = false
-        } else {
-            binding.textErrorNN.isVisible = false
+        } else if (!viewModel.usernameValid.value) {
+            isValid = false
         }
 
         if (selectedDob.isEmpty()) {
@@ -321,7 +332,7 @@ class ProfileActivity : AppCompatActivity(), OnGenderSelectedListener, OnDateSel
         val about = binding.etAbout.text?.toString()?.trim().orEmpty()
 
         val allFilled = firstName.isNotEmpty() &&
-                nickName.isNotEmpty() &&
+                viewModel.usernameValid.value &&
                 selectedDob.isNotEmpty() &&
                 selectedGender.isNotEmpty() &&
                 about.isNotEmpty()

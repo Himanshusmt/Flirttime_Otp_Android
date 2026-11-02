@@ -21,6 +21,9 @@ import com.flirttime.feature.profile.MoreAboutMeResponseData
 import com.flirttime.feature.profile.MyFullProfileData
 import com.flirttime.feature.profile.OtherUserProfileResponseData
 import com.flirttime.feature.profile.UpdateInterestsRequest
+import com.flirttime.feature.onboarding.OnboardingProgress
+import com.flirttime.feature.onboarding.OnboardingStep
+import com.flirttime.feature.onboarding.OnboardingStepRequest
 import com.flirttime.feature.profile.UpdateProfileRequest
 import com.flirttime.feature.profile.UserInterestDto
 import com.flirttime.feature.profile.UserPhotoDto
@@ -83,6 +86,33 @@ class MainRepositoryImpl(
     // 2. PROFILE DETAILS & MEDIA (ME)
     // ==========================================
 
+    override fun getOnboardingProgress(): Flow<Resource<OnboardingProgress>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.getOnboardingProgress()
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(result.data.toProgress()))
+            is Resource.Error -> emit(Resource.Error(result.message, result.code, result.cause, result.errorBody))
+            is Resource.Loading -> Unit
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun reportOnboardingScreen(step: OnboardingStep): Flow<Resource<Unit>> = flow {
+        if (sessionManager.isProfileComplete()) {
+            emit(Resource.Success(Unit))
+            return@flow
+        }
+        val result = safeApiCall {
+            mainApiService.updateOnboardingStep(OnboardingStepRequest(step.raw))
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(Unit))
+            is Resource.Error -> emit(Resource.Error(result.message, result.code, result.cause, result.errorBody))
+            is Resource.Loading -> Unit
+        }
+    }.flowOn(Dispatchers.IO)
+
     override fun updateProfile(request: UpdateProfileRequest): Flow<Resource<AuthUserDto>> = flow {
         emit(Resource.Loading)
         val result = safeApiCall {
@@ -101,7 +131,6 @@ class MainRepositoryImpl(
                 gender = user.gender ?: request.gender,
                 bio = user.about ?: request.about
             )
-            sessionManager.setProfileComplete(true)
             sessionManager.setPageRedirect("user_info")
         }
         emit(result)

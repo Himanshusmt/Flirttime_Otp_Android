@@ -17,7 +17,7 @@
     <!-- Red circle badge with plus -->
     <path
         android:pathData="M30,30m-7,0a7,7 0 1,0 14,0a7,7 0 1,0 -14,0"
-        android:fillColor="#EA3355" />
+        android:fillColor="#D92B2B" />
     <path
         android:pathData="M30,26.5L30,33.5M26.5,30L33.5,30"
         android:strokeWidth="1.6"

@@ -54,7 +54,7 @@
             android:fontFamily="@font/fredokasemibold"
             android:gravity="center"
             android:text="Yes"
-            android:textColor="#EA3355"
+            android:textColor="#D92B2B"
             android:textSize="16sp" />
 
         <View

@@ -21,6 +21,7 @@ import com.flirttime.core.database.SessionManager
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
 import com.flirttime.databinding.ActivityProfileVerificationBinding
+import com.flirttime.feature.main.MainRepository
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -28,6 +29,7 @@ class ProfileVerificationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProfileVerificationBinding
     private val sessionManager: SessionManager by inject()
+    private val mainRepository: MainRepository by inject()
     private var selectedImageUri: Uri? = null
     private var tempCameraUri: Uri? = null
 
@@ -69,6 +71,9 @@ class ProfileVerificationActivity : AppCompatActivity() {
         initHeader()
         setupEdgeToEdge()
         setupListeners()
+        lifecycleScope.launch {
+            mainRepository.reportOnboardingScreen(OnboardingStep.PHOTOS).collect { }
+        }
     }
 
     private fun initHeader() {

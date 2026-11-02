@@ -86,7 +86,7 @@
                         android:layout_height="18dp"
                         android:layout_gravity="center"
                         android:contentDescription="Settings"
-                        android:src="@drawable/ic_settings_white" />
+                        android:src="@drawable/ic_ios_gear" />
 
                 </FrameLayout>
 
@@ -179,10 +179,9 @@
                 android:id="@+id/tvNameAge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:textColor="#1A1A1A"
-                android:textSize="24sp"
-                android:textStyle="bold"
+                android:textSize="26sp"
                 tools:text="tushar, 19" />
 
             <ImageView
@@ -285,9 +284,8 @@
                     android:layout_marginStart="8dp"
                     android:fontFamily="@font/fredokasemibold"
                     android:text="Edit Profile"
-                    android:textColor="#EA3355"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textColor="#D92B2B"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
@@ -320,8 +318,7 @@
                     android:fontFamily="@font/fredokasemibold"
                     android:text="Add Moment"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
@@ -334,11 +331,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="26dp"
-            android:fontFamily="@font/fredokabold"
+            android:fontFamily="@font/fredokasemibold"
             android:text="My Voice"
             android:textColor="#1A1A1A"
             android:textSize="20sp"
-            android:textStyle="bold"
+           
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layoutCtas" />
 
@@ -398,11 +395,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/fredokabold"
+                        android:fontFamily="@font/fredokasemibold"
                         android:text="Record your voice intro"
                         android:textColor="#1A1A1A"
-                        android:textSize="16.5sp"
-                        android:textStyle="bold" />
+                        android:textSize="16.5sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -615,11 +611,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:text="Quick Moments"
                 android:textColor="#1A1A1A"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/btnAddQuickMoment"
@@ -628,13 +623,12 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:paddingVertical="4dp"
                 android:paddingStart="8dp"
                 android:text="+ Add"
-                android:textColor="#EA3355"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textColor="#D92B2B"
+                android:textSize="15sp" />
 
         </LinearLayout>
 
@@ -701,7 +695,7 @@
                     android:layout_marginTop="6dp"
                     android:fontFamily="@font/fredokamedium"
                     android:text="Add new"
-                    android:textColor="#EA3355"
+                    android:textColor="#D92B2B"
                     android:textSize="12.5sp" />
 
             </LinearLayout>
@@ -782,22 +776,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredokabold"
+                    android:fontFamily="@font/fredokasemibold"
                     android:text="My Coins"
-                    android:textColor="#EA3355"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="#D92B2B"
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/tvCoinsBalance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:fontFamily="@font/fredokabold"
+                    android:fontFamily="@font/fredokasemibold"
                     android:text="0 coins"
-                    android:textColor="#EA3355"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textColor="#D92B2B"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -818,14 +810,13 @@
                 android:background="@drawable/bg_btn_pill_red"
                 android:clickable="true"
                 android:focusable="true"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:gravity="center"
                 android:paddingHorizontal="14dp"
                 android:paddingVertical="9dp"
                 android:text="Get coins"
                 android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textSize="14sp" />
 
         </LinearLayout>
 
@@ -893,11 +884,10 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/fredokabold"
+                                android:fontFamily="@font/fredokasemibold"
                                 android:text="You're a Premium user"
-                                android:textColor="#EA3355"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
+                                android:textColor="#D92B2B"
+                                android:textSize="15sp" />
 
                             <TextView
                                 android:id="@+id/tvMembershipStatus"
@@ -905,7 +895,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="6dp"
                                 android:background="@drawable/bg_chip_membership_active"
-                                android:fontFamily="@font/fredokabold"
+                                android:fontFamily="@font/fredokasemibold"
                                 android:paddingHorizontal="6dp"
                                 android:paddingVertical="2dp"
                                 android:text="ACTIVE"
@@ -945,10 +935,9 @@
                         android:id="@+id/tvMembershipPlanName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/fredokabold"
+                        android:fontFamily="@font/fredokasemibold"
                         android:textColor="#2B2B2B"
                         android:textSize="16sp"
-                        android:textStyle="bold"
                         tools:text="Weekly Premium" />
 
                     <TextView
@@ -957,7 +946,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:fontFamily="@font/fredokasemibold"
-                        android:textColor="#EA3355"
+                        android:textColor="#D92B2B"
                         android:textSize="14sp"
                         tools:text="₹199 / weekly" />
 
@@ -986,10 +975,9 @@
                             android:id="@+id/tvMembershipDaysTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/fredokabold"
-                            android:textColor="#EA3355"
+                            android:fontFamily="@font/fredokasemibold"
+                            android:textColor="#D92B2B"
                             android:textSize="15sp"
-                            android:textStyle="bold"
                             tools:text="3 days left" />
 
                         <TextView
@@ -1082,14 +1070,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_btn_pill_outline_red"
-                            android:fontFamily="@font/fredokabold"
+                            android:fontFamily="@font/fredokasemibold"
                             android:gravity="center"
                             android:paddingHorizontal="14dp"
                             android:paddingVertical="7dp"
                             android:text="Benefits"
-                            android:textColor="#EA3355"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textColor="#D92B2B"
+                            android:textSize="13sp" />
 
                         <View
                             android:layout_width="0dp"
@@ -1103,25 +1090,23 @@
                             android:background="@drawable/bg_btn_pill_red"
                             android:clickable="true"
                             android:focusable="true"
-                            android:fontFamily="@font/fredokabold"
+                            android:fontFamily="@font/fredokasemibold"
                             android:gravity="center"
                             android:paddingHorizontal="18dp"
                             android:paddingVertical="9dp"
                             android:text="Manage"
                             android:textColor="@color/white"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
+                            android:textSize="14sp" />
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:fontFamily="@font/fredokabold"
+                        android:fontFamily="@font/fredokasemibold"
                         android:text="What you get"
                         android:textColor="#2B2B2B"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textSize="14sp" />
 
                     <LinearLayout
                         android:id="@+id/layoutMembershipBenefits"
@@ -1185,11 +1170,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/fredokabold"
+                        android:fontFamily="@font/fredokasemibold"
                         android:text="Enjoy All Benefits"
                         android:textColor="@color/white"
-                        android:textSize="18.5sp"
-                        android:textStyle="bold" />
+                        android:textSize="18.5sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -1215,9 +1199,8 @@
                         android:paddingHorizontal="24dp"
                         android:paddingVertical="9dp"
                         android:text="Upgrade to premium"
-                        android:textColor="#EA3355"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textColor="#D92B2B"
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -1242,11 +1225,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:text="My Interests"
                 android:textColor="#1A1A1A"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/btnEditInterests"
@@ -1255,13 +1237,12 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:paddingVertical="4dp"
                 android:paddingStart="8dp"
                 android:text="Edit"
-                android:textColor="#EA3355"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textColor="#D92B2B"
+                android:textSize="15sp" />
 
         </LinearLayout>
 
@@ -1313,11 +1294,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:text="My Moments"
                 android:textColor="#1A1A1A"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/btnSeeAllMoments"
@@ -1326,13 +1306,12 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:paddingVertical="4dp"
                 android:paddingStart="8dp"
                 android:text="See all (10)"
-                android:textColor="#EA3355"
-                android:textSize="14.5sp"
-                android:textStyle="bold" />
+                android:textColor="#D92B2B"
+                android:textSize="14.5sp" />
 
         </LinearLayout>
 
@@ -1383,11 +1362,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:fontFamily="@font/fredokabold"
+                    android:fontFamily="@font/fredokasemibold"
                     android:text="No Moments yet!"
                     android:textColor="#1A1A1A"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -1437,11 +1415,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:text="My Photos"
                 android:textColor="#1A1A1A"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/btnEditPhotos"
@@ -1450,13 +1427,12 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:paddingVertical="4dp"
                 android:paddingStart="8dp"
                 android:text="Edit"
-                android:textColor="#EA3355"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textColor="#D92B2B"
+                android:textSize="15sp" />
 
         </LinearLayout>
 

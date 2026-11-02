@@ -8,6 +8,7 @@ import com.flirttime.core.database.SessionManager
 import com.flirttime.core.network.safeApiCall
 import com.flirttime.feature.auth.AuthUserDto
 import com.flirttime.feature.auth.NotificationSettingsDto
+import com.flirttime.feature.onboarding.GestureVerificationDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -182,7 +183,7 @@ class UserRepositoryImpl(
         }
     }.flowOn(Dispatchers.IO)
 
-    override fun uploadGesturePhoto(context: Context, imageUri: Uri): Flow<Resource<AuthUserDto>> = flow {
+    override fun uploadGesturePhoto(context: Context, imageUri: Uri): Flow<Resource<GestureVerificationDto>> = flow {
         emit(Resource.Loading)
         val part = MultipartHelper.createPartFromUri(context, imageUri, "selfie_image")
         if (part == null) {
@@ -194,8 +195,8 @@ class UserRepositoryImpl(
             userApiService.uploadGesturePhoto(part, typePart)
         }
         if (result is Resource.Success) {
-            sessionManager.setVerified(true)
-            sessionManager.setPageRedirect("gesture")
+            result.data.isFaceVerified?.let { sessionManager.setVerified(it) }
+            result.data.isProfileComplete?.let { sessionManager.setProfileComplete(it) }
         }
         emit(result)
     }.flowOn(Dispatchers.IO)

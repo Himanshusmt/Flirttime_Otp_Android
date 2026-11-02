@@ -48,7 +48,7 @@
             android:contentDescription="Add Moment"
             android:focusable="true"
             android:padding="3dp"
-            android:src="@drawable/ic_header_add_moment" />
+            android:src="@drawable/ic_ios_plus" />
 
         <!-- Notification Bell Icon -->
         <ImageView
@@ -98,7 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/fredokamedium"
-                android:textColor="#DE2D2D"
+                android:textColor="#D92B2B"
                 android:textSize="13sp"
                 tools:text="42%" />
         </LinearLayout>
@@ -171,7 +171,7 @@
             android:text="No moments yet"
             android:textColor="#222222"
             android:textSize="15.5sp"
-            android:textStyle="bold" />
+            />
 
         <TextView
             android:id="@+id/tvEmptySubtitle"

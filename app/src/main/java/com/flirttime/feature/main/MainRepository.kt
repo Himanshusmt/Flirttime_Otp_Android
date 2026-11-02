@@ -11,6 +11,8 @@ import com.flirttime.feature.profile.DiscoveryPeopleResponseData
 import com.flirttime.feature.profile.MoreAboutMeResponseData
 import com.flirttime.feature.profile.MyFullProfileData
 import com.flirttime.feature.profile.OtherUserProfileResponseData
+import com.flirttime.feature.onboarding.OnboardingProgress
+import com.flirttime.feature.onboarding.OnboardingStep
 import com.flirttime.feature.profile.UpdateProfileRequest
 import com.flirttime.feature.profile.UserInterestDto
 import com.flirttime.feature.profile.UserPhotoDto
@@ -44,6 +46,10 @@ interface MainRepository {
 
     /** `GET api/v1/subscriptions/my`. Emits `null` data-equivalent as `Success(null)` when the user has no membership. */
     fun getMySubscription(): Flow<Resource<MySubscription?>>
+
+    fun getOnboardingProgress(): Flow<Resource<OnboardingProgress>>
+
+    fun reportOnboardingScreen(step: OnboardingStep): Flow<Resource<Unit>>
 
     fun updateProfile(request: UpdateProfileRequest): Flow<Resource<AuthUserDto>>
 

@@ -386,20 +386,7 @@ class OtpActivity : AppCompatActivity() {
                                 Toast.makeText(this@OtpActivity, "OTP Verified Successfully", Toast.LENGTH_SHORT).show()
                                 val isProfileComplete = resource.data.user?.isProfileComplete ?: false
                                 viewModel.resetVerifyState()
-
-                                if (isProfileComplete) {
-                                    AppNavigator.navigateTo(
-                                        context = this@OtpActivity,
-                                        destination = Destination.Main(),
-                                        clearBackStack = true
-                                    )
-                                } else {
-                                    AppNavigator.navigateTo(
-                                        context = this@OtpActivity,
-                                        destination = Destination.IntroduceYourself,
-                                        finishCurrent = true
-                                    )
-                                }
+                                viewModel.routeAfterLogin(isProfileComplete)
                             }
                             is Resource.Error -> {
                                 binding.tvContinue.isEnabled = true
@@ -408,6 +395,16 @@ class OtpActivity : AppCompatActivity() {
                             }
                             null -> Unit
                         }
+                    }
+                }
+
+                launch {
+                    viewModel.postLoginDestination.collect { destination ->
+                        AppNavigator.navigateTo(
+                            context = this@OtpActivity,
+                            destination = destination,
+                            clearBackStack = true
+                        )
                     }
                 }
 

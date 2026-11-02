@@ -24,12 +24,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
-        android:fontFamily="@font/fredokamedium"
+        android:fontFamily="@font/fredokasemibold"
         android:gravity="center"
         android:text="Comments"
         android:textColor="#1A1A1A"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textSize="18sp" />
 
     <!-- Subtle Divider below Header -->
     <View
@@ -68,8 +67,8 @@
             android:fontFamily="@font/fredokaregular"
             android:text="No comments yet.\nStart the conversation."
             android:textAlignment="center"
-            android:textColor="#9E9E9E"
-            android:textSize="14sp"
+            android:textColor="#8E8E93"
+            android:textSize="15sp"
             android:visibility="gone" />
 
     </FrameLayout>
@@ -109,8 +108,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Cancel reply"
             android:padding="8dp"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            app:tint="#8E8E93" />
+            android:src="@drawable/ic_ios_xmark" />
     </LinearLayout>
 
     <LinearLayout
@@ -159,13 +157,13 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:fontFamily="@font/fredokaregular"
-                android:hint="Add a comment..."
+                android:hint="Add a comment…"
                 android:imeOptions="actionSend"
                 android:inputType="textCapSentences|textMultiLine"
                 android:maxLines="3"
                 android:textColor="#1A1A1A"
                 android:textColorHint="#9E9E9E"
-                android:textSize="13.5sp" />
+                android:textSize="15sp" />
 
         </LinearLayout>
 
@@ -186,7 +184,7 @@
                 android:layout_gravity="center"
                 android:alpha="0.5"
                 android:contentDescription="Send Comment"
-                android:src="@drawable/direction_arrow" />
+                android:src="@drawable/ic_ios_paperplane" />
 
         </FrameLayout>
 

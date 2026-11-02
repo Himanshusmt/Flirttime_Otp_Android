@@ -42,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:textColor="#252525"

@@ -3,8 +3,8 @@ package com.flirttime.feature.profile
 import android.content.Context
 import android.net.Uri
 import com.flirttime.Resource
-import com.flirttime.feature.auth.AuthUserDto
 import com.flirttime.feature.auth.NotificationSettingsDto
+import com.flirttime.feature.onboarding.GestureVerificationDto
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -47,5 +47,5 @@ interface UserRepository {
     // 5. ACCOUNT MANAGEMENT & VERIFICATION
     // ==========================================
     fun deleteAccount(): Flow<Resource<Unit>>
-    fun uploadGesturePhoto(context: Context, imageUri: Uri): Flow<Resource<AuthUserDto>>
+    fun uploadGesturePhoto(context: Context, imageUri: Uri): Flow<Resource<GestureVerificationDto>>
 }

@@ -46,7 +46,7 @@
             android:maxLines="1"
             android:textColor="#1A1A1A"
             android:textSize="14sp"
-            android:textStyle="bold"
+           
             tools:text="Chotu Chinese Center" />
 
         <TextView

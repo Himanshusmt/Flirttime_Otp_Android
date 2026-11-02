@@ -87,7 +87,7 @@ data class UsernameAvailabilityResponseData(
     @SerializedName("taken") val taken: Boolean? = null
 ) {
     val isUsernameAvailable: Boolean
-        get() = available ?: isAvailable ?: taken?.not() ?: true
+        get() = available ?: isAvailable ?: taken?.not() ?: false
 }
 
 data class NotificationSettingsDto(

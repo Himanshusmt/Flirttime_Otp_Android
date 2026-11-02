@@ -31,6 +31,7 @@ import com.flirttime.core.database.SessionManager
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
 import com.flirttime.databinding.ActivityGestureVerificationBinding
+import com.flirttime.feature.main.MainRepository
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -39,6 +40,7 @@ class GestureVerificationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGestureVerificationBinding
     private val sessionManager: SessionManager by inject()
+    private val mainRepository: MainRepository by inject()
     private val viewModel: GestureVerificationViewModel by viewModel()
     private var tempGestureUri: Uri? = null
 
@@ -60,7 +62,7 @@ class GestureVerificationActivity : AppCompatActivity() {
             if (uri != null) {
                 viewModel.uploadGesturePhoto(this, uri)
             } else {
-                proceedToVerificationProcess()
+                Toast.makeText(this, "Unable to capture selfie. Please try again.", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -77,6 +79,9 @@ class GestureVerificationActivity : AppCompatActivity() {
         setupMulticolorTitle()
         setupListeners()
         observeViewModel()
+        lifecycleScope.launch {
+            mainRepository.reportOnboardingScreen(OnboardingStep.GESTURE).collect { }
+        }
     }
 
     private fun initHeader() {
@@ -219,7 +224,18 @@ class GestureVerificationActivity : AppCompatActivity() {
                             binding.tvTakephoto.isEnabled = true
                             binding.tvTakephoto.alpha = 1.0f
                             viewModel.resetUploadState()
-                            proceedToVerificationProcess()
+                            val verification = resource.data
+                            if (verification.didPass()) {
+                                proceedToVerificationProcess()
+                            } else if (verification.faceDetected == false) {
+                                showFaceNotDetectedDialog(verification.failureMessage)
+                            } else {
+                                Toast.makeText(
+                                    this@GestureVerificationActivity,
+                                    verification.failureMessage,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
                         }
                         is Resource.Error -> {
                             binding.tvTakephoto.isEnabled = true
@@ -233,10 +249,17 @@ class GestureVerificationActivity : AppCompatActivity() {
         }
     }
 
+    private fun showFaceNotDetectedDialog(message: String) {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("No face detected")
+            .setMessage(message)
+            .setPositiveButton("Try again", null)
+            .show()
+    }
+
     private fun proceedToVerificationProcess() {
         lifecycleScope.launch {
-            sessionManager.setPageRedirect("gesture")
-            Toast.makeText(this@GestureVerificationActivity, "Gesture uploaded successfully!", Toast.LENGTH_SHORT).show()
+            sessionManager.setPageRedirect("home")
             AppNavigator.navigateTo(
                 context = this@GestureVerificationActivity,
                 destination = Destination.VerificationProcess,

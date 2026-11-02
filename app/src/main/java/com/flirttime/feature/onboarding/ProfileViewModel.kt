@@ -3,9 +3,12 @@ package com.flirttime.feature.onboarding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flirttime.Resource
+import com.flirttime.feature.auth.AuthRepository
 import com.flirttime.feature.auth.AuthUserDto
-import com.flirttime.feature.profile.UpdateProfileRequest
 import com.flirttime.feature.main.MainRepository
+import com.flirttime.feature.profile.UpdateProfileRequest
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,11 +17,70 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class ProfileViewModel(
-    private val mainRepository: MainRepository
+    private val mainRepository: MainRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _updateProfileState = MutableStateFlow<Resource<AuthUserDto>?>(null)
     val updateProfileState: StateFlow<Resource<AuthUserDto>?> = _updateProfileState.asStateFlow()
+
+    private val _usernameValid = MutableStateFlow(false)
+    val usernameValid: StateFlow<Boolean> = _usernameValid.asStateFlow()
+
+    private val _usernameError = MutableStateFlow<String?>(null)
+    val usernameError: StateFlow<String?> = _usernameError.asStateFlow()
+
+    private var usernameCheckJob: Job? = null
+    private var lastRequestedUsername: String = ""
+
+    fun reportScreenOpened() {
+        viewModelScope.launch {
+            mainRepository.reportOnboardingScreen(OnboardingStep.BASIC_INFO).collect { }
+        }
+    }
+
+    fun onDisplayNameChanged(raw: String) {
+        usernameCheckJob?.cancel()
+        val nickName = raw.trim()
+        if (nickName.isEmpty()) {
+            lastRequestedUsername = ""
+            _usernameValid.value = false
+            _usernameError.value = null
+            return
+        }
+        if (nickName.length < 3) {
+            lastRequestedUsername = ""
+            _usernameValid.value = false
+            _usernameError.value = "Display name must be at least 3 characters"
+            return
+        }
+        _usernameValid.value = false
+        _usernameError.value = null
+        lastRequestedUsername = nickName
+        usernameCheckJob = viewModelScope.launch {
+            delay(500)
+            authRepository.checkUsernameAvailability(nickName).collect { resource ->
+                if (nickName != lastRequestedUsername) return@collect
+                when (resource) {
+                    is Resource.Success -> {
+                        if (resource.data) {
+                            _usernameValid.value = true
+                            _usernameError.value = null
+                        } else {
+                            _usernameValid.value = false
+                            _usernameError.value = "This display name is already taken"
+                        }
+                    }
+                    is Resource.Error -> {
+                        _usernameValid.value = false
+                        _usernameError.value = resource.message?.takeIf { it.isNotBlank() }
+                            ?: "Unable to check display name"
+                    }
+                    is Resource.Loading -> Unit
+                }
+            }
+        }
+    }
 
     fun updateProfile(
         firstName: String,
@@ -36,7 +98,7 @@ class ProfileViewModel(
         val fName = firstName.trim()
         val lName = lastName.trim()
         val nName = nickName.trim()
-        val fullName = if (fName.isNotBlank() && lName.isNotBlank()) "$fName $lName" else fName.ifBlank { nName }
+        val fullName = listOf(fName, lName).filter { it.isNotBlank() }.joinToString(" ").ifBlank { nName }
         val username = if (nName.isNotBlank()) nName else fName.lowercase().replace(" ", "")
 
         val request = UpdateProfileRequest(
@@ -60,11 +122,9 @@ class ProfileViewModel(
      */
     private fun formatDobForApi(inputDob: String): String {
         val trimmed = inputDob.trim()
-        // 1. Already in YYYY-MM-DD format
         if (trimmed.matches(Regex("""^\d{4}-\d{2}-\d{2}$"""))) {
             return trimmed
         }
-        // 2. Format: dd/MM/yyyy or d/M/yyyy
         if (trimmed.contains("/")) {
             val parts = trimmed.split("/")
             if (parts.size == 3) {
@@ -74,7 +134,6 @@ class ProfileViewModel(
                 return "$year-$month-$day"
             }
         }
-        // 3. Fallback: Parse via SimpleDateFormat
         return try {
             val sdfIn = SimpleDateFormat("dd/MM/yyyy", Locale.US)
             val date = sdfIn.parse(trimmed)

@@ -42,7 +42,7 @@
             android:clickable="true"
             android:contentDescription="Notifications"
             android:focusable="true"
-            android:src="@drawable/ic_bell_red" />
+            android:src="@drawable/ic_notification" />
 
     </LinearLayout>
 

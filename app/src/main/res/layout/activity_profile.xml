@@ -107,6 +107,44 @@
                 android:visibility="gone"
                 tools:visibility="visible" />
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtInLname"
+                style="@style/EditTextInputLayoutStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:textColorHint="@color/light_gry"
+                app:boxCollapsedPaddingTop="@dimen/_8sdp"
+                app:boxCornerRadiusBottomEnd="@dimen/_8sdp"
+                app:boxCornerRadiusBottomStart="@dimen/_8sdp"
+                app:boxCornerRadiusTopEnd="@dimen/_8sdp"
+                app:boxCornerRadiusTopStart="@dimen/_8sdp"
+                app:boxStrokeColor="@color/box_stroke_selector"
+                app:boxStrokeWidth="0.8dp"
+                app:expandedHintEnabled="true"
+                app:hintEnabled="true"
+                app:hintTextAppearance="@style/CustomHintTextAppearance"
+                app:hintTextColor="@color/light_gry">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etLastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "
+                    android:fontFamily="@font/fredokaregular"
+                    android:hint="Last Name"
+                    android:imeOptions="actionNext"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapSentences|textPersonName"
+                    android:letterSpacing="0"
+                    android:maxLength="50"
+                    android:paddingVertical="19dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <!-- 2. Display Name / Nick Name -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/txtNickName"

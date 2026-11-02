@@ -77,7 +77,7 @@ class CommentsAdapter(
                 if (liked) R.drawable.ic_moment_heart_filled else R.drawable.ic_moment_heart
             )
             binding.ivCommentLike.imageTintList = android.content.res.ColorStateList.valueOf(
-                if (liked) Color.parseColor("#DE2D2D") else Color.parseColor("#8E8E93")
+                if (liked) Color.parseColor("#D92B2B") else Color.parseColor("#8E8E93")
             )
             if (comment.likeCount > 0) {
                 binding.tvCommentLikeCount.visibility = View.VISIBLE
@@ -121,7 +121,7 @@ class CommentsAdapter(
 
                     override fun updateDrawState(ds: TextPaint) {
                         ds.isUnderlineText = false
-                        ds.color = Color.parseColor("#DE2D2D")
+                        ds.color = Color.parseColor("#D92B2B")
                         ds.isFakeBoldText = true
                     }
                 }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)

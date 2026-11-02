@@ -38,7 +38,7 @@
                 android:id="@+id/tvSenderName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/fredokabold"
+                android:fontFamily="@font/fredokasemibold"
                 android:textColor="#1A1A1A"
                 android:textSize="14.5sp"
                 tools:text="" />

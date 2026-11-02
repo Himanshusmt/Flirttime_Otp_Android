@@ -15,7 +15,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:contentDescription="Back"
-        android:src="@drawable/img_backarrow" />
+        android:src="@drawable/ic_chevron_back" />
 
     <TextView
         android:id="@+id/tv_heading"
@@ -26,11 +26,11 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="19dp"
         android:layout_toEndOf="@id/back_arrow"
-        android:fontFamily="@font/fredokaregular"
+        android:fontFamily="@font/fredokasemibold"
         android:gravity="center"
         android:letterSpacing="0"
         android:text="Privacy policy"
         android:textColor="@color/text_gry"
-        android:textSize="18sp" />
+        android:textSize="20sp" />
 
 </RelativeLayout>

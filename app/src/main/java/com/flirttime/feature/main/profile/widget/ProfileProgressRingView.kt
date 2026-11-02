@@ -42,7 +42,7 @@ class ProfileProgressRingView @JvmOverloads constructor(
         style = Paint.Style.STROKE
         strokeWidth = strokeWidthPx
         strokeCap = Paint.Cap.ROUND
-        color = Color.parseColor("#EA3355")
+        color = Color.parseColor("#D92B2B")
     }
 
     private val oval = RectF()
