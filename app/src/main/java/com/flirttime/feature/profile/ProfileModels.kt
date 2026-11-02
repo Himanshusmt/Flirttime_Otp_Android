@@ -86,25 +86,16 @@ data class MoreAboutMeResponseData(
     @SerializedName("living") val living: String? = null,
     @SerializedName("relationship") val relationship: String? = null,
     @SerializedName("children") val children: String? = null,
+    @SerializedName("exercise") val exercise: String? = null,
+    @SerializedName(value = "looking-for", alternate = ["lookingFor", "looking_for"])
+    val lookingFor: String? = null,
+    @SerializedName("kids") val kids: String? = null,
+    @SerializedName(value = "horoscope", alternate = ["zodiac"])
+    val horoscope: String? = null,
+    @SerializedName("party") val party: String? = null,
     @SerializedName("items") val items: List<MoreAboutMeItemDto>? = null
 ) {
-    fun getEffectiveItems(): List<MoreAboutMeItemDto> {
-        if (!items.isNullOrEmpty()) return items
-        return listOf(
-            MoreAboutMeItemDto("drinking", "Drinking", "🍷", drinking),
-            MoreAboutMeItemDto("education", "Education", "📖", education),
-            MoreAboutMeItemDto("eyeColor", "Eyecolor", "👁", eyeColor),
-            MoreAboutMeItemDto("hairColor", "Haircolor", "💇", hairColor),
-            MoreAboutMeItemDto("height", "Height", "📏", height),
-            MoreAboutMeItemDto("living", "Living", "🏠", living),
-            MoreAboutMeItemDto("relationship", "Relationship", "👩❤️👨", relationship),
-            MoreAboutMeItemDto("religion", "Religion", "🛕", religion),
-            MoreAboutMeItemDto("sexuality", "Sexuality", "⚧", sexuality),
-            MoreAboutMeItemDto("smoking", "Smoking", "🚬", smoking),
-            MoreAboutMeItemDto("weight", "Weight", "⚖️", weight),
-            MoreAboutMeItemDto("children", "Children", "👶", children)
-        )
-    }
+    fun getEffectiveItems(): List<MoreAboutMeItemDto> = MoreAboutMeCatalog.merge(this)
 }
 
 data class AudioIntroDto(

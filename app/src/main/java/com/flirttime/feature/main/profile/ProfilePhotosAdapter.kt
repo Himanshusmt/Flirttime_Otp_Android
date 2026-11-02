@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flirttime.R
+import com.flirttime.core.common.FastImageHelper
 import com.flirttime.databinding.ItemProfilePhotoBinding
 
 data class ProfilePhotoItem(
@@ -36,17 +37,11 @@ class ProfilePhotosAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(photo: ProfilePhotoItem) {
-            val key = photo.url ?: photo.resId?.toString()
-            if (binding.ivUserPhoto.tag != key) {
-                binding.ivUserPhoto.tag = key
-                if (!photo.url.isNullOrBlank()) {
-                    binding.ivUserPhoto.setImageURI(photo.url)
-                } else if (photo.resId != null && photo.resId != 0) {
-                    binding.ivUserPhoto.setActualImageResource(photo.resId)
-                } else {
-                    binding.ivUserPhoto.setActualImageResource(R.drawable.img_login)
-                }
-            }
+            FastImageHelper.loadDirect(
+                draweeView = binding.ivUserPhoto,
+                url = photo.url,
+                fallbackRes = photo.resId?.takeIf { it != 0 } ?: R.drawable.img_login
+            )
 
             binding.root.setOnClickListener {
                 onPhotoClick?.invoke(photo)

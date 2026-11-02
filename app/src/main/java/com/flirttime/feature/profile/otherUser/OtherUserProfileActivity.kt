@@ -44,10 +44,11 @@ class OtherUserProfileActivity : AppCompatActivity() {
     private val viewModel: OtherUserProfileViewModel by viewModel()
 
     private val photosAdapter by lazy {
-        OtherUserPhotosAdapter { url, pos ->
-            // View full screen photo if needed
+        OtherUserPhotosAdapter { _, pos ->
+            openPhotoViewer(pos)
         }
     }
+    private var currentPhotoUrls: List<String> = emptyList()
 
     private val momentsAdapter by lazy {
         OtherUserMomentsAdapter(
@@ -188,6 +189,22 @@ class OtherUserProfileActivity : AppCompatActivity() {
         binding.btnSeeAllMoments.setOnClickListener {
             openMoments(focusMomentId = null)
         }
+
+        binding.ivAvatar.setOnClickListener {
+            openPhotoViewer(0)
+        }
+        binding.ivCoverPhoto.setOnClickListener {
+            openPhotoViewer(0)
+        }
+    }
+
+    private fun openPhotoViewer(startIndex: Int) {
+        if (currentPhotoUrls.isEmpty()) return
+        com.flirttime.feature.moments.MomentMediaViewerActivity.start(
+            this,
+            currentPhotoUrls,
+            startIndex.coerceIn(0, currentPhotoUrls.lastIndex)
+        )
     }
 
     private fun openMoments(focusMomentId: String? = null) {
@@ -218,12 +235,20 @@ class OtherUserProfileActivity : AppCompatActivity() {
     private fun showActionSheet() {
         val sheet = OtherUserActionsBottomSheetDialogFragment.newInstance(currentUserName)
         sheet.onReportClick = {
-            viewModel.reportUser(targetUserId, "Inappropriate profile")
+            showReportReasons()
         }
         sheet.onBlockClick = {
             viewModel.blockUser(targetUserId, "Blocked from Profile")
         }
         sheet.show(supportFragmentManager, OtherUserActionsBottomSheetDialogFragment.TAG)
+    }
+
+    private fun showReportReasons() {
+        val reportSheet = ReportUserBottomSheetDialogFragment.newInstance(currentUserName)
+        reportSheet.onReasonSelected = { title, code ->
+            viewModel.reportUser(targetUserId, reason = code, description = title)
+        }
+        reportSheet.show(supportFragmentManager, ReportUserBottomSheetDialogFragment.TAG)
     }
 
     private fun setupInsets() {
@@ -280,7 +305,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
                 launch {
                     viewModel.actionEvent.collect { (action, data) ->
                         if (action == "nope") {
-                            Toast.makeText(this@OtherUserProfileActivity, "Passed", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@OtherUserProfileActivity, "Not interested", Toast.LENGTH_SHORT).show()
                             finish()
                         } else {
                             val didMatch = data?.isMatched == true
@@ -289,8 +314,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
                             }
                             currentMyAction = action
                             updateActionBar()
-                            val msg = data?.message ?: if (action == "super_like") "Super Liked!" else "Liked!"
-                            Toast.makeText(this@OtherUserProfileActivity, msg, Toast.LENGTH_SHORT).show()
+                            handleLikeResult(action, didMatch)
                         }
                     }
                 }
@@ -324,7 +348,11 @@ class OtherUserProfileActivity : AppCompatActivity() {
                             }
                             is Resource.Success -> {
                                 binding.progressBar.visibility = View.GONE
-                                Toast.makeText(this@OtherUserProfileActivity, "Report submitted successfully. Thank you.", Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    this@OtherUserProfileActivity,
+                                    "Thanks for letting us know. We'll review this profile.",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                             is Resource.Error -> {
                                 binding.progressBar.visibility = View.GONE
@@ -395,7 +423,8 @@ class OtherUserProfileActivity : AppCompatActivity() {
         FastImageHelper.loadDirect(
             draweeView = binding.ivCoverPhoto,
             url = coverUrl.takeIf { it.isNotBlank() },
-            fallbackRes = R.drawable.img_login
+            fallbackRes = R.drawable.img_login,
+            fadeDurationMs = 280
         )
 
         // Voice Intro (Matching iOS Image 1)
@@ -410,6 +439,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
         if (photoUrls.isEmpty() && photoUrl.isNotBlank()) {
             photoUrls.add(photoUrl)
         }
+        currentPhotoUrls = photoUrls
         photosAdapter.submitList(photoUrls)
         binding.tvPhotosCount.text = "${photoUrls.size}"
         binding.layoutPhotosHeader.visibility = if (photoUrls.isNotEmpty()) View.VISIBLE else View.GONE
@@ -418,6 +448,8 @@ class OtherUserProfileActivity : AppCompatActivity() {
         // Interests List (Wrapped ChipGroup matching iOS Image 2)
         val interestsList = user.interests.orEmpty()
         bindInterests(interestsList)
+
+        bindWhyYouMatch(user)
 
         // Common Interests Badge
         val commonCount = user.sharedInterests?.size ?: interestsList.count { it.isCommon == true }
@@ -549,6 +581,74 @@ class OtherUserProfileActivity : AppCompatActivity() {
         val m = seconds / 60
         val s = seconds % 60
         return String.format("%d:%02d", m, s)
+    }
+
+    private fun handleLikeResult(action: String, didMatch: Boolean) {
+        val sharedCount = (viewModel.profileState.value as? Resource.Success)?.data?.sharedInterests?.size ?: 0
+        if (didMatch) {
+            ConnectionResultDialog.showMatch(
+                context = this,
+                name = currentUserName,
+                avatarUrl = currentUserAvatar,
+                hasSharedInterests = sharedCount > 0,
+                onStartConversation = {
+                    AppNavigator.navigateTo(
+                        context = this,
+                        destination = Destination.Main(targetTab = 3)
+                    )
+                }
+            )
+        } else if (action == "like") {
+            ConnectionResultDialog.showLikeSent(
+                context = this,
+                name = currentUserName,
+                avatarUrl = currentUserAvatar
+            )
+        } else {
+            Toast.makeText(this, "Super like sent", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun bindWhyYouMatch(user: UserSearchItemDto) {
+        val reasons = WhyYouMatchHelper.reasonsFor(user)
+        val score = user.profileMatchPercentage ?: user.vibeScore ?: user.compatibility?.interestMatchPercentage
+            ?: user.compatibility?.vibeScore
+        if (reasons.isEmpty() && (score == null || score <= 0)) {
+            binding.cardWhyYouMatch.visibility = View.GONE
+            return
+        }
+
+        binding.cardWhyYouMatch.visibility = View.VISIBLE
+        if (score != null && score > 0) {
+            binding.tvMatchPercentBadge.visibility = View.VISIBLE
+            binding.tvMatchPercentBadge.text = "$score% Match"
+        } else {
+            binding.tvMatchPercentBadge.visibility = View.GONE
+        }
+
+        val container = binding.layoutWhyReasons
+        container.removeAllViews()
+        reasons.forEach { reason ->
+            val row = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.HORIZONTAL
+                gravity = android.view.Gravity.CENTER_VERTICAL
+                setPadding(0, (6 * resources.displayMetrics.density).toInt(), 0, (6 * resources.displayMetrics.density).toInt())
+            }
+            val emoji = android.widget.TextView(this).apply {
+                text = reason.emoji
+                textSize = 16f
+            }
+            val text = android.widget.TextView(this).apply {
+                this.text = reason.text
+                textSize = 14f
+                setTextColor(0xFF333333.toInt())
+                typeface = androidx.core.content.res.ResourcesCompat.getFont(this@OtherUserProfileActivity, R.font.fredokaregular)
+                setPadding((10 * resources.displayMetrics.density).toInt(), 0, 0, 0)
+            }
+            row.addView(emoji)
+            row.addView(text)
+            container.addView(row)
+        }
     }
 
     private fun bindInterests(interests: List<UserInterestDto>) {

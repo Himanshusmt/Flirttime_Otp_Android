@@ -8,7 +8,8 @@ enum class SpotCategory {
     CAFE,
     DRINKS,
     CINEMA,
-    OUTDOORS
+    OUTDOORS,
+    CULTURE
 }
 
 data class VibeSpotItem(
@@ -18,5 +19,18 @@ data class VibeSpotItem(
     val distance: String,
     val category: SpotCategory,
     @field:DrawableRes val iconRes: Int,
-    @field:DrawableRes val backgroundRes: Int
-)
+    @field:DrawableRes val backgroundRes: Int,
+    val city: String? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null
+) {
+    val shareLabel: String
+        get() {
+            val cityName = city?.trim().orEmpty()
+            return when {
+                cityName.isNotEmpty() && !name.contains(cityName, ignoreCase = true) -> "$name, $cityName"
+                address.isNotBlank() && !name.contains(address, ignoreCase = true) -> "$name, $address"
+                else -> name
+            }
+        }
+}

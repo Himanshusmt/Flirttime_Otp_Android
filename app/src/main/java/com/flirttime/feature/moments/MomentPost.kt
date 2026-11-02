@@ -12,6 +12,7 @@ data class MomentPost(
     val mediaUrl: String? = null,
     val mediaRes: Int? = null,
     val mediaUrls: List<String> = emptyList(),
+    val thumbnailUrls: List<String> = emptyList(),
     var currentMediaIndex: Int = 0,
     var likeCount: Int = 0,
     var isLiked: Boolean = false,

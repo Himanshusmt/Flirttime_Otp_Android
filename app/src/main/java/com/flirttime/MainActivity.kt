@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             )
 
             lastStatusBarTop = statusBarInsets.top
-            applyStatusBarInsetsForDestination(navController.currentDestination?.id ?: R.id.navigation_matches)
+            applyStatusBarInsetsForDestination(navController.currentDestination?.id ?: R.id.navigation_moments)
             binding.relativeBottom.updatePadding(bottom = navBarInsets.bottom)
 
             windowInsets
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         setupNavigation()
         handleIncomingIntent()
-        val initialDest = navController.currentDestination?.id ?: R.id.navigation_matches
+        val initialDest = navController.currentDestination?.id ?: R.id.navigation_moments
         updateBottomBarUi(initialDest)
         applyStatusBarInsetsForDestination(initialDest)
     }
@@ -182,14 +182,14 @@ class MainActivity : AppCompatActivity() {
         if (ChatDeepLink.openFromIntent(this, intent)) return
 
         if (intent.hasExtra(AppNavigator.EXTRA_TARGET_TAB)) {
-            val targetTab = intent.getIntExtra(AppNavigator.EXTRA_TARGET_TAB, 2)
+            val targetTab = intent.getIntExtra(AppNavigator.EXTRA_TARGET_TAB, 0)
             when (targetTab) {
                 0 -> selectTab(R.id.navigation_moments)
                 1 -> selectTab(R.id.navigation_explore)
                 2 -> selectTab(R.id.navigation_matches)
                 3 -> selectTab(R.id.navigation_chat)
                 4 -> selectTab(R.id.navigation_profile)
-                else -> selectTab(R.id.navigation_matches)
+                else -> selectTab(R.id.navigation_moments)
             }
         }
     }

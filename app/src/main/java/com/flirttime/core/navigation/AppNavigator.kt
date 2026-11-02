@@ -51,7 +51,7 @@ sealed class Destination {
     ) : Destination()
 
     data class Main(
-        val targetTab: Int = 2
+        val targetTab: Int = 0
     ) : Destination()
 
     data class Webview(
@@ -76,6 +76,8 @@ sealed class Destination {
         val isVerified: Boolean = false
     ) : Destination()
     data object Settings : Destination()
+    data object HelpSupport : Destination()
+    data class Faq(val category: String? = null) : Destination()
     data object PersonalDetails : Destination()
     data object NotificationSettings : Destination()
     data object BlockedReported : Destination()
@@ -122,6 +124,7 @@ object AppNavigator {
     const val EXTRA_PHONE_NUMBER = "extra_phone_number"
     const val EXTRA_VERIFICATION_ID = "extra_verification_id"
     const val EXTRA_TARGET_TAB = "extra_target_tab"
+    const val EXTRA_FAQ_CATEGORY = "extra_faq_category"
     const val EXTRA_WEBVIEW_TITLE = "extra_webview_title"
     const val EXTRA_WEBVIEW_URL = "extra_webview_url"
     const val EXTRA_IMAGE_URI = "extra_image_uri"
@@ -179,6 +182,8 @@ object AppNavigator {
             is Destination.MyMoments -> com.flirttime.feature.main.profile.MyMomentsActivity::class.java
             is Destination.UserMoments -> com.flirttime.feature.main.profile.MyMomentsActivity::class.java
             is Destination.Settings -> com.flirttime.feature.profile.settings.SettingsActivity::class.java
+            is Destination.HelpSupport -> com.flirttime.feature.profile.settings.HelpSupportActivity::class.java
+            is Destination.Faq -> com.flirttime.feature.profile.settings.FaqActivity::class.java
             is Destination.PersonalDetails -> com.flirttime.feature.profile.settings.PersonalDetailsActivity::class.java
             is Destination.NotificationSettings -> com.flirttime.feature.profile.settings.NotificationSettingsActivity::class.java
             is Destination.BlockedReported -> com.flirttime.feature.profile.settings.BlockedReportedActivity::class.java
@@ -201,6 +206,9 @@ object AppNavigator {
                 }
                 is Destination.Main -> {
                     putExtra(EXTRA_TARGET_TAB, destination.targetTab)
+                }
+                is Destination.Faq -> {
+                    destination.category?.let { putExtra(EXTRA_FAQ_CATEGORY, it) }
                 }
                 is Destination.Webview -> {
                     putExtra(EXTRA_WEBVIEW_TITLE, destination.title)

@@ -17,6 +17,7 @@ class MomentMoreOptionsBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private var _binding: BottomSheetMomentMoreOptionsBinding? = null
     private val binding get() = _binding!!
 
+    var onShareClick: (() -> Unit)? = null
     var onDeleteClick: (() -> Unit)? = null
     var onReportClick: (() -> Unit)? = null
     var onBlockClick: (() -> Unit)? = null
@@ -72,6 +73,11 @@ class MomentMoreOptionsBottomSheetDialogFragment : BottomSheetDialogFragment() {
             binding.btnReportMoment.visibility = View.VISIBLE
             binding.dividerReportBlock.visibility = View.VISIBLE
             binding.btnBlockUser.visibility = View.VISIBLE
+        }
+
+        binding.btnShareMoment.setOnClickListener {
+            dismiss()
+            onShareClick?.invoke()
         }
 
         binding.btnDeleteMoment.setOnClickListener {

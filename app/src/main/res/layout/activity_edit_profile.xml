@@ -408,6 +408,80 @@
                 android:textColor="@color/text_tertiary"
                 android:textSize="12sp" />
 
+            <LinearLayout
+                android:id="@+id/cardVerifyBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_verify_banner_card"
+                android:elevation="3dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokaregular"
+                    android:text="Verification"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvVerifyIdentity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokaregular"
+                            android:text="Verify your identity"
+                            android:textColor="@color/text_primary"
+                            android:textSize="17sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/fredokaregular"
+                            android:text="It's a match for trust! Verify your profile for a safer dating experience."
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/btnVerifyYourself"
+                            android:layout_width="140dp"
+                            android:layout_height="33dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/bg_pill_preview_red"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:fontFamily="@font/fredokamedium"
+                            android:gravity="center"
+                            android:text="Verify yourself"
+                            android:textColor="@color/white"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="51dp"
+                        android:layout_height="51dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_verified_red" />
+                </LinearLayout>
+            </LinearLayout>
+
             <!-- Section 2: Cover Picture -->
             <TextView
                 android:layout_width="wrap_content"

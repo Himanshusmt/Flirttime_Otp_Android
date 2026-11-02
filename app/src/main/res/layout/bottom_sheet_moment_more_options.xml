@@ -23,6 +23,25 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/btnShareMoment"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center"
+                android:text="Share moment"
+                android:textColor="#1A1A1A"
+                android:textSize="17sp" />
+
+            <View
+                android:id="@+id/dividerShare"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#D1D1D6" />
+
             <!-- Delete Moment (Shown only for own moment) -->
             <TextView
                 android:id="@+id/btnDeleteMoment"

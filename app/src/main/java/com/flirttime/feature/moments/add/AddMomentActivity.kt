@@ -6,7 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -14,22 +13,23 @@ import androidx.core.view.updatePadding
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flirttime.R
-import com.flirttime.Resource
 import java.io.File
 import com.flirttime.databinding.ActivityAddMomentBinding
+import com.flirttime.feature.moments.MomentsUploadStore
 import com.flirttime.feature.moments.location.WhereAreYouVibingBottomSheetDialogFragment
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AddMomentActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddMomentBinding
     private val viewModel: AddMomentViewModel by viewModel()
+    private val uploadStore: MomentsUploadStore by inject()
     private val selectedPhotos = mutableListOf<Uri>()
     private var selectedLocation: String? = null
     private var pendingCameraUri: Uri? = null
@@ -115,7 +115,6 @@ class AddMomentActivity : AppCompatActivity() {
         setupListeners()
         updatePhotosUi()
         validateShareButton()
-        observePublishState()
     }
 
     private fun setupInsets() {
@@ -281,7 +280,7 @@ class AddMomentActivity : AppCompatActivity() {
     private fun openLocationBottomSheet() {
         val locationSheet = WhereAreYouVibingBottomSheetDialogFragment()
         locationSheet.onSpotSelected = { spot ->
-            selectedLocation = "${spot.name}, ${spot.address}"
+            selectedLocation = spot.shareLabel
             updateLocationUi()
         }
         locationSheet.onCitySelected = { city ->
@@ -360,45 +359,17 @@ class AddMomentActivity : AppCompatActivity() {
         val audience = "everyone"
         val location = selectedLocation
 
-        viewModel.publishMoment(
-            context = this,
+        val started = uploadStore.startUpload(
             caption = caption,
             audience = audience,
             location = location,
             imageUris = selectedPhotos.toList()
         )
-    }
-
-    private fun observePublishState() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.publishState.collect { state ->
-                    when (state) {
-                        is Resource.Loading -> {
-                            binding.btnShare.isEnabled = false
-                            binding.btnShare.text = "Sharing..."
-                        }
-                        is Resource.Success -> {
-                            binding.btnShare.isEnabled = true
-                            binding.btnShare.text = "Share"
-                            Toast.makeText(this@AddMomentActivity, "Moment shared successfully!", Toast.LENGTH_SHORT).show()
-                            finish()
-                        }
-                        is Resource.Error -> {
-                            binding.btnShare.isEnabled = true
-                            binding.btnShare.text = "Share"
-                            Toast.makeText(this@AddMomentActivity, state.message ?: "Failed to share moment", Toast.LENGTH_SHORT).show()
-                            viewModel.resetState()
-                            validateShareButton()
-                        }
-                        null -> {
-                            binding.btnShare.text = "Share"
-                            validateShareButton()
-                        }
-                    }
-                }
-            }
+        if (!started) {
+            Toast.makeText(this, "Please wait, your last moment is still uploading", Toast.LENGTH_SHORT).show()
+            return
         }
+        finish()
     }
 
     companion object {

@@ -5,27 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="9dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="4dp">
 
-    <!-- Commenter Avatar -->
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/ivCommentAvatar"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_marginTop="2dp"
-        app:roundAsCircle="true"
-        app:placeholderImage="@drawable/img_gallery_demo_girl" />
+        app:placeholderImage="@drawable/img_gallery_demo_girl"
+        app:roundAsCircle="true" />
 
-    <!-- Comment Details Column -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="10dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <!-- Header: Username + Time Ago -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,46 +37,121 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/fredokamedium"
                 android:textColor="#1A1A1A"
-                android:textSize="13.5sp"
-                android:textStyle="bold"
+                android:textSize="14sp"
                 tools:text="pawan123" />
 
             <TextView
                 android:id="@+id/tvCommentTimeAgo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
+                android:layout_marginStart="6dp"
                 android:fontFamily="@font/fredokaregular"
                 android:textColor="#8E8E93"
                 android:textSize="12sp"
                 tools:text="31m" />
-
         </LinearLayout>
 
-        <!-- Comment Text Body -->
         <TextView
             android:id="@+id/tvCommentContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="2dp"
             android:fontFamily="@font/fredokaregular"
             android:lineSpacingExtra="2dp"
-            android:textColor="#262626"
-            android:textSize="13.5sp"
-            tools:text="Test hpp" />
+            android:textColor="#1A1A1A"
+            android:textSize="14sp"
+            tools:text="Love this @sara" />
 
-        <!-- Future Reply Action / Replies Preview (Extensible placeholder) -->
-        <TextView
-            android:id="@+id/tvReplyAction"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:fontFamily="@font/fredokamedium"
-            android:textColor="#8E8E93"
-            android:textSize="11.5sp"
-            android:visibility="gone"
-            android:text="Reply" />
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
+            <TextView
+                android:id="@+id/tvReplyAction"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center_vertical"
+                android:text="Reply"
+                android:textColor="#8E8E93"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvDeleteAction"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/fredokamedium"
+                android:gravity="center_vertical"
+                android:text="Delete"
+                android:textColor="#8E8E93"
+                android:textSize="12sp"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutRepliesToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <View
+                android:layout_width="24dp"
+                android:layout_height="1dp"
+                android:background="#A1A1A1" />
+
+            <TextView
+                android:id="@+id/tvRepliesToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/fredokamedium"
+                android:textColor="#8E8E93"
+                android:textSize="12sp"
+                tools:text="View 3 replies" />
+
+            <ProgressBar
+                android:id="@+id/progressReplies"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="8dp"
+                android:indeterminateTint="#A1A1A1"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutLike"
+        android:layout_width="36dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="2dp">
+
+        <ImageView
+            android:id="@+id/ivCommentLike"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:contentDescription="Like comment"
+            android:src="@drawable/ic_moment_heart" />
+
+        <TextView
+            android:id="@+id/tvCommentLikeCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredokaregular"
+            android:textColor="#8E8E93"
+            android:textSize="11sp"
+            android:visibility="gone"
+            tools:text="12"
+            tools:visibility="visible" />
     </LinearLayout>
 
 </LinearLayout>

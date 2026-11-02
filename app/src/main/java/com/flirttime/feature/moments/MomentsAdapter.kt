@@ -21,6 +21,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.flirttime.R
+import com.flirttime.core.common.FastImageHelper
 import com.flirttime.core.common.IsoDate
 import com.flirttime.databinding.ItemMomentLoadingBinding
 import com.flirttime.databinding.ItemMomentPostBinding
@@ -42,6 +43,7 @@ class MomentsAdapter(
         private const val VIEW_TYPE_ITEM = 0
         private const val VIEW_TYPE_LOADING = 1
         const val PAYLOAD_LIKE_UPDATE = "payload_like_update"
+        const val PAYLOAD_COUNTS = "payload_counts"
         const val PAYLOAD_CAPTION = "payload_caption"
 
         /** Longer captions are cut here with a "more" toggle (iOS `captionPreviewLength`). */
@@ -91,6 +93,11 @@ class MomentsAdapter(
         }
     }
 
+    fun notifyCountsChanged(postId: String) {
+        val index = findPostPosition(postId)
+        if (index != -1) notifyItemChanged(index, PAYLOAD_COUNTS)
+    }
+
     fun findPostPosition(postId: String): Int {
         return posts.indexOfFirst { it.id == postId }
     }
@@ -105,6 +112,12 @@ class MomentsAdapter(
     fun notifyPostChanged(postId: String) {
         val index = findPostPosition(postId)
         if (index != -1) notifyItemChanged(index)
+    }
+
+    fun prependPost(post: MomentPost) {
+        if (posts.any { it.id == post.id }) return
+        posts.add(0, post)
+        notifyItemInserted(0)
     }
 
     fun appendPosts(more: List<MomentPost>) {
@@ -156,9 +169,12 @@ class MomentsAdapter(
         payloads: MutableList<Any>
     ) {
         if (payloads.isNotEmpty() && holder is MomentViewHolder && position < posts.size &&
-            (payloads.contains(PAYLOAD_LIKE_UPDATE) || payloads.contains(PAYLOAD_CAPTION))
+            (payloads.contains(PAYLOAD_LIKE_UPDATE) || payloads.contains(PAYLOAD_COUNTS) || payloads.contains(PAYLOAD_CAPTION))
         ) {
-            if (payloads.contains(PAYLOAD_LIKE_UPDATE)) holder.updateLikeUi(posts[position])
+            if (payloads.contains(PAYLOAD_LIKE_UPDATE) || payloads.contains(PAYLOAD_COUNTS)) {
+                holder.updateLikeUi(posts[position])
+                holder.updateCountUi(posts[position])
+            }
             if (payloads.contains(PAYLOAD_CAPTION)) holder.bindCaption(posts[position])
         } else {
             super.onBindViewHolder(holder, position, payloads)
@@ -240,14 +256,11 @@ class MomentsAdapter(
         fun bind(post: MomentPost) {
             boundPost = post
 
-            // User avatar
-            if (!post.avatarUrl.isNullOrBlank()) {
-                binding.ivAvatar.setImageURI(post.avatarUrl)
-            } else if (post.avatarRes != null && post.avatarRes != 0) {
-                binding.ivAvatar.setActualImageResource(post.avatarRes)
-            } else {
-                binding.ivAvatar.setActualImageResource(R.drawable.img_login)
-            }
+            FastImageHelper.loadDirect(
+                draweeView = binding.ivAvatar,
+                url = post.avatarUrl,
+                fallbackRes = post.avatarRes?.takeIf { it != 0 } ?: R.drawable.img_login
+            )
             binding.ivAvatar.setOnClickListener { onUserClick?.invoke(post) }
             binding.tvUsername.setOnClickListener { onUserClick?.invoke(post) }
 
@@ -268,7 +281,7 @@ class MomentsAdapter(
             binding.cardMediaContainer.visibility = if (hasMedia) View.VISIBLE else View.GONE
             placeActions(overPhoto = hasMedia)
 
-            mediaAdapter.setMedia(allMedia, post.mediaRes)
+            mediaAdapter.setMedia(allMedia, post.thumbnailUrls, post.mediaRes)
 
             pageChangeCallback?.let { binding.vpPostMedia.unregisterOnPageChangeCallback(it) }
             val newCallback = object : ViewPager2.OnPageChangeCallback() {
@@ -449,6 +462,13 @@ class MomentsAdapter(
                     Color.parseColor(if (overPhoto) "#FFFFFF" else "#252525")
                 )
             }
+        }
+
+        internal fun updateCountUi(post: MomentPost) {
+            binding.tvCommentCount.text = IsoDate.compactCount(post.commentCount)
+            binding.tvGiftCount.text = IsoDate.compactCount(post.giftCount)
+            binding.btnComment.contentDescription = "Comments, ${post.commentCount}"
+            binding.btnGift.contentDescription = "Gifts, ${post.giftCount}"
         }
 
         private fun updateIndicators(selectedIndex: Int, totalCount: Int) {

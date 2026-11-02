@@ -17,12 +17,18 @@ import com.flirttime.Resource
 import com.flirttime.core.database.SessionManager
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.databinding.ActivityMyMomentsBinding
+import com.flirttime.feature.chat.socket.ChatSocketManager
 import com.flirttime.feature.moments.MomentMediaViewerActivity
 import com.flirttime.feature.moments.MomentPost
 import com.flirttime.feature.moments.MomentsAdapter
 import com.flirttime.feature.moments.MomentsRepository
 import com.flirttime.feature.moments.UserMomentsResponseData
 import com.flirttime.feature.moments.comments.CommentsBottomSheetDialogFragment
+import com.flirttime.feature.moments.socket.LocalEditGuard
+import com.flirttime.feature.moments.socket.MomentSocketKind
+import com.flirttime.feature.moments.socket.MomentSocketUpdate
+import com.flirttime.feature.moments.socket.MomentsSocketService
+import com.flirttime.feature.moments.socket.applyCountsTo
 import com.flirttime.feature.moments.gift.ReceivedGiftsBottomSheetDialogFragment
 import com.flirttime.feature.moments.gift.SendGiftBottomSheetDialogFragment
 import com.flirttime.feature.moments.likes.MomentLikesBottomSheetDialogFragment
@@ -53,7 +59,10 @@ class MyMomentsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMyMomentsBinding
     private val momentsRepository: MomentsRepository by inject()
     private val sessionManager: SessionManager by inject()
+    private val socketManager: ChatSocketManager by inject()
+    private val momentsSocket: MomentsSocketService by inject()
     private lateinit var momentsAdapter: MomentsAdapter
+    private val localEdits = LocalEditGuard()
 
     private var targetUserId: String = "me"
     private var targetUserName: String = ""
@@ -88,9 +97,14 @@ class MyMomentsActivity : AppCompatActivity() {
         setupRecyclerView()
         setupListeners()
 
+        socketManager.connect()
+        momentsSocket.setup()
         lifecycleScope.launch {
             loadSessionAuthor()
             loadFirstPage(showLoader = true)
+        }
+        lifecycleScope.launch {
+            momentsSocket.updates.collect { applySocket(it) }
         }
     }
 
@@ -162,8 +176,14 @@ class MyMomentsActivity : AppCompatActivity() {
             onCommentClick = { post ->
                 val commentSheet = CommentsBottomSheetDialogFragment.newInstance(postId = post.id)
                 commentSheet.onCommentPosted = {
+                    localEdits.mark(post.id)
                     post.commentCount++
-                    momentsAdapter.notifyPostChanged(post.id)
+                    momentsAdapter.notifyCountsChanged(post.id)
+                }
+                commentSheet.onCommentsCountChanged = { count ->
+                    localEdits.mark(post.id)
+                    post.commentCount = count
+                    momentsAdapter.notifyCountsChanged(post.id)
                 }
                 commentSheet.show(supportFragmentManager, CommentsBottomSheetDialogFragment.TAG)
             },
@@ -179,8 +199,9 @@ class MyMomentsActivity : AppCompatActivity() {
                         momentId = post.id
                     )
                     giftSheet.onGiftSent = { _, _ ->
+                        localEdits.mark(post.id)
                         post.giftCount++
-                        momentsAdapter.notifyPostChanged(post.id)
+                        momentsAdapter.notifyCountsChanged(post.id)
                         Toast.makeText(this, "Gift sent \uD83C\uDF89", Toast.LENGTH_SHORT).show()
                     }
                     giftSheet.show(supportFragmentManager, SendGiftBottomSheetDialogFragment.TAG)
@@ -193,6 +214,9 @@ class MyMomentsActivity : AppCompatActivity() {
                     authorName = post.username,
                     isOwnMoment = isOwn(post)
                 )
+                optionsSheet.onShareClick = {
+                    com.flirttime.feature.moments.MomentShareHelper.share(this, post)
+                }
                 optionsSheet.onDeleteClick = { confirmDeleteMoment(post) }
                 optionsSheet.onReportClick = { showReportReasons(post) }
                 optionsSheet.onBlockClick = { confirmBlockAuthor(post) }
@@ -356,6 +380,7 @@ class MyMomentsActivity : AppCompatActivity() {
 
     /** The adapter already applied the optimistic toggle; reconcile with the server (iOS `toggleLike`). */
     private fun syncLike(post: MomentPost, position: Int) {
+        localEdits.mark(post.id)
         val targetLiked = post.isLiked
         likeJobs.remove(post.id)?.cancel()
         likeJobs[post.id] = lifecycleScope.launch {
@@ -408,6 +433,7 @@ class MyMomentsActivity : AppCompatActivity() {
             .setMessage("It will be removed for everyone. This can't be undone.")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Delete") { _, _ ->
+                localEdits.mark(post.id)
                 lifecycleScope.launch {
                     momentsRepository.deleteMoment(post.id).collect { resource ->
                         when (resource) {
@@ -425,6 +451,46 @@ class MyMomentsActivity : AppCompatActivity() {
                 }
             }
             .show()
+    }
+
+    private fun applySocket(update: MomentSocketUpdate) {
+        when {
+            update.kind == MomentSocketKind.Deleted -> {
+                momentsAdapter.removePost(update.momentId)
+                dismissCommentsIfOpen(update.momentId)
+                afterRemoval()
+            }
+            momentsAdapter.findPostPosition(update.momentId) < 0 -> {
+                val incoming = update.moment?.takeIf { shouldAccept(it) } ?: return
+                val patched = update.applyCountsTo(incoming, localEdits.recentlyEdited(update.momentId))
+                patched.isOwnMoment = isCurrentUserMoments || (meId.isNotBlank() && patched.userId == meId)
+                momentsAdapter.prependPost(patched)
+                updateEmptyState()
+            }
+            else -> {
+                val index = momentsAdapter.findPostPosition(update.momentId)
+                if (index < 0) return
+                val post = momentsAdapter.currentList[index]
+                update.applyCountsTo(post, localEdits.recentlyEdited(update.momentId))
+                momentsAdapter.notifyCountsChanged(update.momentId)
+            }
+        }
+    }
+
+    private fun shouldAccept(post: MomentPost): Boolean {
+        if (post.id.isBlank()) return false
+        val author = post.userId
+        return if (isCurrentUserMoments) {
+            author.isNullOrBlank() || author == meId
+        } else {
+            author.isNullOrBlank() || author == targetUserId
+        }
+    }
+
+    private fun dismissCommentsIfOpen(momentId: String) {
+        val sheet = supportFragmentManager.findFragmentByTag(CommentsBottomSheetDialogFragment.TAG)
+            as? CommentsBottomSheetDialogFragment
+        if (sheet?.isForMoment(momentId) == true) sheet.dismiss()
     }
 
     private fun showReportReasons(post: MomentPost) {

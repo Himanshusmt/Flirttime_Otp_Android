@@ -584,6 +584,19 @@ class UserProfileViewModel(
         }
     }
 
+    fun reorderGalleryPhotos(orderedPhotos: List<UserPhotoDto>) {
+        viewModelScope.launch {
+            _uploadGalleryPhotosState.value = Resource.Loading
+            mainRepository.reorderGalleryPhotos(orderedPhotos).collectLatest { resource ->
+                if (resource is Resource.Success) {
+                    _userPhotosState.value = resource
+                    fetchUserProfile()
+                }
+                _uploadGalleryPhotosState.value = resource
+            }
+        }
+    }
+
     fun addOrReplaceGalleryPhoto(context: Context, slotIndex: Int, uri: Uri) {
         viewModelScope.launch {
             _uploadGalleryPhotosState.value = Resource.Loading

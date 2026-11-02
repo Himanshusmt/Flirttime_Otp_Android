@@ -300,17 +300,31 @@ fun MomentDto.toUiItem(
         else -> time
     }
 
-    val extractedMediaUrls = media
+    val extractedMedia = media
         ?.sortedBy { it.orderIndex ?: it.displayOrder ?: 0 }
         ?.mapNotNull { item ->
-            listOf(item.imageUrl, item.mediaUrl, item.publicUrl, item.url, item.thumbnailUrl)
+            val full = listOf(item.imageUrl, item.mediaUrl, item.publicUrl, item.url)
                 .firstOrNull { !it.isNullOrBlank() }
+                ?: item.thumbnailUrl
+            if (full.isNullOrBlank()) return@mapNotNull null
+            val thumb = item.thumbnailUrl?.takeIf { it.isNotBlank() } ?: full
+            full to thumb
         }
         ?: emptyList()
 
-    val fallbackMediaUrl = listOf(imageUrl, photo, thumbnailUrl, firstImageUrl, mediaUrl)
+    val fallbackMediaUrl = listOf(imageUrl, photo, firstImageUrl, mediaUrl)
         .firstOrNull { !it.isNullOrBlank() }
-    val finalMediaUrls = if (extractedMediaUrls.isNotEmpty()) extractedMediaUrls else listOfNotNull(fallbackMediaUrl)
+    val fallbackThumb = thumbnailUrl?.takeIf { it.isNotBlank() } ?: fallbackMediaUrl
+    val finalMediaUrls = if (extractedMedia.isNotEmpty()) {
+        extractedMedia.map { it.first }
+    } else {
+        listOfNotNull(fallbackMediaUrl ?: fallbackThumb)
+    }
+    val finalThumbUrls = if (extractedMedia.isNotEmpty()) {
+        extractedMedia.map { it.second }
+    } else {
+        listOfNotNull(fallbackThumb)
+    }
 
     // iOS: isLiked ?? hasReacted ?? viewerReaction != nil
     val resolvedIsLiked = isLiked ?: hasLiked ?: isLikedByMe ?: likedByMe ?: liked ?: isLike ?: isLikeSnake
@@ -332,6 +346,7 @@ fun MomentDto.toUiItem(
         mediaUrl = finalMediaUrls.firstOrNull(),
         mediaRes = null,
         mediaUrls = finalMediaUrls,
+        thumbnailUrls = finalThumbUrls,
         currentMediaIndex = 0,
         likeCount = resolvedLikes,
         isLiked = resolvedIsLiked,
@@ -345,6 +360,33 @@ fun MomentDto.toUiItem(
 data class PostCommentRequest(
     @SerializedName("comment")
     val comment: String
+)
+
+data class PostReplyRequest(
+    @SerializedName("reply")
+    val reply: String,
+    @SerializedName("parentReplyId")
+    val parentReplyId: String? = null
+)
+
+data class LikeCommentRequest(
+    @SerializedName("action")
+    val action: String
+)
+
+data class CommentLikeResponseData(
+    @SerializedName("isLiked") val isLiked: Boolean? = null,
+    @SerializedName("likesCount") val likesCount: Int? = null,
+    @SerializedName("likeCount") val likeCount: Int? = null
+)
+
+data class MomentCommentRepliesResponseData(
+    @SerializedName("page") val page: Int? = null,
+    @SerializedName("limit") val limit: Int? = null,
+    @SerializedName("totalCount") val totalCount: Int? = null,
+    @SerializedName("totalPages") val totalPages: Int? = null,
+    @SerializedName("replies") val replies: List<MomentCommentDto>? = null,
+    @SerializedName("comments") val comments: List<MomentCommentDto>? = null
 )
 
 data class SendMomentGiftRequest(
@@ -372,6 +414,7 @@ data class MomentCommentUserDto(
 data class MomentCommentDto(
     @SerializedName("id") val id: String? = null,
     @SerializedName("commentId") val commentId: String? = null,
+    @SerializedName("replyId") val replyId: String? = null,
     @SerializedName("comment") val comment: String? = null,
     @SerializedName("text") val text: String? = null,
     @SerializedName("createdAt") val createdAt: String? = null,
@@ -379,8 +422,14 @@ data class MomentCommentDto(
     @SerializedName("isMyComment") val isMyComment: Boolean? = null,
     @SerializedName("canDelete") val canDelete: Boolean? = null,
     @SerializedName("likesCount") val likesCount: Int? = null,
+    @SerializedName("likeCount") val likeCount: Int? = null,
+    @SerializedName("isLiked") val isLiked: Boolean? = null,
+    @SerializedName("hasLiked") val hasLiked: Boolean? = null,
     @SerializedName("repliesCount") val repliesCount: Int? = null,
     @SerializedName("replyCount") val replyCount: Int? = null,
+    @SerializedName("parentId") val parentId: String? = null,
+    @SerializedName("parentCommentId") val parentCommentId: String? = null,
+    @SerializedName("parentReplyId") val parentReplyId: String? = null,
     @SerializedName("user") val user: MomentCommentUserDto? = null,
     @SerializedName("commenter") val commenter: MomentCommentUserDto? = null,
     @SerializedName("author") val author: MomentCommentUserDto? = null

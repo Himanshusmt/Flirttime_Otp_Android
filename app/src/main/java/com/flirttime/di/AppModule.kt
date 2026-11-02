@@ -35,7 +35,10 @@ import com.flirttime.feature.main.explore.ExploreViewModel
 import com.flirttime.feature.main.matches.MatchesViewModel
 import com.flirttime.feature.moments.MomentsRepositoryImpl
 import com.flirttime.feature.moments.MomentsRepository
+import com.flirttime.feature.moments.MomentsUploadStore
+import com.flirttime.feature.moments.socket.MomentsSocketService
 import com.flirttime.feature.notification.NotificationApiService
+import com.flirttime.feature.notification.NotificationBadgeStore
 import com.flirttime.feature.notification.NotificationRepository
 import com.flirttime.feature.notification.NotificationRepositoryImpl
 import com.flirttime.feature.notification.NotificationViewModel
@@ -94,6 +97,7 @@ val appModule = module {
 
     // Moments Feature
     single<MomentsRepository> { MomentsRepositoryImpl(get()) }
+    single { MomentsUploadStore(androidContext(), get()) }
     viewModelOf(::MomentsViewModel)
     viewModelOf(::AddMomentViewModel)
     single { UserProfileViewModel(get(), get(), get(), get(), get()) }
@@ -124,6 +128,8 @@ val appModule = module {
     single { ChatCacheStore(get()) }
     single { ChatDraftStore(androidContext()) }
     single { ChatSocketManager(get(), get()) }
+    single { MomentsSocketService(get(), get()) }
+    single { NotificationBadgeStore(get(), get(), get()) }
     viewModel { ChatListViewModel(get(), get(), get(), get(), androidContext()) }
     viewModel { (conversationId: String, peerUserId: String, settings: ThreadSettings) ->
         ChatDetailViewModel(conversationId, peerUserId, settings, get(), get(), get(), get())

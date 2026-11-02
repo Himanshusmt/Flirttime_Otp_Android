@@ -51,8 +51,12 @@ class OtherUserMomentsAdapter(
 
             FastImageHelper.loadDirect(
                 draweeView = binding.ivMomentThumb,
-                url = thumbUrl,
-                fallbackRes = R.drawable.explore_placeholder
+                url = item.displayImageUrl ?: thumbUrl,
+                thumbnailUrl = item.thumbnailUrl ?: item.media?.firstOrNull()?.thumbnailUrl ?: thumbUrl,
+                fallbackRes = R.drawable.explore_placeholder,
+                targetWidth = 200,
+                targetHeight = 200,
+                grayPlaceholder = true
             )
 
             if (isSeeAllSlot) {

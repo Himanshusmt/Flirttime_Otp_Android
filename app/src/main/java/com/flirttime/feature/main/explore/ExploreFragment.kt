@@ -24,6 +24,8 @@ import com.flirttime.feature.subscription.PremiumStatus
 import com.flirttime.feature.subscription.SubscriptionPopUp
 import com.flirttime.feature.subscription.SubscriptionPopUpType
 import com.flirttime.databinding.FragmentExploreBinding
+import com.flirttime.feature.notification.NotificationBadgeBinder
+import com.flirttime.feature.notification.NotificationBadgeStore
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -42,6 +44,7 @@ class ExploreFragment : Fragment() {
 
     private val viewModel: ExploreViewModel by viewModel()
     private val userProfileViewModel: UserProfileViewModel by inject()
+    private val badgeStore: NotificationBadgeStore by inject()
     private var currentTab: ExploreTab = ExploreTab.YOU_LIKED
     private lateinit var profileAdapter: ExploreProfileAdapter
     private var shouldResetScrollToTop: Boolean = true
@@ -77,6 +80,7 @@ class ExploreFragment : Fragment() {
         setupEmptyStateRefresh()
         observeViewModel()
         updateTabSelection(ExploreTab.YOU_LIKED)
+        NotificationBadgeBinder.bind(binding.btnNotification, viewLifecycleOwner, badgeStore)
     }
 
     override fun onResume() {

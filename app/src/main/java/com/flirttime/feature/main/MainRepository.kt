@@ -62,6 +62,8 @@ interface MainRepository {
         currentPhotos: List<UserPhotoDto>
     ): Flow<Resource<List<UserPhotoDto>>>
 
+    fun reorderGalleryPhotos(orderedPhotos: List<UserPhotoDto>): Flow<Resource<List<UserPhotoDto>>>
+
     fun deleteOnboardingPhoto(photoId: String): Flow<Resource<Unit>>
 
     fun setPrimaryPhoto(photoId: String): Flow<Resource<Unit>>

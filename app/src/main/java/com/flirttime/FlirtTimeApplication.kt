@@ -2,8 +2,10 @@ package com.flirttime
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.net.Uri
 import com.facebook.cache.disk.DiskCacheConfig
 import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory
 import com.facebook.imagepipeline.core.ImagePipelineConfig
 import com.flirttime.core.common.AppForegroundTracker
 import com.flirttime.di.appModule
@@ -34,11 +36,25 @@ class FlirtTimeApplication : Application() {
             .setResizeAndRotateEnabledForNetwork(true)
             .setBitmapsConfig(Bitmap.Config.RGB_565)
             .setMainDiskCacheConfig(diskCacheConfig)
+            .setCacheKeyFactory(PresignedPathCacheKeyFactory)
             .build()
 
         Fresco.initialize(this, pipelineConfig)
 
         // Chat notifications are suppressed while a screen is in front.
         AppForegroundTracker.register(this)
+    }
+}
+
+/** Presigned S3 URLs rotate the query; cache by path so a new signature still hits disk. */
+private object PresignedPathCacheKeyFactory : DefaultCacheKeyFactory() {
+    override fun getCacheKeySourceUri(sourceUri: Uri): Uri {
+        val raw = sourceUri.toString()
+        if (raw.contains("X-Amz-Signature", ignoreCase = true) ||
+            raw.contains("AWSAccessKeyId", ignoreCase = true)
+        ) {
+            return sourceUri.buildUpon().clearQuery().build()
+        }
+        return sourceUri
     }
 }

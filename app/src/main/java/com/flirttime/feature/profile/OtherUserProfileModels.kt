@@ -96,6 +96,8 @@ data class UserSearchItemDto(
     @SerializedName("sharedInterests") val sharedInterests: List<String>? = null,
     @SerializedName("commonInterestsCount") val commonInterestsCount: Int? = null,
     @SerializedName("profileMatchPercentage") val profileMatchPercentage: Int? = null,
+    @SerializedName("vibeScore") val vibeScore: Int? = null,
+    @SerializedName("vibeExplanation") val vibeExplanation: String? = null,
     @SerializedName("momentCount") val momentCount: Int? = null,
     @SerializedName("photos") val photos: List<UserPhotoDto>? = null,
     @SerializedName("moments") val moments: List<MomentDto>? = null,
@@ -456,6 +458,8 @@ data class OtherUserProfileResponseData(
                 sharedInterests = sharedStrings,
                 commonInterestsCount = resolvedCommonCount,
                 profileMatchPercentage = src.profileMatchPercentage ?: src.vibeScore,
+                vibeScore = src.vibeScore ?: src.profileMatchPercentage,
+                vibeExplanation = parseVibeExplanation(src.vibeExplanation),
                 photos = src.photos,
                 moments = src.moments,
                 voiceIntro = resolvedVoice,
@@ -480,6 +484,21 @@ data class OtherUserProfileResponseData(
                 matchStatus = src.matchStatus
             )
         }
+
+    private fun parseVibeExplanation(element: JsonElement?): String? {
+        if (element == null || element.isJsonNull) return null
+        if (element.isJsonPrimitive) return element.asString.takeIf { it.isNotBlank() }
+        if (element.isJsonObject) {
+            val obj = element.asJsonObject
+            listOf("explanation", "text", "message", "vibeExplanation").forEach { key ->
+                val value = obj.get(key)
+                if (value != null && value.isJsonPrimitive) {
+                    value.asString.takeIf { it.isNotBlank() }?.let { return it }
+                }
+            }
+        }
+        return null
+    }
 
     private fun parseMoreAboutMe(element: JsonElement?, src: OtherUserProfileResponseData): List<MoreAboutMeItemDto> {
         val items = mutableListOf<MoreAboutMeItemDto>()

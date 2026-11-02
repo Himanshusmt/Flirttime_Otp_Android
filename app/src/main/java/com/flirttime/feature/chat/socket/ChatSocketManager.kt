@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.net.URI
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 data class ReadReceiptEvent(
     val conversationId: String,
@@ -148,6 +149,7 @@ class ChatSocketManager(
     private var socket: Socket? = null
     private var isConnecting = false
     private val joinedRooms: MutableSet<String> = ConcurrentHashMap.newKeySet()
+    private val extraListeners = ConcurrentHashMap<String, CopyOnWriteArrayList<(Array<Any>) -> Unit>>()
 
     /** Threads currently on screen — local mirror of `EVENT_VIEWING` for notifications. */
     private val viewingConversations: MutableSet<String> = ConcurrentHashMap.newKeySet()
@@ -281,6 +283,14 @@ class ChatSocketManager(
         }
     }
 
+    /**
+     * Fan-out for non-chat events (moments, notification badge). Callbacks stay registered
+     * across reconnect because [registerListeners] rebinds the same event names.
+     */
+    fun listenRaw(event: String, listener: (Array<Any>) -> Unit) {
+        extraListeners.getOrPut(event) { CopyOnWriteArrayList() }.add(listener)
+    }
+
     /** Idempotent — safe to call from every screen that needs realtime updates. */
     fun connect() {
         if (socket != null || isConnecting) return
@@ -333,6 +343,14 @@ class ChatSocketManager(
             _isConnected.value = false
             publishConnectionState()
             Log.w(TAG, "Chat socket connect error: ${args.firstOrNull()}")
+        }
+
+        EXTRA_EVENTS.forEach { event ->
+            socket.on(event) { args ->
+                extraListeners[event]?.forEach { listener ->
+                    runCatching { listener(args) }
+                }
+            }
         }
 
         socket.on(EVENT_MESSAGE_RECEIVED) { args ->
@@ -1135,6 +1153,18 @@ class ChatSocketManager(
             "conversation:deleted",
             "chat:conversation:deleted",
             "conversation:delete:ack"
+        )
+
+        private val EXTRA_EVENTS = listOf(
+            "moment:created",
+            "moment:updated",
+            "moment:like_updated",
+            "moment:comment_created",
+            "moment:comment_deleted",
+            "moment:comment_like_updated",
+            "moment:gift_sent",
+            "moment:deleted",
+            "notification:count"
         )
     }
 }

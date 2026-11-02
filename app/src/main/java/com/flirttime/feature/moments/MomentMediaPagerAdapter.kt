@@ -3,16 +3,18 @@ package com.flirttime.feature.moments
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.flirttime.core.common.ShimmerHelper
+import com.flirttime.core.common.FastImageHelper
 import com.flirttime.databinding.ItemMomentMediaPageBinding
 
 class MomentMediaPagerAdapter(
     private var mediaList: List<String> = emptyList(),
+    private var thumbnailList: List<String> = emptyList(),
     private var fallbackRes: Int? = null
 ) : RecyclerView.Adapter<MomentMediaPagerAdapter.MediaViewHolder>() {
 
-    fun setMedia(items: List<String>, fallback: Int? = null) {
+    fun setMedia(items: List<String>, thumbs: List<String> = emptyList(), fallback: Int? = null) {
         mediaList = items
+        thumbnailList = thumbs
         fallbackRes = fallback
         notifyDataSetChanged()
     }
@@ -28,10 +30,12 @@ class MomentMediaPagerAdapter(
 
     override fun onBindViewHolder(holder: MediaViewHolder, position: Int) {
         val url = mediaList.getOrNull(position)
-        ShimmerHelper.loadWithShimmer(
+        FastImageHelper.loadDirect(
             draweeView = holder.binding.ivMediaPage,
             url = url,
-            fallbackRes = fallbackRes
+            thumbnailUrl = thumbnailList.getOrNull(position),
+            fallbackRes = fallbackRes ?: 0,
+            grayPlaceholder = true
         )
     }
 

@@ -18,7 +18,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.facebook.drawee.drawable.ScalingUtils
 import com.facebook.drawee.view.SimpleDraweeView
 import com.flirttime.R
-import com.flirttime.core.common.MediaUrlHelper
+import com.flirttime.core.common.FastImageHelper
 
 /** Full-screen swipeable photo viewer opened from a moment photo (iOS `MediaViewerController`). */
 class MomentMediaViewerActivity : AppCompatActivity() {
@@ -73,7 +73,7 @@ class MomentMediaViewerActivity : AppCompatActivity() {
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.TOP or Gravity.CENTER_HORIZONTAL
         ))
 
-        fun updateCounter(position: Int) { counter.text = "${position + 1}/${urls.size}" }
+        fun updateCounter(position: Int) { counter.text = "Photo ${position + 1} of ${urls.size}" }
         updateCounter(start)
         pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) = updateCounter(position)
@@ -101,7 +101,11 @@ class MomentMediaViewerActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: Holder, position: Int) {
-            holder.view.setImageURI(MediaUrlHelper.resolveMediaUrl(urls[position]))
+            FastImageHelper.loadDirect(
+                draweeView = holder.view,
+                url = urls[position],
+                grayPlaceholder = true
+            )
         }
 
         override fun getItemCount() = urls.size

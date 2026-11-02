@@ -3,7 +3,12 @@ package com.flirttime.feature.moments
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flirttime.Resource
-import com.flirttime.feature.moments.MomentsRepository
+import com.flirttime.feature.chat.socket.ChatSocketManager
+import com.flirttime.feature.moments.socket.LocalEditGuard
+import com.flirttime.feature.moments.socket.MomentSocketKind
+import com.flirttime.feature.moments.socket.MomentSocketUpdate
+import com.flirttime.feature.moments.socket.MomentsSocketService
+import com.flirttime.feature.moments.socket.applyCountsTo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -13,7 +18,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MomentsViewModel(
-    private val momentsRepository: MomentsRepository
+    private val momentsRepository: MomentsRepository,
+    private val socketManager: ChatSocketManager,
+    private val momentsSocket: MomentsSocketService
 ) : ViewModel() {
 
     companion object {
@@ -34,6 +41,11 @@ class MomentsViewModel(
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage: SharedFlow<String> = _errorMessage.asSharedFlow()
 
+    private val _socketChange = MutableSharedFlow<SocketListChange>(extraBufferCapacity = 16)
+    val socketChange: SharedFlow<SocketListChange> = _socketChange.asSharedFlow()
+
+    private val localEdits = LocalEditGuard()
+
     private var currentPage: Int = 1
     private var totalPages: Int = 1
     private var isFetchingPage: Boolean = false
@@ -43,7 +55,12 @@ class MomentsViewModel(
         get() = (currentPage < totalPages) || (lastLoadedBatchSize >= PAGE_SIZE)
 
     init {
+        socketManager.connect()
+        momentsSocket.setup()
         loadMoments(isRefresh = false)
+        viewModelScope.launch {
+            momentsSocket.updates.collect { applySocket(it) }
+        }
     }
 
     fun loadMoments(isRefresh: Boolean = false) {
@@ -166,6 +183,7 @@ class MomentsViewModel(
     }
 
     fun toggleLike(momentId: String, isLiked: Boolean) {
+        markLocalEdit(momentId)
         viewModelScope.launch {
             momentsRepository.toggleLike(momentId = momentId, isLiked = isLiked).collect {
                 // Background optimistic sync with server
@@ -173,7 +191,48 @@ class MomentsViewModel(
         }
     }
 
+    fun markLocalEdit(momentId: String) {
+        localEdits.mark(momentId)
+    }
+
+    private fun applySocket(update: MomentSocketUpdate) {
+        val change = when {
+            update.kind == MomentSocketKind.Deleted -> {
+                val existed = accumulatedMoments.any { it.id == update.momentId }
+                if (existed) {
+                    accumulatedMoments.removeAll { it.id == update.momentId }
+                    _momentsState.value = Resource.Success(accumulatedMoments.toList())
+                    SocketListChange.Removed(update.momentId)
+                } else {
+                    SocketListChange.None
+                }
+            }
+            accumulatedMoments.none { it.id == update.momentId } -> {
+                val incoming = update.moment?.takeIf { shouldAccept(it) } ?: return
+                val patched = update.applyCountsTo(incoming, localEdits.recentlyEdited(update.momentId))
+                accumulatedMoments.add(0, patched)
+                _momentsState.value = Resource.Success(accumulatedMoments.toList())
+                SocketListChange.Inserted(0)
+            }
+            else -> {
+                val index = accumulatedMoments.indexOfFirst { it.id == update.momentId }
+                if (index < 0) return
+                accumulatedMoments[index] = update.applyCountsTo(
+                    accumulatedMoments[index],
+                    localEdits.recentlyEdited(update.momentId)
+                )
+                SocketListChange.Counts(update.momentId)
+            }
+        }
+        viewModelScope.launch { _socketChange.emit(change) }
+    }
+
+    private fun shouldAccept(post: MomentPost): Boolean {
+        return post.id.isNotBlank()
+    }
+
     fun deleteMoment(momentId: String, onResult: ((Boolean, String?) -> Unit)? = null) {
+        markLocalEdit(momentId)
         viewModelScope.launch {
             momentsRepository.deleteMoment(momentId).collect { resource ->
                 when (resource) {
@@ -241,5 +300,12 @@ class MomentsViewModel(
     fun removeMomentsByAuthor(authorId: String) {
         accumulatedMoments.removeAll { it.userId == authorId }
         _momentsState.value = Resource.Success(accumulatedMoments.toList())
+    }
+
+    sealed class SocketListChange {
+        data class Counts(val momentId: String) : SocketListChange()
+        data class Inserted(val index: Int) : SocketListChange()
+        data class Removed(val momentId: String) : SocketListChange()
+        data object None : SocketListChange()
     }
 }

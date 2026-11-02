@@ -177,6 +177,10 @@ class SettingsViewModel(
         }
     }
 
+    fun resetUsernameAvailabilityState() {
+        _usernameAvailabilityState.value = null
+    }
+
     // Personal Details Profile Update (Atomic Merge)
     fun updatePersonalDetails(
         fullName: String? = null,

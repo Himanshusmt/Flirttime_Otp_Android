@@ -9,7 +9,9 @@ object MockVibeSpotsProvider {
             VibeCategory("cat_coffee", "☕", "Coffee", SpotCategory.CAFE),
             VibeCategory("cat_drinks", "🍷", "Drinks", SpotCategory.DRINKS),
             VibeCategory("cat_dinner", "🍴", "Dinner", SpotCategory.RESTAURANT),
-            VibeCategory("cat_outdoors", "🍃", "Outdoors", SpotCategory.OUTDOORS)
+            VibeCategory("cat_outdoors", "🍃", "Outdoors", SpotCategory.OUTDOORS),
+            VibeCategory("cat_movies", "🎬", "Movies", SpotCategory.CINEMA),
+            VibeCategory("cat_culture", "🎭", "Culture", SpotCategory.CULTURE)
         )
     }
 

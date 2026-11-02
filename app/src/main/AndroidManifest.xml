@@ -35,6 +35,10 @@
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
     </queries>
 
     <application
@@ -203,6 +207,16 @@
         <!-- Settings Screen -->
         <activity
             android:name=".feature.profile.settings.SettingsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".feature.profile.settings.HelpSupportActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".feature.profile.settings.FaqActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 

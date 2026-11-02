@@ -209,12 +209,24 @@
 
         </LinearLayout>
 
-        <!-- Trailing Red Chevron -->
-        <ImageView
+        <FrameLayout
             android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:contentDescription="Arrow"
-            android:src="@drawable/ic_chevron_right_red" />
+            android:layout_height="18dp">
+
+            <ImageView
+                android:id="@+id/ivShareCityChevron"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="Arrow"
+                android:src="@drawable/ic_chevron_right_red" />
+
+            <ProgressBar
+                android:id="@+id/progressShareCity"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:indeterminateTint="@color/brand_primary"
+                android:visibility="gone" />
+        </FrameLayout>
 
     </LinearLayout>
 
@@ -237,6 +249,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
+
+        <ProgressBar
+            android:id="@+id/progressSpots"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/brand_primary"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSpots"

@@ -1,11 +1,14 @@
 package com.flirttime.feature.profile.edit
 
+import android.content.ClipData
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.DragEvent
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +23,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.flirttime.R
 import com.flirttime.Resource
 import com.flirttime.core.common.EdgeToEdgeHelper
+import com.flirttime.core.common.FastImageHelper
 import com.flirttime.core.database.SessionManager
 import com.flirttime.core.image.CropConfig
 import com.flirttime.core.image.CropResult
@@ -29,6 +33,7 @@ import com.flirttime.core.navigation.Destination
 import com.flirttime.databinding.ActivityEditProfileBinding
 import com.flirttime.databinding.ItemMoreAboutMeRowBinding
 import com.flirttime.feature.main.profile.UserProfileViewModel
+import com.flirttime.feature.profile.MoreAboutMeCatalog
 import com.flirttime.feature.profile.MoreAboutMeItemDto
 import com.flirttime.feature.profile.UserInterestDto
 import com.flirttime.feature.profile.UserPhotoDto
@@ -60,20 +65,14 @@ class EditProfileActivity : AppCompatActivity() {
     private var availableCatalog: List<UserInterestDto> = emptyList()
     private var savedInterestIds: MutableSet<String> = mutableSetOf()
 
-    private val moreAboutMeOptions = mapOf(
-        "drinking" to arrayOf("Non-Drinker", "Socially", "Regularly", "Planning to quit", "Prefer not to say"),
-        "education" to arrayOf("High School", "In College", "Undergraduate", "Bachelor's", "Master's", "PhD / Doctorate", "Trade School"),
-        "eyeColor" to arrayOf("Black", "Brown", "Amber", "Hazel", "Blue", "Green", "Gray"),
-        "hairColor" to arrayOf("Black", "Brown", "Blonde", "Auburn", "Red", "Gray / White", "Dyed / Colorful"),
-        "height" to arrayOf("4'10\" (147 cm)", "5'0\" (152 cm)", "5'2\" (157 cm)", "5'4\" (163 cm)", "5'6\" (168 cm)", "5'8\" (173 cm)", "5'10\" (178 cm)", "6'0\" (183 cm)", "6'2\" (188 cm)", "6'4\" (193 cm)"),
-        "living" to arrayOf("Alone", "With roommates", "With parents", "With partner", "Student housing"),
-        "relationship" to arrayOf("Single", "In a relationship", "Engaged", "Married", "It's complicated"),
-        "religion" to arrayOf("Hindu", "Muslim", "Christian", "Sikh", "Buddhist", "Jain", "Atheist", "Agnostic", "Spiritual", "Other"),
-        "sexuality" to arrayOf("Straight", "Gay", "Lesbian", "Bisexual", "Pansexual", "Asexual", "Queer"),
-        "smoking" to arrayOf("Non-smoker", "Occasionally", "Regularly", "Trying to quit", "Vape only"),
-        "weight" to arrayOf("40-50 kg", "50-60 kg", "60-70 kg", "70-80 kg", "80-90 kg", "90+ kg"),
-        "children" to arrayOf("Don't have children", "Have children", "Want children", "Don't want children", "Not sure yet")
-    )
+    private val gallerySlots: List<View>
+        get() = listOf(
+            binding.slotPhoto1,
+            binding.slotPhoto2,
+            binding.slotPhoto3,
+            binding.slotPhoto4,
+            binding.slotPhoto5
+        )
 
     private val audioPickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -96,8 +95,15 @@ class EditProfileActivity : AppCompatActivity() {
         setupBioWatcher()
         setupInterestsRecyclerView()
         setupMoreAboutMeSection()
+        setupPhotoDragAndDrop()
         loadLocalProfileData()
         observeViewModel()
+        refreshVerifyBanner()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshVerifyBanner()
     }
 
     override fun finish() {
@@ -200,6 +206,12 @@ class EditProfileActivity : AppCompatActivity() {
             photoCropTarget = PhotoCropTarget.AVATAR
             cropperHelper.launchGallery(CropConfig.profileAvatar(circular = false))
         }
+        binding.slotPhotoPrimary.setOnLongClickListener { view ->
+            if (currentPhotos.isEmpty()) return@setOnLongClickListener false
+            val clip = ClipData.newPlainText("gallery_slot", PRIMARY_SLOT.toString())
+            view.startDragAndDrop(clip, View.DragShadowBuilder(view), PRIMARY_SLOT, 0)
+            true
+        }
 
         // Gallery slots 1 to 5 (individual single image replacement or add)
         val openGallerySlot = { slotIndex: Int ->
@@ -232,6 +244,92 @@ class EditProfileActivity : AppCompatActivity() {
         binding.btnDeleteVoice.setOnClickListener {
             viewModel.deleteAudio()
         }
+
+        binding.btnVerifyYourself.setOnClickListener {
+            AppNavigator.navigateTo(
+                context = this,
+                destination = Destination.GestureVerification
+            )
+        }
+        binding.cardVerifyBanner.setOnClickListener {
+            AppNavigator.navigateTo(
+                context = this,
+                destination = Destination.GestureVerification
+            )
+        }
+    }
+
+    private fun refreshVerifyBanner() {
+        lifecycleScope.launch {
+            val verified = sessionManager.isVerified() || viewModel.userProfileState.value?.isVerified == true
+            binding.cardVerifyBanner.isVisible = !verified
+            if (!verified) {
+                val name = sessionManager.getFirstName().ifBlank {
+                    sessionManager.getFullName().ifBlank { sessionManager.getUsername() }
+                }
+                binding.tvVerifyIdentity.text = if (name.isNotBlank()) {
+                    "Verify your identity, $name"
+                } else {
+                    "Verify your identity"
+                }
+            }
+        }
+    }
+
+    private fun setupPhotoDragAndDrop() {
+        binding.slotPhotoPrimary.setOnDragListener { _, event ->
+            handlePhotoDrag(event, dropIndex = PRIMARY_SLOT)
+        }
+        gallerySlots.forEachIndexed { index, slot ->
+            slot.setOnDragListener { _, event ->
+                handlePhotoDrag(event, dropIndex = index)
+            }
+        }
+    }
+
+    private fun handlePhotoDrag(event: DragEvent, dropIndex: Int): Boolean {
+        return when (event.action) {
+            DragEvent.ACTION_DRAG_STARTED -> true
+            DragEvent.ACTION_DRAG_ENTERED -> {
+                highlightDropTarget(dropIndex, true)
+                true
+            }
+            DragEvent.ACTION_DRAG_EXITED, DragEvent.ACTION_DRAG_ENDED -> {
+                highlightDropTarget(dropIndex, false)
+                true
+            }
+            DragEvent.ACTION_DROP -> {
+                highlightDropTarget(dropIndex, false)
+                val fromIndex = event.localState as? Int ?: return false
+                onPhotoDropped(fromIndex, dropIndex)
+                true
+            }
+            else -> true
+        }
+    }
+
+    private fun highlightDropTarget(index: Int, highlighted: Boolean) {
+        val target = if (index == PRIMARY_SLOT) binding.slotPhotoPrimary else gallerySlots.getOrNull(index)
+        target?.alpha = if (highlighted) 0.65f else 1f
+    }
+
+    private fun onPhotoDropped(fromIndex: Int, toIndex: Int) {
+        if (fromIndex == toIndex) return
+        if (toIndex == PRIMARY_SLOT) {
+            val photo = currentPhotos.getOrNull(fromIndex) ?: return
+            photo.id?.let { viewModel.setPrimaryPhoto(it) }
+            return
+        }
+        if (fromIndex == PRIMARY_SLOT) {
+            val photo = currentPhotos.getOrNull(toIndex) ?: return
+            photo.id?.let { viewModel.setPrimaryPhoto(it) }
+            return
+        }
+        if (fromIndex !in currentPhotos.indices || toIndex !in currentPhotos.indices) return
+        val reordered = currentPhotos.toMutableList()
+        val moved = reordered.removeAt(fromIndex)
+        reordered.add(toIndex.coerceIn(0, reordered.size), moved)
+        viewModel.reorderGalleryPhotos(reordered)
     }
 
     private fun showPhotoOptionsDialog(photo: UserPhotoDto, slotIndex: Int) {
@@ -389,22 +487,7 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun setupMoreAboutMeSection() {
-        // Initial placeholder rows until network response loads
-        val initialItems = listOf(
-            MoreAboutMeItemDto("drinking", "Drinking", "🍷", null),
-            MoreAboutMeItemDto("education", "Education", "📖", null),
-            MoreAboutMeItemDto("eyeColor", "Eyecolor", "👁", null),
-            MoreAboutMeItemDto("hairColor", "Haircolor", "💇", null),
-            MoreAboutMeItemDto("height", "Height", "📏", null),
-            MoreAboutMeItemDto("living", "Living", "🏠", null),
-            MoreAboutMeItemDto("relationship", "Relationship", "👩❤️👨", null),
-            MoreAboutMeItemDto("religion", "Religion", "🛕", null),
-            MoreAboutMeItemDto("sexuality", "Sexuality", "⚧", null),
-            MoreAboutMeItemDto("smoking", "Smoking", "🚬", null),
-            MoreAboutMeItemDto("weight", "Weight", "⚖️", null),
-            MoreAboutMeItemDto("children", "Children", "👶", null)
-        )
-        bindMoreAboutMeItems(initialItems)
+        bindMoreAboutMeItems(MoreAboutMeCatalog.emptyItems())
     }
 
     private fun bindMoreAboutMeItems(items: List<MoreAboutMeItemDto>) {
@@ -431,7 +514,7 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun showMoreAboutMePicker(item: MoreAboutMeItemDto) {
-        val options = moreAboutMeOptions[item.key] ?: arrayOf("Yes", "No", "Prefer not to say")
+        val options = MoreAboutMeCatalog.optionsFor(item.key)
         val selectedIndex = options.indexOfFirst { it.equals(item.value, ignoreCase = true) }
 
         MaterialAlertDialogBuilder(this)
@@ -450,20 +533,21 @@ class EditProfileActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     sessionManager.profileImageUriFlow.collect { photoUri ->
-                        if (photoUri.isNotBlank()) {
-                            binding.ivPhotoPrimary.setImageURI(photoUri)
-                        } else {
-                            binding.ivPhotoPrimary.setActualImageResource(R.drawable.img_login)
-                        }
+                        FastImageHelper.loadDirect(
+                            draweeView = binding.ivPhotoPrimary,
+                            url = photoUri.takeIf { it.isNotBlank() },
+                            fallbackRes = R.drawable.img_login
+                        )
                     }
                 }
                 launch {
                     sessionManager.coverPhotoUrlFlow.collect { coverUri ->
-                        if (coverUri.isNotBlank()) {
-                            binding.ivCoverPicture.setImageURI(coverUri)
-                        } else {
-                            binding.ivCoverPicture.setActualImageResource(R.drawable.img_login)
-                        }
+                        FastImageHelper.loadDirect(
+                            draweeView = binding.ivCoverPicture,
+                            url = coverUri.takeIf { it.isNotBlank() },
+                            fallbackRes = R.drawable.img_login,
+                            fadeDurationMs = 280
+                        )
                     }
                 }
                 launch {
@@ -474,6 +558,7 @@ class EditProfileActivity : AppCompatActivity() {
                                 binding.etBio.setText(profile.bio)
                                 binding.tvBioCounter.text = "${profile.bio.length}/150"
                             }
+                            refreshVerifyBanner()
                         }
                     }
                 }
@@ -496,6 +581,21 @@ class EditProfileActivity : AppCompatActivity() {
                     }
                 }
 
+                launch {
+                    viewModel.uploadGalleryPhotosState.collect { resource ->
+                        when (resource) {
+                            is Resource.Error -> {
+                                Toast.makeText(
+                                    this@EditProfileActivity,
+                                    resource.message.ifBlank { "Couldn't reorder photos" },
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            else -> Unit
+                        }
+                    }
+                }
+
                 // 2. Primary Photo Upload State
                 launch {
                     viewModel.uploadPrimaryPhotoState.collect { resource ->
@@ -507,7 +607,11 @@ class EditProfileActivity : AppCompatActivity() {
                                 Toast.makeText(this@EditProfileActivity, "Profile photo updated", Toast.LENGTH_SHORT).show()
                                 val photoUrl = resource.data.profilePicture
                                 if (!photoUrl.isNullOrBlank()) {
-                                    binding.ivPhotoPrimary.setImageURI(photoUrl)
+                                    FastImageHelper.loadDirect(
+                                        draweeView = binding.ivPhotoPrimary,
+                                        url = photoUrl,
+                                        fallbackRes = R.drawable.img_login
+                                    )
                                 }
                                 viewModel.resetUploadPrimaryPhotoState()
                             }
@@ -635,7 +739,7 @@ class EditProfileActivity : AppCompatActivity() {
                 launch {
                     viewModel.moreAboutMeState.collect { resource ->
                         if (resource is Resource.Success) {
-                            bindMoreAboutMeItems(resource.data.getEffectiveItems())
+                            bindMoreAboutMeItems(MoreAboutMeCatalog.merge(resource.data))
                         } else if (resource is Resource.Error) {
                             android.util.Log.e("EditProfileActivity", "Failed to fetch more about me: ${resource.message} | code: ${resource.code} | body: ${resource.errorBody}")
                         }
@@ -665,7 +769,12 @@ class EditProfileActivity : AppCompatActivity() {
                                 Toast.makeText(this@EditProfileActivity, "Cover photo updated successfully!", Toast.LENGTH_SHORT).show()
                                 val coverUrl = resource.data
                                 if (coverUrl.isNotBlank()) {
-                                    binding.ivCoverPicture.setImageURI(coverUrl)
+                                    FastImageHelper.loadDirect(
+                                        draweeView = binding.ivCoverPicture,
+                                        url = coverUrl,
+                                        fallbackRes = R.drawable.img_login,
+                                        fadeDurationMs = 280
+                                    )
                                 }
                                 viewModel.resetUploadCoverPhotoState()
                             }
@@ -777,28 +886,29 @@ class EditProfileActivity : AppCompatActivity() {
         if (photo != null && !photo.url.isNullOrBlank()) {
             placeholder.isVisible = false
             btnDelete.isVisible = true
-            drawee.setImageURI(photo.url)
+            FastImageHelper.loadDirect(
+                draweeView = drawee,
+                url = photo.url,
+                fallbackRes = R.drawable.img_login
+            )
             btnDelete.setOnClickListener {
                 photo.id?.let { id -> viewModel.deletePhoto(id) }
             }
             slotParent?.setOnClickListener {
                 showPhotoOptionsDialog(photo, slotIndex)
             }
-            slotParent?.setOnLongClickListener {
-                photo.id?.let { id ->
-                    MaterialAlertDialogBuilder(this)
-                        .setTitle("Set Primary Photo")
-                        .setMessage("Do you want to set this photo as your primary profile photo?")
-                        .setPositiveButton("Yes") { _, _ ->
-                            viewModel.setPrimaryPhoto(id)
-                        }
-                        .setNegativeButton("Cancel", null)
-                        .show()
-                }
+            slotParent?.setOnLongClickListener { view ->
+                val clip = ClipData.newPlainText("gallery_slot", slotIndex.toString())
+                val shadow = View.DragShadowBuilder(view)
+                view.startDragAndDrop(clip, shadow, slotIndex, 0)
                 true
             }
         } else {
-            drawee.setImageURI(null as String?)
+            FastImageHelper.loadDirect(
+                draweeView = drawee,
+                url = null,
+                fallbackRes = R.drawable.img_login
+            )
             placeholder.isVisible = true
             btnDelete.isVisible = false
             slotParent?.setOnClickListener {
@@ -808,5 +918,9 @@ class EditProfileActivity : AppCompatActivity() {
             }
             slotParent?.setOnLongClickListener(null)
         }
+    }
+
+    companion object {
+        private const val PRIMARY_SLOT = -1
     }
 }

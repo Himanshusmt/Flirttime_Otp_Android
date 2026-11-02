@@ -14,7 +14,6 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.flirttime.R
 import com.flirttime.Resource
 import com.flirttime.core.common.EdgeToEdgeHelper
 import com.flirttime.core.database.SessionManager
@@ -37,6 +36,7 @@ class PersonalDetailsActivity : AppCompatActivity() {
 
     private var pendingEmail: String? = null
     private var pendingPhone: String? = null
+    private var pendingUsername: String? = null
     private var activeOtpDialog: androidx.appcompat.app.AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -174,7 +174,7 @@ class PersonalDetailsActivity : AppCompatActivity() {
         binding.btnEditPhone.setOnClickListener { openPhoneAdder() }
 
         // Edit Location
-        val openLocationEditor = { showEditLocationDialog() }
+        val openLocationEditor = { showEditLocationSheet() }
         binding.rowLocation.setOnClickListener { openLocationEditor() }
         binding.btnEditLocation.setOnClickListener { openLocationEditor() }
 
@@ -253,12 +253,18 @@ class PersonalDetailsActivity : AppCompatActivity() {
             .setView(container)
             .setPositiveButton("Save") { _, _ ->
                 val newUsername = input.text.toString().trim()
-                val regex = Regex("^[a-zA-Z0-9._]{3,30}$")
-                if (!regex.matches(newUsername)) {
-                    Toast.makeText(this, "Username must be 3-30 characters (letters, numbers, '.', '_')", Toast.LENGTH_SHORT).show()
+                if (newUsername == currentUsername) return@setPositiveButton
+                if (newUsername.length !in 3..30) {
+                    Toast.makeText(this, "Username must be 3 to 30 characters.", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
-                viewModel.updatePersonalDetails(username = newUsername)
+                val regex = Regex("^[a-zA-Z0-9._]{3,30}$")
+                if (!regex.matches(newUsername)) {
+                    Toast.makeText(this, "Username can only contain letters, numbers, dots and underscores.", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                pendingUsername = newUsername
+                viewModel.checkUsername(newUsername)
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -374,40 +380,16 @@ class PersonalDetailsActivity : AppCompatActivity() {
             .show()
     }
 
-    // Edit Location Dialog
-    private fun showEditLocationDialog() {
-        val currentLocation = binding.tvLocation.text.toString().let {
-            if (it == "Not added") "" else it
+    private fun showEditLocationSheet() {
+        val sheet = EditLocationBottomSheetDialogFragment.newInstance()
+        sheet.onPlaceResolved = { place ->
+            viewModel.updatePersonalDetails(
+                location = place.label,
+                latitude = place.latitude,
+                longitude = place.longitude
+            )
         }
-
-        val container = FrameLayout(this)
-        val input = EditText(this).apply {
-            setText(currentLocation)
-            setSelection(length())
-            hint = "e.g. Indore, Madhya Pradesh, India"
-            setSingleLine(true)
-        }
-        val params = FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        ).apply {
-            setMargins((20 * resources.displayMetrics.density).toInt(), 0, (20 * resources.displayMetrics.density).toInt(), 0)
-        }
-        container.addView(input, params)
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Edit Location")
-            .setView(container)
-            .setPositiveButton("Save") { _, _ ->
-                val newLoc = input.text.toString().trim()
-                if (newLoc.isBlank()) {
-                    Toast.makeText(this, "Location cannot be empty", Toast.LENGTH_SHORT).show()
-                    return@setPositiveButton
-                }
-                viewModel.updatePersonalDetails(location = newLoc)
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+        sheet.show(supportFragmentManager, EditLocationBottomSheetDialogFragment.TAG)
     }
 
     private fun showLogoutConfirmationDialog() {
@@ -438,6 +420,42 @@ class PersonalDetailsActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 // Profile update state
                 launch {
+                    viewModel.usernameAvailabilityState.collect { resource ->
+                        when (resource) {
+                            is Resource.Loading -> {
+                                binding.layoutLoading.isVisible = true
+                            }
+                            is Resource.Success -> {
+                                binding.layoutLoading.isVisible = false
+                                val username = pendingUsername
+                                viewModel.resetUsernameAvailabilityState()
+                                if (resource.data && !username.isNullOrBlank()) {
+                                    viewModel.updatePersonalDetails(username = username)
+                                } else {
+                                    pendingUsername = null
+                                    Toast.makeText(
+                                        this@PersonalDetailsActivity,
+                                        "This username is already taken",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                            is Resource.Error -> {
+                                binding.layoutLoading.isVisible = false
+                                pendingUsername = null
+                                viewModel.resetUsernameAvailabilityState()
+                                Toast.makeText(
+                                    this@PersonalDetailsActivity,
+                                    resource.message.ifBlank { "This username is already taken" },
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            null -> Unit
+                        }
+                    }
+                }
+
+                launch {
                     viewModel.updateProfileState.collect { resource ->
                         when (resource) {
                             is Resource.Loading -> {
@@ -445,6 +463,7 @@ class PersonalDetailsActivity : AppCompatActivity() {
                             }
                             is Resource.Success -> {
                                 binding.layoutLoading.isVisible = false
+                                pendingUsername = null
                                 viewModel.resetUpdateProfileState()
                                 Toast.makeText(this@PersonalDetailsActivity, "Details updated successfully", Toast.LENGTH_SHORT).show()
                             }

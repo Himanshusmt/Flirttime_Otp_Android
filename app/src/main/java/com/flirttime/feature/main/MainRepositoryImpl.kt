@@ -541,6 +541,35 @@ class MainRepositoryImpl(
         getOnboardingPhotos().collect { emit(it) }
     }.flowOn(Dispatchers.IO)
 
+    override fun reorderGalleryPhotos(
+        orderedPhotos: List<UserPhotoDto>
+    ): Flow<Resource<List<UserPhotoDto>>> = flow {
+        emit(Resource.Loading)
+        val updatedKeys = orderedPhotos.mapNotNull { photo ->
+            photo.effectiveKey?.takeIf { it.isNotBlank() } ?: photo.url?.takeIf { it.isNotBlank() }
+        }
+        if (updatedKeys.isEmpty()) {
+            emit(Resource.Error("No photos to reorder."))
+            return@flow
+        }
+        val replaceResult = safeApiCall {
+            mainApiService.updateGalleryPhotoKeys(mapOf("imageKeys" to updatedKeys))
+        }
+        if (replaceResult is Resource.Success) {
+            val profileRes = safeApiCall { mainApiService.getMyProfile() }
+            if (profileRes is Resource.Success) {
+                val photos = profileRes.data.profile?.photos.orEmpty()
+                if (photos.isNotEmpty()) {
+                    emit(Resource.Success(photos))
+                    return@flow
+                }
+            }
+            emit(Resource.Success(orderedPhotos))
+        } else if (replaceResult is Resource.Error) {
+            emit(Resource.Error(replaceResult.message, replaceResult.code, replaceResult.cause, replaceResult.errorBody))
+        }
+    }.flowOn(Dispatchers.IO)
+
     override fun deleteOnboardingPhoto(photoId: String): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading)
         val result = safeApiCall {

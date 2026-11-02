@@ -1,6 +1,5 @@
 package com.flirttime.feature.moments
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,18 +12,18 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flirttime.R
-import androidx.lifecycle.lifecycleScope
 import com.flirttime.Resource
 import com.flirttime.core.database.SessionManager
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
 import com.flirttime.databinding.FragmentMomentsBinding
 import com.flirttime.feature.moments.comments.CommentsBottomSheetDialogFragment
-import com.flirttime.feature.moments.delete.DeleteMomentBottomSheetDialogFragment
 import com.flirttime.feature.moments.gift.ReceivedGiftsBottomSheetDialogFragment
 import com.flirttime.feature.moments.gift.SendGiftBottomSheetDialogFragment
 import com.flirttime.feature.moments.options.MomentMoreOptionsBottomSheetDialogFragment
 import com.flirttime.feature.moments.options.ReportMomentBottomSheetDialogFragment
+import com.flirttime.feature.notification.NotificationBadgeBinder
+import com.flirttime.feature.notification.NotificationBadgeStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -37,6 +36,8 @@ class MomentsFragment : Fragment() {
 
     private val momentsViewModel: MomentsViewModel by viewModel()
     private val sessionManager: SessionManager by inject()
+    private val uploadStore: MomentsUploadStore by inject()
+    private val badgeStore: NotificationBadgeStore by inject()
     private lateinit var momentsAdapter: MomentsAdapter
 
     override fun onCreateView(
@@ -55,6 +56,9 @@ class MomentsFragment : Fragment() {
         setupFeed()
         setupScrollListener()
         observeMoments()
+        observeUpload()
+        observeSocket()
+        NotificationBadgeBinder.bind(binding.btnNotification, viewLifecycleOwner, badgeStore)
     }
 
     override fun onResume() {
@@ -89,8 +93,14 @@ class MomentsFragment : Fragment() {
             onCommentClick = { post ->
                 val commentSheet = CommentsBottomSheetDialogFragment.newInstance(postId = post.id)
                 commentSheet.onCommentPosted = {
+                    momentsViewModel.markLocalEdit(post.id)
                     post.commentCount++
-                    momentsAdapter.notifyDataSetChanged()
+                    momentsAdapter.notifyCountsChanged(post.id)
+                }
+                commentSheet.onCommentsCountChanged = { count ->
+                    momentsViewModel.markLocalEdit(post.id)
+                    post.commentCount = count
+                    momentsAdapter.notifyCountsChanged(post.id)
                 }
                 commentSheet.show(childFragmentManager, CommentsBottomSheetDialogFragment.TAG)
             },
@@ -108,8 +118,9 @@ class MomentsFragment : Fragment() {
                             momentId = post.id
                         )
                         giftSheet.onGiftSent = { _, _ ->
+                            momentsViewModel.markLocalEdit(post.id)
                             post.giftCount++
-                            momentsAdapter.notifyDataSetChanged()
+                            momentsAdapter.notifyCountsChanged(post.id)
                         }
                         giftSheet.show(childFragmentManager, SendGiftBottomSheetDialogFragment.TAG)
                     }
@@ -124,6 +135,9 @@ class MomentsFragment : Fragment() {
                     authorName = post.username,
                     isOwnMoment = isAuthor
                 )
+                optionsSheet.onShareClick = {
+                    MomentShareHelper.share(requireContext(), post)
+                }
                 optionsSheet.onDeleteClick = {
                     confirmDeleteMoment(post)
                 }
@@ -231,6 +245,80 @@ class MomentsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun observeSocket() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                momentsViewModel.socketChange.collect { change ->
+                    when (change) {
+                        is MomentsViewModel.SocketListChange.Counts -> {
+                            momentsAdapter.notifyCountsChanged(change.momentId)
+                        }
+                        is MomentsViewModel.SocketListChange.Removed -> {
+                            dismissCommentsIfOpen(change.momentId)
+                        }
+                        else -> Unit
+                    }
+                }
+            }
+        }
+    }
+
+    private fun dismissCommentsIfOpen(momentId: String) {
+        val sheet = childFragmentManager.findFragmentByTag(CommentsBottomSheetDialogFragment.TAG)
+            as? CommentsBottomSheetDialogFragment
+        if (sheet?.isForMoment(momentId) == true) sheet.dismiss()
+    }
+
+    private fun observeUpload() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    uploadStore.progress.collect { progress ->
+                        if (progress == null) {
+                            hideUploadingBar()
+                        } else {
+                            showUploadingBar(progress)
+                        }
+                    }
+                }
+                launch {
+                    uploadStore.finished.collect { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                momentsViewModel.loadMoments(isRefresh = true)
+                                Toast.makeText(requireContext(), "Your moment is live", Toast.LENGTH_SHORT).show()
+                            }
+                            is Resource.Error -> {
+                                Toast.makeText(requireContext(), result.message ?: "Unable to post your moment", Toast.LENGTH_SHORT).show()
+                            }
+                            is Resource.Loading -> Unit
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showUploadingBar(progress: Float) {
+        binding.layoutUploadProgress.visibility = View.VISIBLE
+        binding.layoutUploadProgress.alpha = 1f
+        val percent = (progress * 100).toInt().coerceIn(0, 100)
+        binding.tvUploadPercent.text = "$percent%"
+        binding.progressUploadMoment.progress = percent
+    }
+
+    private fun hideUploadingBar() {
+        if (binding.layoutUploadProgress.visibility != View.VISIBLE) return
+        binding.layoutUploadProgress.animate()
+            .alpha(0f)
+            .setDuration(300)
+            .withEndAction {
+                binding.layoutUploadProgress.visibility = View.GONE
+                binding.layoutUploadProgress.alpha = 1f
+            }
+            .start()
     }
 
     private fun updateMomentsUi(moments: List<MomentPost>) {

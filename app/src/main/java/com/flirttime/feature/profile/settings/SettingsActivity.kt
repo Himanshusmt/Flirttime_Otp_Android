@@ -1,7 +1,6 @@
 package com.flirttime.feature.profile.settings
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +22,9 @@ import com.flirttime.core.navigation.Destination
 import com.flirttime.databinding.ActivitySettingsBinding
 import com.flirttime.databinding.DialogBlockedUsersBinding
 import com.flirttime.databinding.DialogNotificationsSettingsBinding
+import com.flirttime.feature.main.profile.UserProfileViewModel
+import com.flirttime.feature.subscription.PremiumActivity
+import com.flirttime.feature.subscription.PremiumStatus
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
@@ -35,6 +37,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
     private val viewModel: SettingsViewModel by viewModel()
     private val sessionManager: SessionManager by inject()
+    private val userProfileViewModel: UserProfileViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +50,18 @@ class SettingsActivity : AppCompatActivity() {
         setupListeners()
         observeViewModel()
         displayAppVersion()
+        updatePremiumCardVisibility()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        userProfileViewModel.fetchUserProfile()
+        userProfileViewModel.loadMembership()
+        updatePremiumCardVisibility()
+    }
+
+    private fun updatePremiumCardVisibility() {
+        binding.cardPremium.isVisible = !PremiumStatus.isPremium(userProfileViewModel)
     }
 
     private fun setupInsets() {
@@ -117,6 +132,13 @@ class SettingsActivity : AppCompatActivity() {
                         }
                     }
                 }
+
+                launch {
+                    userProfileViewModel.userProfileState.collect { updatePremiumCardVisibility() }
+                }
+                launch {
+                    userProfileViewModel.membershipState.collect { updatePremiumCardVisibility() }
+                }
             }
         }
     }
@@ -137,6 +159,10 @@ class SettingsActivity : AppCompatActivity() {
         binding.cardProfileOverview.setOnClickListener { openEditProfile() }
         binding.btnEditProfile.setOnClickListener { openEditProfile() }
 
+        binding.cardPremium.setOnClickListener {
+            PremiumActivity.start(this)
+        }
+
         // Section: ACCOUNT
         binding.rowPersonalDetails.setOnClickListener {
             AppNavigator.navigateTo(this, Destination.PersonalDetails)
@@ -152,7 +178,7 @@ class SettingsActivity : AppCompatActivity() {
 
         // Section: SUPPORT
         binding.rowHelpSupport.setOnClickListener {
-            openHelpSupport()
+            AppNavigator.navigateTo(this, Destination.HelpSupport)
         }
 
         binding.rowShareApp.setOnClickListener {
@@ -183,24 +209,6 @@ class SettingsActivity : AppCompatActivity() {
         // Log out button
         binding.btnLogOut.setOnClickListener {
             showLogoutConfirmationDialog()
-        }
-    }
-
-    private fun openHelpSupport() {
-        try {
-            val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:support@flirttime.in")
-                putExtra(Intent.EXTRA_SUBJECT, "Flirt Time Support Request")
-            }
-            startActivity(emailIntent)
-        } catch (_: Exception) {
-            AppNavigator.navigateTo(
-                context = this,
-                destination = Destination.Webview(
-                    title = "Help & Support",
-                    url = "https://flirttime.in/help"
-                )
-            )
         }
     }
 

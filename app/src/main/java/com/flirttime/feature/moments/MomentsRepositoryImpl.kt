@@ -5,12 +5,16 @@ import com.flirttime.Resource
 import com.flirttime.core.common.MultipartHelper
 import com.flirttime.core.network.safeApiCall
 import com.flirttime.feature.moments.comments.CommentItem
+import com.flirttime.feature.moments.comments.CommentMapper
 import com.flirttime.feature.moments.gift.GiftItem
 import com.flirttime.feature.moments.MomentsFeedResult
 import com.flirttime.feature.moments.MomentLikeResponseData
 import com.flirttime.feature.moments.MomentReceivedGiftsResponseData
 import com.flirttime.feature.quickmoments.MyQuickMomentsResponseData
+import com.flirttime.feature.moments.CommentLikeResponseData
+import com.flirttime.feature.moments.LikeCommentRequest
 import com.flirttime.feature.moments.PostCommentRequest
+import com.flirttime.feature.moments.PostReplyRequest
 import com.flirttime.feature.quickmoments.QuickMomentReactionRequest
 import com.flirttime.feature.quickmoments.QuickMomentReplyRequest
 import com.flirttime.feature.moments.SendGiftResponseData
@@ -213,30 +217,7 @@ class MomentsRepositoryImpl(
         when (result) {
             is Resource.Success -> {
                 val commentsDtoList = result.data.comments.orEmpty()
-                val domainItems = commentsDtoList.map { dto ->
-                    val userObj = dto.user ?: dto.commenter ?: dto.author
-                    val username = userObj?.username?.takeIf { it.isNotBlank() }
-                        ?: userObj?.fullName?.takeIf { it.isNotBlank() }
-                        ?: userObj?.name?.takeIf { it.isNotBlank() }
-                        ?: "User"
-                    val avatarUrl = userObj?.profilePicture?.takeIf { it.isNotBlank() }
-                        ?: userObj?.profilePhoto?.takeIf { it.isNotBlank() }
-                    val content = dto.comment?.takeIf { it.isNotBlank() }
-                        ?: dto.text.orEmpty()
-                    val time = dto.timeAgo?.takeIf { it.isNotBlank() } ?: "Just now"
-
-                    CommentItem(
-                        id = dto.id ?: dto.commentId ?: System.currentTimeMillis().toString(),
-                        userId = userObj?.id ?: userObj?.userId,
-                        username = username,
-                        timeAgo = time,
-                        text = content,
-                        avatarResId = com.flirttime.R.drawable.img_gallery_demo_girl,
-                        avatarUrl = avatarUrl,
-                        likeCount = dto.likesCount ?: 0,
-                        replyCount = dto.repliesCount ?: dto.replyCount ?: 0
-                    )
-                }
+                val domainItems = commentsDtoList.map { CommentMapper.fromDto(it, currentUserId = null) }
                 emit(Resource.Success(domainItems))
             }
             is Resource.Error -> {
@@ -256,6 +237,87 @@ class MomentsRepositoryImpl(
                 momentId = momentId,
                 request = PostCommentRequest(comment = comment)
             )
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(Unit))
+            is Resource.Error -> emit(Resource.Error(message = result.message, code = result.code, cause = result.cause, errorBody = result.errorBody))
+            is Resource.Loading -> Unit
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun getMomentCommentReplies(
+        momentId: String,
+        commentId: String,
+        page: Int,
+        limit: Int
+    ): Flow<Resource<List<CommentItem>>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.getMomentCommentReplies(
+                momentId = momentId,
+                commentId = commentId,
+                page = page,
+                limit = limit
+            )
+        }
+        when (result) {
+            is Resource.Success -> {
+                val replies = result.data.replies ?: result.data.comments.orEmpty()
+                emit(Resource.Success(replies.map { CommentMapper.fromDto(it, currentUserId = null, fallbackParentId = commentId) }))
+            }
+            is Resource.Error -> emit(Resource.Error(message = result.message, code = result.code, cause = result.cause, errorBody = result.errorBody))
+            is Resource.Loading -> Unit
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun postMomentCommentReply(
+        momentId: String,
+        commentId: String,
+        reply: String,
+        parentReplyId: String?
+    ): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.postMomentCommentReply(
+                momentId = momentId,
+                commentId = commentId,
+                request = PostReplyRequest(reply = reply, parentReplyId = parentReplyId)
+            )
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(Unit))
+            is Resource.Error -> emit(Resource.Error(message = result.message, code = result.code, cause = result.cause, errorBody = result.errorBody))
+            is Resource.Loading -> Unit
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun likeMomentComment(
+        momentId: String,
+        commentId: String,
+        isLiked: Boolean
+    ): Flow<Resource<CommentLikeResponseData?>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.likeMomentComment(
+                momentId = momentId,
+                commentId = commentId,
+                request = LikeCommentRequest(action = if (isLiked) "like" else "unlike")
+            )
+        }
+        when (result) {
+            is Resource.Success -> emit(Resource.Success(result.data))
+            is Resource.Error -> emit(Resource.Error(message = result.message, code = result.code, cause = result.cause, errorBody = result.errorBody))
+            is Resource.Loading -> Unit
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun deleteMomentComment(
+        momentId: String,
+        commentId: String
+    ): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.deleteMomentComment(momentId = momentId, commentId = commentId)
         }
         when (result) {
             is Resource.Success -> emit(Resource.Success(Unit))

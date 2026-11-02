@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.flirttime.core.common.ShimmerHelper
+import com.flirttime.core.common.FastImageHelper
 import com.flirttime.databinding.ItemProfileMomentBinding
 import com.flirttime.feature.moments.MomentDto
 
@@ -41,10 +41,13 @@ class ProfileMomentsAdapter(
         fun bind(item: ProfileMomentUiItem) {
             val moment = item.moment
 
-            // Media Image with Shimmer placeholder
-            ShimmerHelper.loadWithShimmer(
+            FastImageHelper.loadDirect(
                 draweeView = binding.ivMomentMedia,
-                url = moment.displayImageUrl
+                url = moment.displayImageUrl,
+                thumbnailUrl = moment.thumbnailUrl ?: moment.media?.firstOrNull()?.thumbnailUrl,
+                grayPlaceholder = true,
+                targetWidth = 200,
+                targetHeight = 200
             )
 
             if (item.isOverflow) {

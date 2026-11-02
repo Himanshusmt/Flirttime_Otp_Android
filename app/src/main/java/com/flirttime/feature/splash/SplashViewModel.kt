@@ -46,13 +46,13 @@ class SplashViewModel(
 
                         // Route to appropriate screen based on user verification status
                         val target = when {
-                            user.pageRedirect == "home" -> Destination.Main(targetTab = 2)
+                            user.pageRedirect == "home" -> Destination.Main(targetTab = 0)
                             user.pageRedirect == "gesture" -> Destination.VerificationProcess
                             user.pageRedirect == "avatar" -> Destination.GestureVerification
                             user.pageRedirect == "user_info" -> Destination.ProfileVerification
-                            user.isProfileComplete == true -> Destination.Main(targetTab = 2)
+                            user.isProfileComplete == true -> Destination.Main(targetTab = 0)
                             user.isProfileComplete != true -> Destination.IntroduceYourself
-                            else -> Destination.Main(targetTab = 2)
+                            else -> Destination.Main(targetTab = 0)
                         }
                         _navigationEvent.emit(target)
                     }
@@ -66,11 +66,11 @@ class SplashViewModel(
                             val cachedRedirect = sessionManager.getPageRedirect()
                             val cachedProfileComplete = sessionManager.isProfileComplete()
                             val fallbackTarget = when {
-                                cachedRedirect == "home" -> Destination.Main(targetTab = 2)
+                                cachedRedirect == "home" -> Destination.Main(targetTab = 0)
                                 cachedRedirect == "gesture" -> Destination.VerificationProcess
                                 cachedRedirect == "avatar" -> Destination.GestureVerification
                                 cachedRedirect == "user_info" -> Destination.ProfileVerification
-                                cachedProfileComplete -> Destination.Main(targetTab = 2)
+                                cachedProfileComplete -> Destination.Main(targetTab = 0)
                                 else -> Destination.IntroduceYourself
                             }
                             _navigationEvent.emit(fallbackTarget)

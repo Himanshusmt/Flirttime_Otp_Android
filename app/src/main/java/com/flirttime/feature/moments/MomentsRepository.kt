@@ -25,6 +25,10 @@ interface MomentsRepository {
     // Comments
     fun getMomentComments(momentId: String, page: Int = 1, limit: Int = 20): Flow<Resource<List<CommentItem>>>
     fun postMomentComment(momentId: String, comment: String): Flow<Resource<Unit>>
+    fun getMomentCommentReplies(momentId: String, commentId: String, page: Int = 1, limit: Int = 100): Flow<Resource<List<CommentItem>>>
+    fun postMomentCommentReply(momentId: String, commentId: String, reply: String, parentReplyId: String? = null): Flow<Resource<Unit>>
+    fun likeMomentComment(momentId: String, commentId: String, isLiked: Boolean): Flow<Resource<CommentLikeResponseData?>>
+    fun deleteMomentComment(momentId: String, commentId: String): Flow<Resource<Unit>>
 
     // Gifts
     fun getMomentGiftsCatalog(momentId: String): Flow<Resource<Pair<Int, List<GiftItem>>>>

@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.flirttime.R
+import com.flirttime.core.common.FastImageHelper
 import com.flirttime.feature.subscription.PremiumActivity
 import com.flirttime.Resource
 import com.flirttime.core.image.CropAspectRatio
@@ -62,8 +63,12 @@ class ProfileFragment : Fragment() {
             when (result) {
                 is CropResult.Success -> {
                     val uri = result.croppedUri
-                    binding.ivCoverPhoto.tag = uri.toString()
-                    binding.ivCoverPhoto.setImageURI(uri)
+                    FastImageHelper.loadDirect(
+                        draweeView = binding.ivCoverPhoto,
+                        url = uri.toString(),
+                        fallbackRes = R.drawable.img_login,
+                        fadeDurationMs = 280
+                    )
                     userProfileViewModel.uploadCoverPhoto(requireContext(), uri)
                 }
                 is CropResult.Failure -> {
@@ -193,40 +198,27 @@ class ProfileFragment : Fragment() {
             binding.ivVerifiedBadge.visibility = verifiedVisibility
         }
 
-        // 6. User Avatar (Direct Fresco loading with tag caching to avoid flicker)
         val avatarUrl = profile.profilePhotoUrl
-        if (!avatarUrl.isNullOrBlank()) {
-            if (binding.ivAvatar.tag != avatarUrl) {
-                binding.ivAvatar.tag = avatarUrl
-                binding.ivAvatar.setImageURI(avatarUrl)
-            }
-        } else if (binding.ivAvatar.tag != "default") {
-            binding.ivAvatar.tag = "default"
-            binding.ivAvatar.setActualImageResource(R.drawable.img_login)
-        }
+        FastImageHelper.loadDirect(
+            draweeView = binding.ivAvatar,
+            url = avatarUrl,
+            fallbackRes = R.drawable.img_login
+        )
 
-        // 7. Cover Photo (Direct Fresco loading with tag caching to avoid flicker)
-        val coverUrl = profile.coverPhotoUrl
-        if (!coverUrl.isNullOrBlank()) {
-            if (binding.ivCoverPhoto.tag != coverUrl) {
-                binding.ivCoverPhoto.tag = coverUrl
-                binding.ivCoverPhoto.setImageURI(coverUrl)
-            }
-        } else if (binding.ivCoverPhoto.tag != "default") {
-            binding.ivCoverPhoto.tag = "default"
-            binding.ivCoverPhoto.setActualImageResource(R.drawable.img_login)
-        }
+        FastImageHelper.loadDirect(
+            draweeView = binding.ivCoverPhoto,
+            url = profile.coverPhotoUrl,
+            fallbackRes = R.drawable.img_login,
+            fadeDurationMs = 280
+        )
 
-        // 8. Quick Moments "Add new" Thumbnail (Direct Fresco loading with tag caching to avoid flicker)
-        if (!avatarUrl.isNullOrBlank()) {
-            if (binding.ivAddNewThumb.tag != avatarUrl) {
-                binding.ivAddNewThumb.tag = avatarUrl
-                binding.ivAddNewThumb.setImageURI(avatarUrl)
-            }
-        } else if (binding.ivAddNewThumb.tag != "default") {
-            binding.ivAddNewThumb.tag = "default"
-            binding.ivAddNewThumb.setActualImageResource(R.drawable.img_login)
-        }
+        FastImageHelper.loadDirect(
+            draweeView = binding.ivAddNewThumb,
+            url = avatarUrl,
+            fallbackRes = R.drawable.img_login,
+            targetWidth = 70,
+            targetHeight = 70
+        )
 
         // 9. Subscription Cards (Membership Card vs Premium Banner, matching iOS updateSubscriptionCards)
         updateSubscriptionCards()
@@ -936,12 +928,12 @@ class ProfileFragment : Fragment() {
                     is Resource.Error -> {
                         Toast.makeText(requireContext(), "Failed to upload cover: ${resource.message}", Toast.LENGTH_LONG).show()
                         val currentUrl = userProfileViewModel.userProfileState.value?.coverPhotoUrl
-                        binding.ivCoverPhoto.tag = currentUrl
-                        if (!currentUrl.isNullOrBlank()) {
-                            binding.ivCoverPhoto.setImageURI(currentUrl)
-                        } else {
-                            binding.ivCoverPhoto.setActualImageResource(R.drawable.img_login)
-                        }
+                        FastImageHelper.loadDirect(
+                            draweeView = binding.ivCoverPhoto,
+                            url = currentUrl,
+                            fallbackRes = R.drawable.img_login,
+                            fadeDurationMs = 280
+                        )
                         userProfileViewModel.resetUploadCoverPhotoState()
                     }
                     is Resource.Loading -> Unit

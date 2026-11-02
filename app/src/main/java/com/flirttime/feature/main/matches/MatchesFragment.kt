@@ -34,6 +34,8 @@ import com.flirttime.feature.quickmoments.AddNewMomentBottomSheetDialogFragment
 import com.flirttime.feature.quickmoments.QuickMomentCardItem
 import com.flirttime.feature.quickmoments.QuickMomentsCardAdapter
 import com.flirttime.feature.quickmoments.QuickMomentsViewerDialogFragment
+import com.flirttime.feature.notification.NotificationBadgeBinder
+import com.flirttime.feature.notification.NotificationBadgeStore
 import com.flirttime.feature.subscription.PremiumStatus
 import com.flirttime.feature.subscription.SubscriptionPopUp
 import com.flirttime.feature.subscription.SubscriptionPopUpType
@@ -49,6 +51,7 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
 
     private val viewModel: MatchesViewModel by viewModel()
     private val userProfileViewModel: UserProfileViewModel by inject()
+    private val badgeStore: NotificationBadgeStore by inject()
 
     private lateinit var interestAdapter: InterestAdapter
     private lateinit var interestPeopleAdapter: InterestPeopleAdapter
@@ -73,6 +76,7 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
         setupScreenSwipeArea()
         setupEmptyStateRefresh()
         observeViewModel()
+        NotificationBadgeBinder.bind(binding.btnNotification, viewLifecycleOwner, badgeStore)
 
         binding.btnNotification.setOnClickListener {
             AppNavigator.navigateTo(

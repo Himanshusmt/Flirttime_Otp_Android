@@ -16,7 +16,11 @@ import com.flirttime.feature.moments.MomentGiftsCatalogResponseData
 import com.flirttime.feature.moments.MomentLikeResponseData
 import com.flirttime.feature.moments.MomentReceivedGiftsResponseData
 import com.flirttime.feature.moments.MomentsFeedResponseData
+import com.flirttime.feature.moments.CommentLikeResponseData
+import com.flirttime.feature.moments.LikeCommentRequest
+import com.flirttime.feature.moments.MomentCommentRepliesResponseData
 import com.flirttime.feature.moments.PostCommentRequest
+import com.flirttime.feature.moments.PostReplyRequest
 import com.flirttime.feature.moments.SendGiftResponseData
 import com.flirttime.feature.moments.SendMomentGiftRequest
 import com.flirttime.feature.moments.ToggleLikeRequest
@@ -238,6 +242,34 @@ interface MainApiService {
     suspend fun postMomentComment(
         @Path("momentId") momentId: String,
         @Body request: PostCommentRequest
+    ): ApiResponse<Any>
+
+    @GET("api/v1/moments/{momentId}/comments/{commentId}/replies")
+    suspend fun getMomentCommentReplies(
+        @Path("momentId") momentId: String,
+        @Path("commentId") commentId: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 100
+    ): ApiResponse<MomentCommentRepliesResponseData>
+
+    @POST("api/v1/moments/{momentId}/comments/{commentId}/replies")
+    suspend fun postMomentCommentReply(
+        @Path("momentId") momentId: String,
+        @Path("commentId") commentId: String,
+        @Body request: PostReplyRequest
+    ): ApiResponse<Any>
+
+    @POST("api/v1/moments/{momentId}/comments/{commentId}/like")
+    suspend fun likeMomentComment(
+        @Path("momentId") momentId: String,
+        @Path("commentId") commentId: String,
+        @Body request: LikeCommentRequest
+    ): ApiResponse<CommentLikeResponseData>
+
+    @DELETE("api/v1/moments/{momentId}/comments/{commentId}")
+    suspend fun deleteMomentComment(
+        @Path("momentId") momentId: String,
+        @Path("commentId") commentId: String
     ): ApiResponse<Any>
 
     // Moments Gifts

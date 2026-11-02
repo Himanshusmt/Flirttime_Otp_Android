@@ -4,4 +4,5 @@
     <item name="right_overlay" type="id" />
     <item name="top_overlay" type="id" />
     <item name="bottom_overlay" type="id" />
+    <item name="fast_image_loaded_url" type="id" />
 </resources>
