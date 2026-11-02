@@ -41,7 +41,7 @@
                 android:fontFamily="@font/fredokabold"
                 android:textColor="#1A1A1A"
                 android:textSize="14.5sp"
-                tools:text="hdhdhd" />
+                tools:text="" />
 
             <TextView
                 android:id="@+id/tvTimeAgo"
@@ -51,7 +51,7 @@
                 android:fontFamily="@font/fredokaregular"
                 android:textColor="#9E9E9E"
                 android:textSize="12sp"
-                tools:text="1d" />
+                tools:text="" />
 
         </LinearLayout>
 
@@ -63,7 +63,7 @@
             android:fontFamily="@font/fredokaregular"
             android:textColor="#666666"
             android:textSize="12.5sp"
-            tools:text="Sent you a Rose · 1 coins" />
+            tools:text="" />
 
     </LinearLayout>
 
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="22sp"
-            tools:text="🌹" />
+            tools:text="" />
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/ivGiftImage"

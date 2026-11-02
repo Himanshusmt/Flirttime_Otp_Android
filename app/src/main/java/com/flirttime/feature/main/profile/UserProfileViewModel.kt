@@ -12,14 +12,17 @@ import com.flirttime.feature.main.MainRepository
 import com.flirttime.feature.moments.MomentDto
 import com.flirttime.feature.moments.UserMomentsResponseData
 import com.flirttime.feature.moments.MomentsRepository
+import com.flirttime.feature.main.matches.MatchesRepository
 import com.flirttime.feature.profile.AudioIntroDto
 import com.flirttime.feature.profile.MoreAboutMeResponseData
 import com.flirttime.feature.profile.UpdateProfileRequest
 import com.flirttime.feature.profile.UserInterestDto
 import com.flirttime.feature.profile.UserPhotoDto
+import com.flirttime.feature.subscription.MySubscription
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -34,15 +37,22 @@ data class UserProfileUiModel(
     val completionPercent: Int,
     val isVerified: Boolean,
     val profilePhotoUrl: String?,
-    val coverPhotoUrl: String?
+    val coverPhotoUrl: String?,
+    val isSubscribed: Boolean = false
 )
 
 class UserProfileViewModel(
     private val authRepository: AuthRepository,
+    private val matchesRepository: MatchesRepository,
     private val momentsRepository: MomentsRepository,
     private val mainRepository: MainRepository,
     private val sessionManager: SessionManager
 ) : ViewModel() {
+
+    private companion object {
+        /** iOS fetches 10 moments so the 3x3 grid can detect an overflow ("+N" tile). */
+        const val MY_MOMENTS_PREVIEW_LIMIT = 10
+    }
 
     private var cachedFullProfile: com.flirttime.feature.profile.MyFullProfileData? = null
 
@@ -79,6 +89,13 @@ class UserProfileViewModel(
 
     private val _myQuickMomentsState = MutableStateFlow<Resource<com.flirttime.feature.quickmoments.MyQuickMomentsResponseData>?>(null)
     val myQuickMomentsState: StateFlow<Resource<com.flirttime.feature.quickmoments.MyQuickMomentsResponseData>?> = _myQuickMomentsState.asStateFlow()
+
+    private val _coinBalanceState = MutableStateFlow<Int>(0)
+    val coinBalanceState: StateFlow<Int> = _coinBalanceState.asStateFlow()
+
+    /** Cached `GET subscriptions/my` (iOS `SubscriptionMembershipStore.membership`). `null` until loaded / no membership. */
+    private val _membershipState = MutableStateFlow<MySubscription?>(null)
+    val membershipState: StateFlow<MySubscription?> = _membershipState.asStateFlow()
 
     private val _uploadPrimaryPhotoState = MutableStateFlow<Resource<AuthUserDto>?>(null)
     val uploadPrimaryPhotoState: StateFlow<Resource<AuthUserDto>?> = _uploadPrimaryPhotoState.asStateFlow()
@@ -120,6 +137,10 @@ class UserProfileViewModel(
         loadLocalProfile()
         fetchUserProfile()
         fetchMoreAboutMe()
+        loadWalletBalance()
+        loadMyQuickMoments()
+        loadMyMoments()
+        loadMembership()
     }
 
     private fun loadLocalProfile() {
@@ -137,13 +158,16 @@ class UserProfileViewModel(
             val audioUrl = sessionManager.getAudioIntroUrl()
             val audioDuration = sessionManager.getAudioIntroDuration()
 
+            // iOS header shows the username first (see `ProfileViewController.headerName`).
             val effectiveName = when {
+                sessionManager.getUsername().isNotBlank() -> sessionManager.getUsername()
                 firstName.isNotBlank() && lastName.isNotBlank() -> "$firstName $lastName"
                 firstName.isNotBlank() -> firstName
                 nickName.isNotBlank() -> nickName
                 else -> "User"
             }
-            val age = calculateAge(dob) ?: 19
+            // iOS only shows an age when the profile has one; no placeholder age.
+            val age = calculateAge(dob)
             val completion = if (isComplete) 100 else 90
 
             _userProfileState.value = UserProfileUiModel(
@@ -176,29 +200,44 @@ class UserProfileViewModel(
             if (_userProfileState.value == null) {
                 loadLocalProfile()
             }
+            awaitProfile()
+        }
+    }
 
-            mainRepository.getMyFullProfile().collectLatest { resource ->
-                if (resource is Resource.Success) {
-                    applyFullProfile(resource.data)
-                }
+    private suspend fun awaitProfile() {
+        mainRepository.getMyFullProfile().collectLatest { resource ->
+            when (resource) {
+                is Resource.Success -> applyFullProfile(resource.data)
+                is Resource.Error ->
+                    android.util.Log.e("UserProfileViewModel", "getMyFullProfile failed: ${resource.message}")
+                is Resource.Loading -> Unit
             }
         }
     }
 
+    /**
+     * Mirrors iOS `ProfileViewController.loadData()`: profile, quick moments, my moments, wallet and
+     * membership are all reloaded, and the pull-to-refresh spinner stops only when every request finished.
+     */
+    fun loadAll() {
+        fetchUserProfile()
+        loadMyQuickMoments()
+        loadMyMoments()
+        loadWalletBalance()
+        loadMembership()
+    }
+
     fun refreshProfile() {
+        if (_isRefreshing.value) return
         viewModelScope.launch {
             _isRefreshing.value = true
             try {
-                mainRepository.getMyFullProfile().collectLatest { resource ->
-                    when (resource) {
-                        is Resource.Success -> {
-                            applyFullProfile(resource.data)
-                        }
-                        is Resource.Error -> {
-                            android.util.Log.e("UserProfileViewModel", "refreshProfile getMyFullProfile failed: ${resource.message}")
-                        }
-                        is Resource.Loading -> Unit
-                    }
+                coroutineScope {
+                    launch { runCatching { awaitProfile() } }
+                    launch { runCatching { awaitMyQuickMoments() } }
+                    launch { runCatching { awaitMyMoments() } }
+                    launch { runCatching { awaitWalletBalance() } }
+                    launch { runCatching { awaitMembership() } }
                 }
             } catch (e: Exception) {
                 android.util.Log.e("UserProfileViewModel", "Error refreshing profile: ${e.localizedMessage}", e)
@@ -228,7 +267,8 @@ class UserProfileViewModel(
     private suspend fun applyFullProfile(full: com.flirttime.feature.profile.MyFullProfileData) {
         cachedFullProfile = full
         val localDob = sessionManager.getDob()
-        val calculatedAge = full.age ?: calculateAge(localDob) ?: 19
+        // iOS shows "name, age" only when the profile actually has an age.
+        val calculatedAge = full.age ?: calculateAge(localDob)
         val current = _userProfileState.value
 
         val resolvedLocation = when {
@@ -244,15 +284,19 @@ class UserProfileViewModel(
         }
 
         _userProfileState.value = UserProfileUiModel(
-            name = full.name.ifBlank { current?.name ?: "User" },
+            name = full.headerName.ifBlank { full.name }.ifBlank { current?.name ?: "User" },
             age = calculatedAge,
             location = resolvedLocation,
             bio = resolvedBio,
             completionPercent = full.completionPercent,
             isVerified = full.isVerified,
             profilePhotoUrl = full.profilePhotoUrl ?: sessionManager.getProfileImageUri().ifBlank { null },
-            coverPhotoUrl = full.coverPhotoUrl ?: sessionManager.getCoverPhotoUrl().ifBlank { null }
+            coverPhotoUrl = full.coverPhotoUrl ?: sessionManager.getCoverPhotoUrl().ifBlank { null },
+            isSubscribed = full.isSubscribed
         )
+
+        // The offline fallback is built from local session data only; never let it wipe server lists.
+        if (full.isOfflineFallback) return
 
         // 1. Photos
         _userPhotosState.value = Resource.Success(full.photos)
@@ -265,12 +309,10 @@ class UserProfileViewModel(
             _moreAboutMeState.value = Resource.Success(full.moreAboutMe)
         }
 
-        // 4. Moments (unconditionally update from atomic master profile so deletions reflect instantly)
-        _userMomentsState.value = Resource.Success(
-            UserMomentsResponseData(moments = full.moments, totalCount = full.moments.size)
-        )
+        // 4. Moments come from their own call (`GET moments/me`, see `loadMyMoments`) exactly like iOS,
+        //    because `users/profile` does not carry moments or their total count.
 
-        // 5. Voice Intro (atomic from master profile)
+        // 5. Voice Intro: server truth, only playable once `status == "ready"` (iOS `userVoiceIntro`).
         if (full.audioIntro != null) {
             _userAudioState.value = Resource.Success(full.audioIntro)
         } else if (!full.voiceIntroUrl.isNullOrBlank()) {
@@ -283,7 +325,9 @@ class UserProfileViewModel(
                     status = "ready"
                 )
             )
-        } else if (_userAudioState.value?.getOrNull()?.effectiveUrl.isNullOrBlank()) {
+        } else {
+            sessionManager.setAudioIntroUrl("")
+            sessionManager.setAudioIntroDuration(0)
             _userAudioState.value = Resource.Success(AudioIntroDto())
         }
 
@@ -294,9 +338,84 @@ class UserProfileViewModel(
     }
 
     fun loadMyQuickMoments() {
-        viewModelScope.launch {
-            momentsRepository.getMyQuickMoments().collectLatest { resource ->
+        viewModelScope.launch { awaitMyQuickMoments() }
+    }
+
+    private suspend fun awaitMyQuickMoments() {
+        matchesRepository.getMyQuickMoments().collectLatest { resource ->
+            // Keep the previous list when a refresh fails (iOS ignores quick-moment errors).
+            if (resource is Resource.Success || _myQuickMomentsState.value == null) {
                 _myQuickMomentsState.value = resource
+            }
+        }
+    }
+
+    fun loadWalletBalance() {
+        viewModelScope.launch { awaitWalletBalance() }
+    }
+
+    private suspend fun awaitWalletBalance() {
+        matchesRepository.getWalletBalance().collectLatest { res ->
+            if (res is Resource.Success) {
+                _coinBalanceState.value = res.data.balance
+            }
+        }
+    }
+
+    /**
+     * Latest moments for the Profile grid: `GET moments/me?page=1&limit=10` (iOS
+     * `ProfileViewModel.getMyMoments`). The 10th item only previews the "+N" tile; `totalCount` drives it.
+     */
+    fun loadMyMoments() {
+        viewModelScope.launch { awaitMyMoments() }
+    }
+
+    private suspend fun awaitMyMoments() {
+        momentsRepository.getMyMoments(page = 1, limit = MY_MOMENTS_PREVIEW_LIMIT).collectLatest { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val moments = result.data.moments.orEmpty().take(MY_MOMENTS_PREVIEW_LIMIT)
+                    val total = maxOf(result.data.totalCount ?: result.data.momentCount ?: moments.size, moments.size)
+                    _userMomentsState.value = Resource.Success(
+                        UserMomentsResponseData(moments = moments, totalCount = total)
+                    )
+                }
+                is Resource.Error -> {
+                    android.util.Log.e("UserProfileViewModel", "getMyMoments error: ${result.message}")
+                    // iOS: on failure show the empty state only if nothing has loaded yet.
+                    if (_userMomentsState.value == null) {
+                        _userMomentsState.value = Resource.Success(
+                            UserMomentsResponseData(moments = emptyList(), totalCount = 0)
+                        )
+                    }
+                }
+                is Resource.Loading -> Unit
+            }
+        }
+    }
+
+    /** `GET subscriptions/my` (iOS `SubscriptionMembershipStore.refresh`). A failure keeps the last membership. */
+    fun loadMembership() {
+        viewModelScope.launch { awaitMembership() }
+    }
+
+    private suspend fun awaitMembership() {
+        mainRepository.getMySubscription().collectLatest { result ->
+            if (result is Resource.Success) {
+                _membershipState.value = result.data
+            } else if (result is Resource.Error) {
+                android.util.Log.e("UserProfileViewModel", "my subscription failed: ${result.message}")
+            }
+        }
+    }
+
+    fun deleteQuickMoment(momentId: String, onDeleted: () -> Unit = {}) {
+        viewModelScope.launch {
+            matchesRepository.deleteQuickMoment(momentId).collect { res ->
+                if (res is Resource.Success) {
+                    onDeleted()
+                    loadMyQuickMoments()
+                }
             }
         }
     }

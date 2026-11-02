@@ -22,7 +22,10 @@ enum class NotificationType {
     SUPER_LIKE,
     MESSAGE,
     PROFILE_VERIFIED,
-    PHOTO_NOT_APPROVED;
+    PHOTO_NOT_APPROVED,
+    PROFILE_VISIT,
+    MOMENT_COMMENT_REPLY,
+    MOMENT_COMMENT_LIKE;
 
     companion object {
         fun fromString(type: String?): NotificationType {
@@ -31,9 +34,12 @@ enum class NotificationType {
                 "like" -> LIKE
                 "compliment" -> COMPLIMENT
                 "super_like", "superlike" -> SUPER_LIKE
-                "message" -> MESSAGE
+                "message", "chat" -> MESSAGE
                 "profile_verified", "verified" -> PROFILE_VERIFIED
                 "photo_not_approved", "rejected", "photo_rejected" -> PHOTO_NOT_APPROVED
+                "profile_visit", "visit" -> PROFILE_VISIT
+                "moment_comment_reply", "comment_reply", "reply" -> MOMENT_COMMENT_REPLY
+                "moment_comment_like", "comment_like" -> MOMENT_COMMENT_LIKE
                 else -> MATCH
             }
         }
@@ -87,6 +93,17 @@ data class NotificationActorDto(
     @SerializedName("id") val id: String? = null,
     @SerializedName("name") val name: String? = null,
     @SerializedName("username") val username: String? = null,
+    @SerializedName("profilePhoto") val profilePhoto: String? = null,
+    @SerializedName("profilePhotoUrl") val profilePhotoUrl: String? = null,
+    @SerializedName("profilePicture") val profilePicture: String? = null,
+    @SerializedName("avatar") val avatar: String? = null
+)
+
+data class NotificationSenderDto(
+    @SerializedName("id") val id: String? = null,
+    @SerializedName("name") val name: String? = null,
+    @SerializedName("profilePhoto") val profilePhoto: String? = null,
+    @SerializedName("profilePhotoUrl") val profilePhotoUrl: String? = null,
     @SerializedName("profilePicture") val profilePicture: String? = null,
     @SerializedName("avatar") val avatar: String? = null
 )
@@ -101,12 +118,27 @@ data class NotificationItemDto(
     @SerializedName("createdAt") val createdAt: String? = null,
     @SerializedName("image") val image: String? = null,
     @SerializedName("avatarUrl") val avatarUrl: String? = null,
-    @SerializedName("actor") val actor: NotificationActorDto? = null
+    @SerializedName("actor") val actor: NotificationActorDto? = null,
+    @SerializedName("sender") val sender: NotificationSenderDto? = null
 ) {
     fun toDomain(section: NotificationSection): NotificationItem {
-        val resolvedAvatar = image ?: avatarUrl ?: actor?.profilePicture ?: actor?.avatar
-        val resolvedTitle = title ?: actor?.name ?: "Notification"
-        val resolvedDesc = body ?: description.orEmpty()
+        val resolvedAvatar = actor?.profilePhoto?.takeIf { it.isNotBlank() }
+            ?: sender?.profilePhotoUrl?.takeIf { it.isNotBlank() }
+            ?: actor?.profilePhotoUrl?.takeIf { it.isNotBlank() }
+            ?: sender?.profilePhoto?.takeIf { it.isNotBlank() }
+            ?: image?.takeIf { it.isNotBlank() }
+            ?: avatarUrl?.takeIf { it.isNotBlank() }
+            ?: actor?.profilePicture?.takeIf { it.isNotBlank() }
+            ?: actor?.avatar?.takeIf { it.isNotBlank() }
+            ?: sender?.profilePicture?.takeIf { it.isNotBlank() }
+            ?: sender?.avatar?.takeIf { it.isNotBlank() }
+
+        val resolvedTitle = title?.takeIf { it.isNotBlank() }
+            ?: actor?.name
+            ?: sender?.name
+            ?: "Notification"
+
+        val resolvedDesc = body?.takeIf { it.isNotBlank() } ?: description.orEmpty()
         val formattedTime = formatRelativeTime(createdAt)
 
         return NotificationItem(
@@ -181,8 +213,15 @@ class NotificationListDeserializer : JsonDeserializer<NotificationListResponseDa
         }
 
         val jsonObject = json.asJsonObject
+        val paginationObj = if (jsonObject.has("pagination") && jsonObject.get("pagination").isJsonObject) {
+            jsonObject.getAsJsonObject("pagination")
+        } else null
+
         val nextCursor = jsonObject.get("nextCursor")?.takeIf { !it.isJsonNull }?.asString
-        val hasMore = jsonObject.get("hasMore")?.takeIf { !it.isJsonNull }?.asBoolean ?: false
+            ?: paginationObj?.get("nextCursor")?.takeIf { !it.isJsonNull }?.asString
+        val hasMore = jsonObject.get("hasMore")?.takeIf { !it.isJsonNull }?.asBoolean
+            ?: paginationObj?.get("hasMore")?.takeIf { !it.isJsonNull }?.asBoolean
+            ?: false
 
         val sectionsList = mutableListOf<NotificationSectionDto>()
 
@@ -217,8 +256,10 @@ class NotificationListDeserializer : JsonDeserializer<NotificationListResponseDa
                     }
                 }
             }
-        } else {
-            // Format C: Root level date keys
+        }
+
+        // Format C: Root level date keys if sections was not present
+        if (sectionsList.isEmpty()) {
             for (key in listOf("today", "yesterday", "earlier", "Today", "Yesterday", "Earlier")) {
                 val arrayElem = jsonObject.get(key)
                 if (arrayElem != null && arrayElem.isJsonArray) {
@@ -228,6 +269,19 @@ class NotificationListDeserializer : JsonDeserializer<NotificationListResponseDa
                     }
                     sectionsList.add(NotificationSectionDto(title = key, items = items))
                 }
+            }
+        }
+
+        // Format D: Fallback to root "notifications" or "items" if sectionsList is still empty
+        if (sectionsList.isEmpty()) {
+            val itemsArray = jsonObject.get("notifications")?.takeIf { it.isJsonArray }?.asJsonArray
+                ?: jsonObject.get("items")?.takeIf { it.isJsonArray }?.asJsonArray
+            if (itemsArray != null && itemsArray.size() > 0) {
+                val items = mutableListOf<NotificationItemDto>()
+                for (itemElem in itemsArray) {
+                    items.add(context.deserialize(itemElem, NotificationItemDto::class.java))
+                }
+                sectionsList.add(NotificationSectionDto(title = "Earlier", items = items))
             }
         }
 

@@ -1,16 +1,14 @@
 package com.flirttime.feature.main.explore
 
-import android.graphics.Color
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.flirttime.R
 import com.flirttime.core.common.ShimmerHelper
 import com.flirttime.databinding.ItemExploreProfileCardBinding
-import com.flirttime.feature.main.explore.ExploreProfileItem
 
 class ExploreProfileAdapter(
     private val onProfileClick: (ExploreProfileItem) -> Unit
@@ -35,28 +33,31 @@ class ExploreProfileAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ExploreProfileItem) {
-            // 1. Photo / Placeholder Binding
-            if (item.isPlaceholder || item.imageUrl.isNullOrBlank()) {
-                binding.viewPlaceholderBg.visibility = View.VISIBLE
+            // 1. Photo / Placeholder / Blur Binding
+            if (item.imageUrl.isNullOrBlank()) {
+                binding.ivPlaceholder.visibility = View.VISIBLE
                 binding.ivProfilePhoto.visibility = View.GONE
-                // Semi-transparent scrim on light card
-                binding.viewScrim.visibility = View.GONE
-                // Use subtle gray text on placeholder card
-                binding.tvNameAge.setTextColor(Color.parseColor("#999999"))
-                binding.tvDistance.setTextColor(Color.parseColor("#AAAAAA"))
-                binding.tvLocation.setTextColor(Color.parseColor("#AAAAAA"))
             } else {
-                binding.viewPlaceholderBg.visibility = View.GONE
+                binding.ivPlaceholder.visibility = View.GONE
                 binding.ivProfilePhoto.visibility = View.VISIBLE
-                binding.viewScrim.visibility = View.VISIBLE
-                binding.tvNameAge.setTextColor(Color.WHITE)
-                binding.tvDistance.setTextColor(Color.parseColor("#F0F0F0"))
-                binding.tvLocation.setTextColor(Color.parseColor("#E0E0E0"))
 
-                ShimmerHelper.loadWithShimmer(binding.ivProfilePhoto, item.imageUrl)
+                // Load with Shimmer and blur if locked
+                ShimmerHelper.loadWithShimmer(
+                    draweeView = binding.ivProfilePhoto,
+                    url = item.imageUrl,
+                    fallbackRes = R.drawable.explore_placeholder,
+                    isBlurred = item.isLocked
+                )
             }
 
-            // 2. Name & Age
+            // 2. Lock / Blur Overlay
+            if (item.isLocked) {
+                binding.layoutBlurOverlay.visibility = View.VISIBLE
+            } else {
+                binding.layoutBlurOverlay.visibility = View.GONE
+            }
+
+            // 3. Name & Age
             val nameAgeText = if (item.age != null && item.age > 0) {
                 "${item.username}, ${item.age}"
             } else {
@@ -64,10 +65,18 @@ class ExploreProfileAdapter(
             }
             binding.tvNameAge.text = nameAgeText
 
-            // 3. Ribbon Badge
-            binding.ivRibbonBadge.visibility = if (item.hasRibbonBadge) View.VISIBLE else View.GONE
+            // 4. Achievement / Verified Rosette Badge
+            binding.ivRibbonBadge.visibility = if (item.isVerified) View.VISIBLE else View.GONE
 
-            // 4. Distance
+            // 5. Online Status (Badge Pill & Dot next to name)
+            val showOnline = item.isOnline && !item.isLocked
+            binding.layoutOnlineBadge.visibility = if (showOnline) View.VISIBLE else View.GONE
+            binding.dotOnlineNextToName.visibility = if (showOnline) View.VISIBLE else View.GONE
+
+            // 6. SuperLike Badge
+            binding.ivSuperLikeBadge.visibility = if (item.isSuperLike && !item.isLocked) View.VISIBLE else View.GONE
+
+            // 7. Walk Distance (e.g. "7 km away", "Nearby")
             if (!item.distance.isNullOrBlank()) {
                 binding.layoutDistance.visibility = View.VISIBLE
                 binding.tvDistance.text = item.distance
@@ -75,10 +84,12 @@ class ExploreProfileAdapter(
                 binding.layoutDistance.visibility = View.GONE
             }
 
-            // 5. Location
-            binding.tvLocation.text = item.location
+            // 8. Subtitle / Location
+            val subtitleText = item.subtitle?.takeIf { it.isNotBlank() } ?: item.location
+            binding.tvSubtitle.text = subtitleText
+            binding.tvSubtitle.visibility = if (subtitleText.isNotBlank()) View.VISIBLE else View.GONE
 
-            // 6. Click Handler
+            // 9. Click Handler
             binding.cardProfile.setOnClickListener {
                 onProfileClick(item)
             }
@@ -88,7 +99,7 @@ class ExploreProfileAdapter(
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<ExploreProfileItem>() {
             override fun areItemsTheSame(oldItem: ExploreProfileItem, newItem: ExploreProfileItem): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.id == newItem.id && oldItem.isLocked == newItem.isLocked
             }
 
             override fun areContentsTheSame(oldItem: ExploreProfileItem, newItem: ExploreProfileItem): Boolean {

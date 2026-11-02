@@ -3,6 +3,7 @@ package com.flirttime.feature.profile
 import com.flirttime.feature.auth.CoverPhotoDto
 import com.flirttime.feature.moments.MomentDto
 import com.flirttime.feature.quickmoments.MyQuickMomentsResponseData
+import com.google.gson.JsonElement
 import com.google.gson.annotations.SerializedName
 
 data class MyFullProfileData(
@@ -25,7 +26,12 @@ data class MyFullProfileData(
     val moments: List<MomentDto> = emptyList(),
     val audioIntro: AudioIntroDto? = null,
     val quickMoments: MyQuickMomentsResponseData? = null,
-    val moreAboutMe: MoreAboutMeResponseData? = null
+    val moreAboutMe: MoreAboutMeResponseData? = null,
+    val isSubscribed: Boolean = false,
+    /** Name shown on the Profile header: username first, then display name (iOS `headerName`). */
+    val headerName: String = "",
+    /** True when built from local session data because `users/profile` failed; lists must not be overwritten. */
+    val isOfflineFallback: Boolean = false
 )
 
 data class UpdateProfileRequest(
@@ -192,13 +198,50 @@ data class MyProfileDetailsDto(
     @SerializedName("about") val about: String? = null,
     @SerializedName("city") val city: String? = null,
     @SerializedName("state") val state: String? = null,
+    /** Either `{ "city": "...", "state": "..." }` or a plain string, exactly like iOS `MyProfileInfo`. */
+    @SerializedName("location") val location: JsonElement? = null,
     @SerializedName("profilePhoto") val profilePhoto: UserPhotoDto? = null,
     @SerializedName("coverPhoto") val coverPhoto: CoverPhotoDto? = null,
     @SerializedName("photos") val photos: List<UserPhotoDto>? = null,
     @SerializedName("isVerified") val isVerified: Boolean? = null,
     @SerializedName("completionPercentage") val completionPercentage: Int? = null,
     @SerializedName("isSubscribed") val isSubscribed: Boolean? = null
-)
+) {
+    /** "City, State", skipping whichever part is missing (iOS `MyProfileInfo.locationText`). */
+    val locationText: String
+        get() {
+            var resolvedCity: String? = city
+            var resolvedState: String? = state
+            val loc = location
+            if (loc != null && loc.isJsonObject) {
+                val obj = loc.asJsonObject
+                resolvedCity = obj.get("city")?.takeIf { it.isJsonPrimitive }?.asString
+                resolvedState = obj.get("state")?.takeIf { it.isJsonPrimitive }?.asString
+            } else if (loc != null && loc.isJsonPrimitive) {
+                resolvedCity = loc.asString
+                resolvedState = null
+            }
+            return listOf(resolvedCity, resolvedState)
+                .mapNotNull { it?.trim()?.takeIf(String::isNotEmpty) }
+                .joinToString(", ")
+        }
+
+    /** Gallery photos, primary first, then by display order (iOS `photoURLs`). */
+    val orderedPhotos: List<UserPhotoDto>
+        get() = photos.orEmpty()
+            .withIndex()
+            .sortedWith(
+                compareByDescending<IndexedValue<UserPhotoDto>> { it.value.isPrimary == true }
+                    .thenBy { it.value.displayOrder ?: it.index }
+            )
+            .map { it.value }
+            .filter { it.effectiveUrl.isNotBlank() }
+
+    /** Main gallery photo, falling back to `profilePhoto` (iOS `avatarURL`). */
+    val avatarUrl: String?
+        get() = orderedPhotos.firstOrNull()?.effectiveUrl
+            ?: profilePhoto?.effectiveUrl?.takeIf { it.isNotBlank() }
+}
 
 // Presigned Media URL (POST /api/v1/media/presigned-url)
 data class PresignedUrlResponseData(

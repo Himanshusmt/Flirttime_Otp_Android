@@ -101,6 +101,7 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         dialog.window?.let { window ->
             WindowCompat.setDecorFitsSystemWindows(window, false)
+            @Suppress("DEPRECATION")
             window.navigationBarColor = Color.TRANSPARENT
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 window.isNavigationBarContrastEnforced = false
@@ -190,7 +191,7 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 minAge = kotlin.math.round(values[0]).toInt()
                 maxAge = kotlin.math.round(values[1]).toInt()
                 val maxLabel = if (maxAge >= 70) "70+" else maxAge.toString()
-                binding.tvAgeRangeValue.text = "$minAge – $maxLabel"
+                binding.tvAgeRangeValue.text = "$minAge ΓÇô $maxLabel"
                 if (fromUser) requestDynamicCountUpdate()
             }
         }
@@ -226,7 +227,7 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private fun loadInterestsCatalog() {
         viewLifecycleOwner.lifecycleScope.launch {
             mainRepository.getInterestsCatalog().collect { resource ->
-                if (resource is Resource.Success && resource.data != null) {
+                if (resource is Resource.Success) {
                     availableInterests = resource.data
                     populateInterestsChips(availableInterests)
                 }
@@ -278,7 +279,7 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private fun loadSavedFiltersFromBackend() {
         viewLifecycleOwner.lifecycleScope.launch {
             matchesRepository.getDiscoveryFilters().collect { resource ->
-                if (resource is Resource.Success && resource.data != null) {
+                if (resource is Resource.Success) {
                     applyFiltersToUi(resource.data)
                 }
             }
@@ -289,9 +290,9 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
         // 1. Gender
         val genders = filters.genders
         val mappedGender = when {
-            genders?.contains("female") == true -> GenderFilter.WOMEN
-            genders?.contains("male") == true -> GenderFilter.MEN
-            genders?.contains("non_binary") == true -> GenderFilter.NON_BINARY
+            genders?.any { it.equals("women", true) || it.equals("woman", true) || it.equals("female", true) } == true -> GenderFilter.WOMEN
+            genders?.any { it.equals("men", true) || it.equals("man", true) || it.equals("male", true) } == true -> GenderFilter.MEN
+            genders?.any { it.equals("non_binary", true) || it.equals("non-binary", true) } == true -> GenderFilter.NON_BINARY
             else -> GenderFilter.EVERYONE
         }
         updateGenderUi(mappedGender)
@@ -301,7 +302,7 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
         maxAge = filters.ageMax ?: 70
         binding.sliderAgeRange.setValues(minAge.toFloat().coerceAtLeast(18f), maxAge.toFloat().coerceAtMost(70f))
         val maxLabel = if (maxAge >= 70) "70+" else maxAge.toString()
-        binding.tvAgeRangeValue.text = "$minAge – $maxLabel"
+        binding.tvAgeRangeValue.text = "$minAge ΓÇô $maxLabel"
 
         // 3. Distance
         distanceKm = filters.maxDistanceKm ?: 100
@@ -351,8 +352,8 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     private fun buildCurrentFiltersDto(): DiscoveryFiltersDto {
         val gendersList = when (selectedGender) {
-            GenderFilter.WOMEN -> listOf("female")
-            GenderFilter.MEN -> listOf("male")
+            GenderFilter.WOMEN -> listOf("women")
+            GenderFilter.MEN -> listOf("men")
             GenderFilter.NON_BINARY -> listOf("non_binary")
             GenderFilter.EVERYONE -> null
         }
@@ -386,7 +387,7 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
             matchesRepository.searchDiscoveryCards(page = 1, limit = 1, countOnly = true, filters = filters)
                 .collect { resource ->
                     if (_binding == null) return@collect
-                    if (resource is Resource.Success && resource.data != null) {
+                    if (resource is Resource.Success) {
                         val count = resource.data.pagination?.totalCount ?: 0
                         binding.btnShowMatches.text = if (count > 0) "Show $count matches" else "Show Matches"
                     }
@@ -399,7 +400,7 @@ class FiltersBottomSheetDialogFragment : BottomSheetDialogFragment() {
         minAge = 18
         maxAge = 70
         binding.sliderAgeRange.setValues(18f, 70f)
-        binding.tvAgeRangeValue.text = "18 – 70+"
+        binding.tvAgeRangeValue.text = "18 ΓÇô 70+"
 
         distanceKm = 100
         binding.sliderDistance.value = 100f

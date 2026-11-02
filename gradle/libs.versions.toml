@@ -23,6 +23,7 @@ fresco = "3.6.0"
 imageCropper = "4.7.0"
 swiperefreshlayout = "1.1.0"
 socketio = "2.1.1"
+billing = "7.1.1"
 
 [libraries]
 android-image-cropper = { group = "com.vanniktech", name = "android-image-cropper", version.ref = "imageCropper" }
@@ -36,6 +37,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
+play-billing = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
 shimmer = { group = "com.facebook.shimmer", name = "shimmer", version = "0.5.0" }
 
 # Navigation Component

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS PremiumPlanTile: "1 / month / ₹499 / ₹116/wk" with ribbon + selection check. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="112dp"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <LinearLayout
+        android:id="@+id/cardPlan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_premium_tile_unselected"
+        android:elevation="3dp"
+        android:orientation="vertical"
+        android:paddingStart="10dp"
+        android:paddingTop="22dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="14dp">
+
+        <TextView
+            android:id="@+id/tvPlanCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredokabold"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="#252525"
+            android:textSize="34sp" />
+
+        <TextView
+            android:id="@+id/tvPlanUnit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/fredokamedium"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="#646464"
+            android:textSize="15sp" />
+
+        <View
+            android:id="@+id/planDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="#E3E5E5" />
+
+        <TextView
+            android:id="@+id/tvPlanPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/fredokabold"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="#252525"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/tvPlanWeekly"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/fredokaregular"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="#757575"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/ivPlanCheck"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_premium_white_circle"
+        android:elevation="4dp"
+        android:importantForAccessibility="no"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_sf_checkmark_circle_fill"
+        android:visibility="gone"
+        app:tint="#D92B2B" />
+
+    <TextView
+        android:id="@+id/tvPlanRibbon"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="1dp"
+        android:elevation="4dp"
+        android:fontFamily="@font/fredokabold"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:paddingHorizontal="10dp"
+        android:textColor="#FFFFFF"
+        android:textSize="11sp"
+        android:visibility="gone" />
+</FrameLayout>

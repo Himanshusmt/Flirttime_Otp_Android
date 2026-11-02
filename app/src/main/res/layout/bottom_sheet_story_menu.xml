@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_rounded"
+    android:orientation="vertical"
+    android:paddingTop="12dp"
+    android:paddingBottom="24dp">
+
+    <!-- Top Drag Handle -->
+    <View
+        android:layout_width="44dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_sheet_drag_handle" />
+
+    <!-- ============================================================== -->
+    <!-- CASE A: OWN STORY MENU (Delete + Cancel side-by-side)          -->
+    <!-- ============================================================== -->
+    <LinearLayout
+        android:id="@+id/layoutOwnStoryMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:visibility="gone">
+
+        <!-- Destructive Action: Delete (Outline Red) -->
+        <LinearLayout
+            android:id="@+id/btnMenuDeleteStory"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_story_menu_discard"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="Delete"
+                android:src="@drawable/ic_story_trash_outline" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/fredokasemibold"
+                android:text="Delete"
+                android:textColor="#E02847"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <!-- Safe Dismiss: Cancel (Solid Red / Filled Pill) -->
+        <LinearLayout
+            android:id="@+id/btnMenuCancelOwn"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_story_menu_share"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredokasemibold"
+                android:text="Cancel"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- ============================================================== -->
+    <!-- CASE B: OTHER USER STORY MENU (Primary: View Profile,           -->
+    <!--         Secondary: Report + Cancel)                            -->
+    <!-- ============================================================== -->
+    <LinearLayout
+        android:id="@+id/layoutOtherStoryMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:visibility="gone">
+
+        <!-- Primary CTA: View Profile (Filled Brand Red) -->
+        <LinearLayout
+            android:id="@+id/btnMenuViewProfile"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_story_menu_share"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="Profile"
+                android:src="@drawable/ic_settings_person"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/tvMenuViewProfileLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/fredokasemibold"
+                android:text="View Profile"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <!-- Secondary Row: Report (Warning Outline) + Cancel (Neutral Outline) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Secondary Warning: Report Moment -->
+            <LinearLayout
+                android:id="@+id/btnMenuReport"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_story_menu_discard"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="Report"
+                    android:src="@drawable/ic_report_flag_red"
+                    app:tint="#E02847" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:text="Report"
+                    android:textColor="#E02847"
+                    android:textSize="15.5sp" />
+
+            </LinearLayout>
+
+            <!-- Secondary Neutral: Cancel -->
+            <LinearLayout
+                android:id="@+id/btnMenuCancelOther"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_story_menu_neutral"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredokasemibold"
+                    android:text="Cancel"
+                    android:textColor="#4A5568"
+                    android:textSize="15.5sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,10 +1,17 @@
 package com.flirttime.feature.main.matches
 
+import android.util.Log
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flirttime.Resource
+import com.flirttime.core.database.SessionManager
 import com.flirttime.feature.main.matches.interest.InterestPersonItem
 import com.flirttime.feature.profile.DiscoveryActionResponseData
+import com.flirttime.feature.quickmoments.QuickMomentCardItem
+import com.flirttime.feature.quickmoments.QuickMomentSlideDto
+import com.flirttime.feature.quickmoments.QuickMomentTrayItemDto
 import com.flirttime.feature.quickmoments.QuickMomentsTrayResponseData
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +19,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -32,7 +40,8 @@ data class DiscoveryDeckState(
 )
 
 class MatchesViewModel(
-    private val matchesRepository: MatchesRepository
+    private val matchesRepository: MatchesRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     // 1. Candidate profiles for Swipe Cards (People Tab)
@@ -55,6 +64,13 @@ class MatchesViewModel(
     private val _quickMomentsTrayState = MutableStateFlow<Resource<QuickMomentsTrayResponseData>?>(null)
     val quickMomentsTrayState: StateFlow<Resource<QuickMomentsTrayResponseData>?> = _quickMomentsTrayState.asStateFlow()
 
+    // 4b. Quick Moments Cards for the Quick Moments Tab (Add New + Stories)
+    private val _quickMomentsCardsState = MutableStateFlow<Resource<List<QuickMomentCardItem>>>(Resource.Loading)
+    val quickMomentsCardsState: StateFlow<Resource<List<QuickMomentCardItem>>> = _quickMomentsCardsState.asStateFlow()
+
+    private val _quickMomentCreationState = MutableSharedFlow<Resource<QuickMomentSlideDto>>()
+    val quickMomentCreationState: SharedFlow<Resource<QuickMomentSlideDto>> = _quickMomentCreationState.asSharedFlow()
+
     // 5. Header Quick Info States
     private val _coinBalanceState = MutableStateFlow<Int>(40)
     val coinBalanceState: StateFlow<Int> = _coinBalanceState.asStateFlow()
@@ -76,6 +92,7 @@ class MatchesViewModel(
     init {
         loadInitialPeople()
         loadQuickMomentsTray()
+        loadQuickMomentsCards()
         loadHeaderInfo()
         loadSavedFilters()
     }
@@ -83,19 +100,20 @@ class MatchesViewModel(
     private fun loadSavedFilters() {
         viewModelScope.launch {
             matchesRepository.getDiscoveryFilters().collect { resource ->
-                if (resource is Resource.Success && resource.data != null) {
+                if (resource is Resource.Success) {
                     val saved = resource.data
+                    val sanitized = saved.copy(genders = saved.normalizedGenders)
                     // Only apply if any filter value is actually set
-                    val hasFilter = !saved.genders.isNullOrEmpty() ||
-                        saved.ageMin != null ||
-                        saved.ageMax != null ||
-                        saved.maxDistanceKm != null ||
-                        !saved.lookingFor.isNullOrEmpty() ||
-                        !saved.interestIds.isNullOrEmpty() ||
-                        saved.verifiedOnly == true ||
-                        saved.onlineOnly == true
+                    val hasFilter = !sanitized.genders.isNullOrEmpty() ||
+                        sanitized.ageMin != null ||
+                        sanitized.ageMax != null ||
+                        sanitized.maxDistanceKm != null ||
+                        !sanitized.lookingFor.isNullOrEmpty() ||
+                        !sanitized.interestIds.isNullOrEmpty() ||
+                        sanitized.verifiedOnly == true ||
+                        sanitized.onlineOnly == true
                     if (hasFilter) {
-                        _activeFilters.value = saved
+                        _activeFilters.value = sanitized
                     }
                 }
             }
@@ -130,6 +148,212 @@ class MatchesViewModel(
         viewModelScope.launch {
             matchesRepository.getQuickMomentsTray().collect { resource ->
                 _quickMomentsTrayState.value = resource
+            }
+        }
+    }
+
+    /**
+     * Loads Quick Moments cards deck directly via GET /api/v1/quick-moments/tray
+     * Formats into 3-column grid (Add new + My Story + other active user stories).
+     * Pure backend API data with zero mock/dummy data.
+     */
+    fun loadQuickMomentsCards(forceRefresh: Boolean = false) {
+        viewModelScope.launch {
+            _quickMomentsCardsState.value = Resource.Loading
+
+            matchesRepository.getQuickMomentsTray().collect { trayRes ->
+                when (trayRes) {
+                    is Resource.Success -> {
+                        _quickMomentsTrayState.value = trayRes
+                        val trayData = trayRes.data
+                        val myStatus = trayData.myStatus
+                        val otherUsers = trayData.otherUsers
+
+                        val cards = mutableListOf<QuickMomentCardItem>()
+
+                        // 1. Add New Card (Always first)
+                        val profilePhoto = myStatus?.avatar?.ifBlank { null }
+                            ?: myStatus?.user?.profilePhoto
+                            ?: sessionManager.getProfileImageUri().ifBlank { null }
+                        cards.add(QuickMomentCardItem.AddNewCard(userProfilePhoto = profilePhoto))
+
+                        // 2. User's own active stories from myStatus
+                        val ownStories = myStatus?.stories.orEmpty()
+                        ownStories.forEach { slide ->
+                            cards.add(
+                                QuickMomentCardItem.StoryCard(
+                                    storyId = slide.id ?: "own_${System.currentTimeMillis()}",
+                                    userId = sessionManager.getUserId(),
+                                    userName = "My story",
+                                    userAvatar = profilePhoto,
+                                    relativeAge = slide.relativeAge ?: myStatus?.latestTimeAgo ?: "1m",
+                                    textContent = slide.effectiveText,
+                                    mediaUrl = slide.displayImageUrl,
+                                    backgroundColor = slide.backgroundColor,
+                                    isOwnStory = true,
+                                    hasUnread = false,
+                                    viewCount = slide.effectiveViewCount,
+                                    originalSlide = slide
+                                )
+                            )
+                        }
+                        // 3. Other users' active stories from tray (otherUsers)
+                        val otherList = otherUsers.orEmpty()
+                        otherList.forEach { otherUser ->
+                            val userStories = otherUser.stories.orEmpty()
+                            val userName = otherUser.effectiveName
+                            val userAvatar = otherUser.effectiveAvatar
+                            val userTimeAgo = otherUser.effectiveTimeAgo
+                            val userId = otherUser.effectiveUserId
+                            val momentId = otherUser.effectiveId
+
+                            if (userStories.isNotEmpty()) {
+                                userStories.forEach { slide ->
+                                    cards.add(
+                                        QuickMomentCardItem.StoryCard(
+                                            storyId = slide.id ?: momentId,
+                                            userId = userId,
+                                            userName = userName,
+                                            userAvatar = userAvatar,
+                                            relativeAge = slide.relativeAge ?: userTimeAgo,
+                                            textContent = slide.effectiveText ?: otherUser.effectiveText,
+                                            mediaUrl = slide.displayImageUrl ?: otherUser.effectiveMediaUrl,
+                                            backgroundColor = slide.backgroundColor ?: otherUser.effectiveBackground,
+                                            isOwnStory = false,
+                                            hasUnread = otherUser.hasUnread == true,
+                                            viewCount = slide.effectiveViewCount,
+                                            originalSlide = slide
+                                        )
+                                    )
+                                }
+                            } else {
+                                cards.add(
+                                    QuickMomentCardItem.StoryCard(
+                                        storyId = momentId,
+                                        userId = userId,
+                                        userName = userName,
+                                        userAvatar = userAvatar,
+                                        relativeAge = userTimeAgo,
+                                        textContent = otherUser.effectiveText,
+                                        mediaUrl = otherUser.effectiveMediaUrl,
+                                        backgroundColor = otherUser.effectiveBackground,
+                                        isOwnStory = false,
+                                        hasUnread = otherUser.hasUnread == true,
+                                        viewCount = 0
+                                    )
+                                )
+                            }
+                        }
+
+                        // 4. Legacy tray items fallback (if otherUsers was empty)
+                        if (otherList.isEmpty()) {
+                            trayData.getEffectiveItems().forEach { tray ->
+                                val userStories = tray.stories.orEmpty()
+                                val userName = tray.effectiveName
+                                val userAvatar = tray.effectiveAvatar
+                                val userTimeAgo = tray.effectiveTimeAgo
+                                val userId = tray.effectiveId
+
+                                if (userStories.isNotEmpty()) {
+                                    userStories.forEach { slide ->
+                                        cards.add(
+                                            QuickMomentCardItem.StoryCard(
+                                                storyId = slide.id ?: userId,
+                                                userId = userId,
+                                                userName = userName,
+                                                userAvatar = userAvatar,
+                                                relativeAge = slide.relativeAge ?: userTimeAgo,
+                                                textContent = slide.effectiveText ?: tray.effectiveText,
+                                                mediaUrl = slide.displayImageUrl ?: tray.effectiveMediaUrl,
+                                                backgroundColor = slide.backgroundColor ?: tray.effectiveBackground,
+                                                isOwnStory = false,
+                                                hasUnread = tray.hasUnreadStories,
+                                                viewCount = slide.viewsCount,
+                                                originalSlide = slide
+                                            )
+                                        )
+                                    }
+                                } else {
+                                    cards.add(
+                                        QuickMomentCardItem.StoryCard(
+                                            storyId = userId,
+                                            userId = userId,
+                                            userName = userName,
+                                            userAvatar = userAvatar,
+                                            relativeAge = userTimeAgo,
+                                            textContent = tray.effectiveText,
+                                            mediaUrl = tray.effectiveMediaUrl,
+                                            backgroundColor = tray.effectiveBackground,
+                                            isOwnStory = false,
+                                            hasUnread = tray.hasUnreadStories,
+                                            viewCount = 0
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                        Log.d("MatchesVM", "Loaded ${cards.size} Quick Moments cards from tray API")
+                        _quickMomentsCardsState.value = Resource.Success(cards)
+                    }
+                    is Resource.Error -> {
+                        Log.e("MatchesVM", "Failed to load tray: ${trayRes.message}")
+                        _quickMomentsCardsState.value = Resource.Error(trayRes.message)
+                    }
+                    is Resource.Loading -> {
+                        _quickMomentsCardsState.value = Resource.Loading
+                    }
+                }
+            }
+        }
+    }
+
+    fun createTextQuickMoment(text: String, backgroundColor: String = "#EA3355") {
+        viewModelScope.launch {
+            _quickMomentCreationState.emit(Resource.Loading)
+            matchesRepository.createTextQuickMoment(text, backgroundColor).collect { res ->
+                _quickMomentCreationState.emit(res)
+                if (res is Resource.Success) {
+                    loadQuickMomentsCards(forceRefresh = true)
+                }
+            }
+        }
+    }
+
+    fun createImageQuickMoment(context: Context, imageUri: Uri, caption: String? = null) {
+        viewModelScope.launch {
+            _quickMomentCreationState.emit(Resource.Loading)
+            matchesRepository.createImageQuickMoment(context, imageUri, caption).collect { res ->
+                _quickMomentCreationState.emit(res)
+                if (res is Resource.Success) {
+                    loadQuickMomentsCards(forceRefresh = true)
+                }
+            }
+        }
+    }
+
+    fun deleteQuickMoment(momentId: String, onDeleted: () -> Unit = {}) {
+        viewModelScope.launch {
+            matchesRepository.deleteQuickMoment(momentId).collect { res ->
+                if (res is Resource.Success) {
+                    loadQuickMomentsCards(forceRefresh = true)
+                    onDeleted()
+                }
+            }
+        }
+    }
+
+    fun reactToQuickMoment(momentId: String, reaction: String) {
+        viewModelScope.launch {
+            matchesRepository.reactToQuickMoment(momentId, reaction).collect()
+        }
+    }
+
+    fun replyToQuickMoment(momentId: String, message: String, onSent: () -> Unit = {}) {
+        viewModelScope.launch {
+            matchesRepository.replyToQuickMoment(momentId, message).collect { res ->
+                if (res is Resource.Success) {
+                    onSent()
+                }
             }
         }
     }
@@ -357,9 +581,10 @@ class MatchesViewModel(
      * Saves and applies discovery filter preferences.
      */
     fun applyFilters(filters: DiscoveryFiltersDto) {
-        _activeFilters.value = filters
+        val sanitized = filters.copy(genders = filters.normalizedGenders)
+        _activeFilters.value = sanitized
         viewModelScope.launch {
-            matchesRepository.saveDiscoveryFilters(filters).collect { }
+            matchesRepository.saveDiscoveryFilters(sanitized).collect { }
         }
         loadInitialPeople(forceRefresh = true)
     }

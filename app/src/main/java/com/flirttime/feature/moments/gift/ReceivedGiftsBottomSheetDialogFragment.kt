@@ -11,8 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.flirttime.Resource
 import com.flirttime.databinding.BottomSheetReceivedGiftsBinding
-import com.flirttime.feature.moments.GiftSenderDto
-import com.flirttime.feature.moments.ReceivedGiftDto
 import com.flirttime.feature.moments.MomentsRepository
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -111,14 +109,13 @@ class ReceivedGiftsBottomSheetDialogFragment : BottomSheetDialogFragment() {
                                 binding.rvReceivedGifts.visibility = View.VISIBLE
                                 binding.layoutEmpty.visibility = View.GONE
                             } else {
-                                // Provide reference preview gift matching media_1792671367529_62a5d75d.png
-                                showPreviewGift()
+                                showEmptyState()
                             }
                         }
                         is Resource.Error -> {
                             binding.progressBar.visibility = View.GONE
                             if (adapter.itemCount == 0) {
-                                showPreviewGift()
+                                showEmptyState()
                             }
                         }
                     }
@@ -132,27 +129,10 @@ class ReceivedGiftsBottomSheetDialogFragment : BottomSheetDialogFragment() {
         binding.tvGiftsSummary.text = "$giftsCount $giftLabel · $coinsCount $coinLabel"
     }
 
-    /**
-     * Fallback preview matching media_1792671367529_62a5d75d.png
-     */
-    private fun showPreviewGift() {
-        val preview = listOf(
-            ReceivedGiftDto(
-                id = "preview_gift_1",
-                giftName = "Rose",
-                coins = 1,
-                icon = "🌹",
-                sender = GiftSenderDto(
-                    name = "hdhdhd",
-                    avatarUrl = null
-                ),
-                timeAgo = "1d"
-            )
-        )
-        updateSummaryHeader(1, 1)
-        adapter.submitList(preview)
-        binding.rvReceivedGifts.visibility = View.VISIBLE
-        binding.layoutEmpty.visibility = View.GONE
+    private fun showEmptyState() {
+        binding.tvGiftsSummary.text = ""
+        binding.rvReceivedGifts.visibility = View.GONE
+        binding.layoutEmpty.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {

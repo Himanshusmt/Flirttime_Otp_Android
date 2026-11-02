@@ -1,11 +1,17 @@
 package com.flirttime.feature.main.matches
 
+import android.content.Context
+import android.net.Uri
 import com.flirttime.Resource
 import com.flirttime.feature.profile.DiscoveryActionResponseData
 import com.flirttime.feature.profile.DiscoveryFilterOptionsData
 import com.flirttime.feature.profile.DiscoveryPeopleResponseData
 import com.flirttime.feature.profile.InterestsCatalogResponseData
+import com.flirttime.feature.quickmoments.MyQuickMomentsResponseData
+import com.flirttime.feature.quickmoments.QuickMomentSlideDto
 import com.flirttime.feature.quickmoments.QuickMomentsTrayResponseData
+import com.flirttime.feature.quickmoments.QuickMomentViewersResponseData
+import com.flirttime.feature.quickmoments.QuickMomentReactionsResponseData
 import kotlinx.coroutines.flow.Flow
 
 interface MatchesRepository {
@@ -37,4 +43,13 @@ interface MatchesRepository {
     // 7. Interests & Quick Moments
     fun getDiscoveryInterests(): Flow<Resource<InterestsCatalogResponseData>>
     fun getQuickMomentsTray(): Flow<Resource<QuickMomentsTrayResponseData>>
+    fun getMyQuickMoments(): Flow<Resource<MyQuickMomentsResponseData>>
+    fun createTextQuickMoment(text: String, backgroundColor: String = "#EA3355"): Flow<Resource<QuickMomentSlideDto>>
+    fun createImageQuickMoment(context: Context, imageUri: Uri, caption: String? = null): Flow<Resource<QuickMomentSlideDto>>
+    fun deleteQuickMoment(momentId: String): Flow<Resource<Unit>>
+    fun reactToQuickMoment(momentId: String, reaction: String): Flow<Resource<Unit>>
+    fun replyToQuickMoment(momentId: String, message: String): Flow<Resource<Unit>>
+    fun markQuickMomentViewed(momentId: String): Flow<Resource<Unit>>
+    fun getQuickMomentViewers(momentId: String, page: Int = 1, limit: Int = 30): Flow<Resource<QuickMomentViewersResponseData>>
+    fun getQuickMomentReactions(momentId: String, page: Int = 1, limit: Int = 50): Flow<Resource<QuickMomentReactionsResponseData>>
 }

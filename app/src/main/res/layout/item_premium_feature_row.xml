@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS PremiumComparisonCard row: bubble icon · label · lock (Free) · check (Premium). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/bg_premium_icon_bubble">
+
+        <ImageView
+            android:id="@+id/ivFeatureIcon"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            app:tint="#D92B2B" />
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/ivFeatureRemote"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            fresco:actualImageScaleType="fitCenter" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvFeatureText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/fredokamedium"
+        android:textColor="#252525"
+        android:textSize="15sp" />
+
+    <ImageView
+        android:layout_width="44dp"
+        android:layout_height="14dp"
+        android:layout_marginStart="8dp"
+        android:importantForAccessibility="no"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_sf_lock_fill"
+        app:tint="#C6C6C6" />
+
+    <ImageView
+        android:layout_width="66dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="8dp"
+        android:importantForAccessibility="no"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_sf_checkmark_circle_fill"
+        app:tint="#D92B2B" />
+</LinearLayout>

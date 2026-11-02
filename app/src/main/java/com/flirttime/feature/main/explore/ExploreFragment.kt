@@ -1,17 +1,13 @@
 package com.flirttime.feature.main.explore
 
-import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -22,8 +18,14 @@ import com.flirttime.R
 import com.flirttime.Resource
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
+import com.flirttime.feature.main.profile.UserProfileViewModel
+import com.flirttime.feature.subscription.PremiumActivity
+import com.flirttime.feature.subscription.PremiumStatus
+import com.flirttime.feature.subscription.SubscriptionPopUp
+import com.flirttime.feature.subscription.SubscriptionPopUpType
 import com.flirttime.databinding.FragmentExploreBinding
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 enum class ExploreTab {
@@ -39,8 +41,22 @@ class ExploreFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ExploreViewModel by viewModel()
+    private val userProfileViewModel: UserProfileViewModel by inject()
     private var currentTab: ExploreTab = ExploreTab.YOU_LIKED
     private lateinit var profileAdapter: ExploreProfileAdapter
+    private var shouldResetScrollToTop: Boolean = true
+
+    private fun resetScrollToTop() {
+        if (_binding == null) return
+        binding.rvExploreProfiles.stopScroll()
+        val layoutManager = binding.rvExploreProfiles.layoutManager as? GridLayoutManager
+        layoutManager?.scrollToPositionWithOffset(0, 0)
+        binding.rvExploreProfiles.post {
+            if (_binding != null) {
+                (binding.rvExploreProfiles.layoutManager as? GridLayoutManager)?.scrollToPositionWithOffset(0, 0)
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,9 +73,15 @@ class ExploreFragment : Fragment() {
         setupTabs()
         setupGrid()
         setupPullToRefresh()
+        setupUpsellBanner()
         setupEmptyStateRefresh()
         observeViewModel()
         updateTabSelection(ExploreTab.YOU_LIKED)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadCounts()
     }
 
     private fun setupHeaderActions() {
@@ -69,21 +91,20 @@ class ExploreFragment : Fragment() {
     }
 
     private fun setupTabs() {
-        binding.tabLikes.setOnClickListener {
-            updateTabSelection(ExploreTab.LIKES)
-        }
+        binding.segmentHeader.onSelect = { tab -> updateTabSelection(tab) }
+    }
 
-        binding.tabYouLiked.setOnClickListener {
-            updateTabSelection(ExploreTab.YOU_LIKED)
+    private fun setupUpsellBanner() {
+        // iOS `page.onUpsellTap` → openPremium(source: tab == .compliments ? .compliment : .superLike)
+        val openPremium = {
+            PremiumActivity.start(
+                requireContext(),
+                if (currentTab == ExploreTab.COMPLIMENTS) SubscriptionPopUpType.COMPLIMENT
+                else SubscriptionPopUpType.SUPER_LIKE
+            )
         }
-
-        binding.tabMatches.setOnClickListener {
-            updateTabSelection(ExploreTab.MATCHES)
-        }
-
-        binding.tabCompliments.setOnClickListener {
-            updateTabSelection(ExploreTab.COMPLIMENTS)
-        }
+        binding.layoutUpsellBanner.setOnClickListener { openPremium() }
+        binding.btnUpsellUnlock.setOnClickListener { openPremium() }
     }
 
     private fun setupPullToRefresh() {
@@ -91,18 +112,43 @@ class ExploreFragment : Fragment() {
             ContextCompat.getColor(requireContext(), R.color.brand_red)
         )
         binding.swipeRefreshExplore.setOnRefreshListener {
+            shouldResetScrollToTop = true
             viewModel.refreshCurrentTab()
         }
     }
 
     private fun setupEmptyStateRefresh() {
         binding.btnRefreshExplore.setOnClickListener {
+            shouldResetScrollToTop = true
             viewModel.refreshCurrentTab()
         }
     }
 
     private fun setupGrid() {
         profileAdapter = ExploreProfileAdapter { profile ->
+            if (profile.isLocked) {
+                // iOS: likes → .superLike popup, compliments → .chat popup (skipped for Premium members).
+                if (!PremiumStatus.isPremium(userProfileViewModel)) {
+                    SubscriptionPopUp.show(
+                        requireContext(),
+                        if (currentTab == ExploreTab.COMPLIMENTS) SubscriptionPopUpType.CHAT
+                        else SubscriptionPopUpType.SUPER_LIKE
+                    )
+                }
+                return@ExploreProfileAdapter
+            }
+
+            if (currentTab == ExploreTab.COMPLIMENTS) {
+                viewModel.markRead(profile)
+            }
+
+            val seededMyAction = when {
+                currentTab == ExploreTab.YOU_LIKED -> if (profile.isSuperLike) "super_like" else "like"
+                profile.isSuperLike -> "super_like"
+                else -> null
+            }
+            val isMatchedUser = (currentTab == ExploreTab.MATCHES) || profile.isMatched
+
             AppNavigator.navigateTo(
                 context = requireContext(),
                 destination = Destination.UserProfile(
@@ -110,7 +156,10 @@ class ExploreFragment : Fragment() {
                     username = profile.username,
                     age = profile.age,
                     profilePhotoUrl = profile.imageUrl,
-                    city = profile.location
+                    coverPhotoUrl = profile.coverUrl,
+                    city = profile.location,
+                    isMatched = isMatchedUser,
+                    myAction = seededMyAction
                 )
             )
         }
@@ -119,6 +168,7 @@ class ExploreFragment : Fragment() {
         binding.rvExploreProfiles.apply {
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = profileAdapter
+            itemAnimator = null // Smooth scrolling without item flicker
             addItemDecoration(object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(
                     outRect: Rect,
@@ -127,6 +177,7 @@ class ExploreFragment : Fragment() {
                     state: RecyclerView.State
                 ) {
                     val position = parent.getChildAdapterPosition(view)
+                    if (position == RecyclerView.NO_POSITION) return
                     val column = position % 2
 
                     if (column == 0) {
@@ -152,77 +203,40 @@ class ExploreFragment : Fragment() {
                 }
             })
         }
+
+        // Instant 0ms display on initial view setup if cached data exists
+        val initialCached = viewModel.getCachedItems(ExploreTab.YOU_LIKED)
+        if (!initialCached.isNullOrEmpty()) {
+            profileAdapter.submitList(initialCached) {
+                resetScrollToTop()
+            }
+            binding.progressBarExplore.visibility = View.GONE
+            binding.layoutEmptyExplore.visibility = View.GONE
+        }
     }
 
     fun updateTabSelection(tab: ExploreTab) {
         currentTab = tab
         viewModel.selectTab(tab)
 
-        val brandRed = ContextCompat.getColor(requireContext(), R.color.brand_red)
-        val mutedGray = Color.parseColor("#8E8E93")
-        val activeText = Color.parseColor("#1A1A1A")
-        val semiboldFont = ResourcesCompat.getFont(requireContext(), R.font.fredokasemibold)
-        val mediumFont = ResourcesCompat.getFont(requireContext(), R.font.fredokamedium)
+        // Always reset scroll to top when user selects or switches tab
+        shouldResetScrollToTop = true
+        resetScrollToTop()
 
-        // 1. Likes
-        val isLikes = tab == ExploreTab.LIKES
-        bindTabState(
-            iconView = binding.ivTabLikesIcon,
-            labelView = binding.tvTabLikesLabel,
-            indicatorView = binding.indicatorTabLikes,
-            isActive = isLikes,
-            activeIconColor = brandRed,
-            inactiveIconColor = mutedGray,
-            activeTextColor = activeText,
-            inactiveTextColor = mutedGray,
-            activeFont = semiboldFont,
-            inactiveFont = mediumFont
-        )
+        // Instantaneous 0ms switch if cached
+        val cached = viewModel.getCachedItems(tab)
+        if (!cached.isNullOrEmpty()) {
+            profileAdapter.submitList(cached) {
+                resetScrollToTop()
+                shouldResetScrollToTop = false
+            }
+            binding.progressBarExplore.visibility = View.GONE
+            binding.layoutEmptyExplore.visibility = View.GONE
+        } else {
+            resetScrollToTop()
+        }
 
-        // 2. You Liked
-        val isYouLiked = tab == ExploreTab.YOU_LIKED
-        bindTabState(
-            iconView = binding.ivTabYouLikedIcon,
-            labelView = binding.tvTabYouLikedLabel,
-            indicatorView = binding.indicatorTabYouLiked,
-            isActive = isYouLiked,
-            activeIconColor = null,
-            inactiveIconColor = mutedGray,
-            activeTextColor = activeText,
-            inactiveTextColor = mutedGray,
-            activeFont = semiboldFont,
-            inactiveFont = mediumFont
-        )
-
-        // 3. Matches
-        val isMatches = tab == ExploreTab.MATCHES
-        bindTabState(
-            iconView = binding.ivTabMatchesIcon,
-            labelView = binding.tvTabMatchesLabel,
-            indicatorView = binding.indicatorTabMatches,
-            isActive = isMatches,
-            activeIconColor = brandRed,
-            inactiveIconColor = mutedGray,
-            activeTextColor = activeText,
-            inactiveTextColor = mutedGray,
-            activeFont = semiboldFont,
-            inactiveFont = mediumFont
-        )
-
-        // 4. Compliments
-        val isCompliments = tab == ExploreTab.COMPLIMENTS
-        bindTabState(
-            iconView = binding.ivTabComplimentsIcon,
-            labelView = binding.tvTabComplimentsLabel,
-            indicatorView = binding.indicatorTabCompliments,
-            isActive = isCompliments,
-            activeIconColor = brandRed,
-            inactiveIconColor = mutedGray,
-            activeTextColor = activeText,
-            inactiveTextColor = mutedGray,
-            activeFont = semiboldFont,
-            inactiveFont = mediumFont
-        )
+        binding.segmentHeader.select(tab, animated = isResumed)
     }
 
     private fun observeViewModel() {
@@ -242,11 +256,16 @@ class ExploreFragment : Fragment() {
                                 binding.progressBarExplore.visibility = View.GONE
                                 binding.swipeRefreshExplore.isRefreshing = false
                                 val items = resource.data
-                                profileAdapter.submitList(items)
+                                profileAdapter.submitList(items) {
+                                    if (shouldResetScrollToTop) {
+                                        shouldResetScrollToTop = false
+                                        resetScrollToTop()
+                                    }
+                                }
 
                                 if (items.isEmpty()) {
                                     binding.layoutEmptyExplore.visibility = View.VISIBLE
-                                    updateEmptyStateText(currentTab)
+                                    updateEmptyStateUI(currentTab)
                                 } else {
                                     binding.layoutEmptyExplore.visibility = View.GONE
                                 }
@@ -256,7 +275,7 @@ class ExploreFragment : Fragment() {
                                 binding.swipeRefreshExplore.isRefreshing = false
                                 if (profileAdapter.itemCount == 0) {
                                     binding.layoutEmptyExplore.visibility = View.VISIBLE
-                                    updateEmptyStateText(currentTab)
+                                    updateEmptyStateUI(currentTab)
                                 }
                                 Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
                             }
@@ -274,77 +293,31 @@ class ExploreFragment : Fragment() {
                 // 3. Observe Tab Badge Counts
                 launch {
                     viewModel.badgeCounts.collect { badges ->
-                        updateBadgeView(binding.tvLikesBadge, badges[ExploreTab.LIKES] ?: 0)
-                        updateBadgeView(binding.tvYouLikedBadge, badges[ExploreTab.YOU_LIKED] ?: 0)
-                        updateBadgeView(binding.tvMatchesBadge, badges[ExploreTab.MATCHES] ?: 0)
-                        updateBadgeView(binding.tvComplimentsBadge, badges[ExploreTab.COMPLIMENTS] ?: 0)
+                        ExploreTab.entries.forEach { tab ->
+                            binding.segmentHeader.setCount(tab, badges[tab] ?: 0)
+                        }
+                    }
+                }
+
+                // 4. Observe Upsell Banner
+                launch {
+                    viewModel.upsellText.collect { text ->
+                        if (!text.isNullOrBlank()) {
+                            binding.layoutUpsellBanner.visibility = View.VISIBLE
+                            binding.tvUpsellMessage.text = text
+                        } else {
+                            binding.layoutUpsellBanner.visibility = View.GONE
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun updateEmptyStateText(tab: ExploreTab) {
-        when (tab) {
-            ExploreTab.LIKES -> {
-                binding.tvEmptyExploreEmoji.text = "❤️"
-                binding.tvEmptyExploreTitle.text = "No Likes Yet"
-                binding.tvEmptyExploreSubtitle.text = "People who swipe right on you will appear here"
-            }
-            ExploreTab.YOU_LIKED -> {
-                binding.tvEmptyExploreEmoji.text = "👉"
-                binding.tvEmptyExploreTitle.text = "No Profiles Liked"
-                binding.tvEmptyExploreSubtitle.text = "Profiles you swipe right on will be saved here"
-            }
-            ExploreTab.MATCHES -> {
-                binding.tvEmptyExploreEmoji.text = "🎉"
-                binding.tvEmptyExploreTitle.text = "No Matches Yet"
-                binding.tvEmptyExploreSubtitle.text = "When you and someone like each other, you'll match here"
-            }
-            ExploreTab.COMPLIMENTS -> {
-                binding.tvEmptyExploreEmoji.text = "💬"
-                binding.tvEmptyExploreTitle.text = "No Compliments Yet"
-                binding.tvEmptyExploreSubtitle.text = "Compliments you send or receive will be listed here"
-            }
-        }
-    }
-
-    private fun updateBadgeView(badgeView: TextView, count: Int) {
-        if (count > 0) {
-            badgeView.visibility = View.VISIBLE
-            badgeView.text = if (count > 99) "99+" else count.toString()
-        } else {
-            badgeView.visibility = View.GONE
-        }
-    }
-
-    private fun bindTabState(
-        iconView: ImageView,
-        labelView: TextView,
-        indicatorView: View,
-        isActive: Boolean,
-        activeIconColor: Int?,
-        inactiveIconColor: Int,
-        activeTextColor: Int,
-        inactiveTextColor: Int,
-        activeFont: android.graphics.Typeface?,
-        inactiveFont: android.graphics.Typeface?
-    ) {
-        if (isActive) {
-            if (activeIconColor != null) {
-                iconView.setColorFilter(activeIconColor)
-            } else {
-                iconView.clearColorFilter()
-            }
-            labelView.setTextColor(activeTextColor)
-            labelView.typeface = activeFont
-            indicatorView.visibility = View.VISIBLE
-        } else {
-            iconView.setColorFilter(inactiveIconColor)
-            labelView.setTextColor(inactiveTextColor)
-            labelView.typeface = inactiveFont
-            indicatorView.visibility = View.INVISIBLE
-        }
+    private fun updateEmptyStateUI(tab: ExploreTab) {
+        binding.ivEmptyExploreIcon.setImageResource(tab.iconRes)
+        binding.tvEmptyExploreTitle.text = tab.emptyTitle
+        binding.tvEmptyExploreSubtitle.text = tab.emptyMessage
     }
 
     private fun dpToPx(dp: Float): Int {

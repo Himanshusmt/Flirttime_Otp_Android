@@ -19,17 +19,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.flirttime.R
 import com.flirttime.Resource
 import com.flirttime.core.common.ShimmerHelper
+import com.flirttime.core.image.CropResult
+import com.flirttime.core.image.ImageCropperHelper
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
 import com.flirttime.core.ui.dialog.CommonConfirmationDialog
 import com.flirttime.databinding.DialogMatchCelebrationBinding
 import com.flirttime.databinding.FragmentMatchesBinding
-import com.flirttime.feature.main.matches.FiltersBottomSheetDialogFragment
 import com.flirttime.feature.main.matches.interest.InterestAdapter
 import com.flirttime.feature.main.matches.interest.InterestPeopleAdapter
 import com.flirttime.feature.main.matches.interest.MockInterestsProvider
+import com.flirttime.feature.main.profile.UserProfileViewModel
+import com.flirttime.feature.quickmoments.AddNewMomentBottomSheetDialogFragment
+import com.flirttime.feature.quickmoments.QuickMomentCardItem
+import com.flirttime.feature.quickmoments.QuickMomentsCardAdapter
+import com.flirttime.feature.quickmoments.QuickMomentsViewerDialogFragment
+import com.flirttime.feature.subscription.PremiumStatus
+import com.flirttime.feature.subscription.SubscriptionPopUp
+import com.flirttime.feature.subscription.SubscriptionPopUpType
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
@@ -38,9 +48,11 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
     private val binding get() = _binding!!
 
     private val viewModel: MatchesViewModel by viewModel()
+    private val userProfileViewModel: UserProfileViewModel by inject()
 
     private lateinit var interestAdapter: InterestAdapter
     private lateinit var interestPeopleAdapter: InterestPeopleAdapter
+    private lateinit var quickMomentsAdapter: QuickMomentsCardAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,6 +67,7 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
         super.onViewCreated(view, savedInstanceState)
         setupCardStackView()
         setupPillTabs()
+        setupQuickMomentsSection()
         setupInterestsSection()
         setupBottomActions()
         setupScreenSwipeArea()
@@ -71,6 +84,53 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
         binding.btnFilter.setOnClickListener {
             showFiltersBottomSheet()
         }
+    }
+
+    private fun setupQuickMomentsSection() {
+        quickMomentsAdapter = QuickMomentsCardAdapter(
+            onAddNewClick = {
+                showAddQuickMomentBottomSheet()
+            },
+            onStoryClick = { storyCard ->
+                val allStories = quickMomentsAdapter.currentList.filterIsInstance<QuickMomentCardItem.StoryCard>()
+                val initialIndex = allStories.indexOf(storyCard).coerceAtLeast(0)
+                val viewer = QuickMomentsViewerDialogFragment.newInstance(
+                    storyList = if (allStories.isNotEmpty()) allStories else listOf(storyCard),
+                    initialIndex = initialIndex
+                )
+                viewer.onDeleteClick = { storyId ->
+                    viewModel.deleteQuickMoment(storyId) {
+                        Toast.makeText(requireContext(), "Story deleted", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                viewer.onReactClick = { storyId, emoji ->
+                    viewModel.reactToQuickMoment(storyId, emoji)
+                }
+                viewer.onReplyClick = { storyId, message ->
+                    viewModel.replyToQuickMoment(storyId, message)
+                }
+                viewer.show(childFragmentManager, "StoryViewer")
+            }
+        )
+
+        binding.rvQuickMomentsCards.apply {
+            layoutManager = GridLayoutManager(requireContext(), 3)
+            adapter = quickMomentsAdapter
+            setHasFixedSize(true)
+        }
+
+        binding.swipeRefreshQuickMoments.setColorSchemeResources(R.color.brand_red)
+        binding.swipeRefreshQuickMoments.setOnRefreshListener {
+            viewModel.loadQuickMomentsCards(forceRefresh = true)
+        }
+    }
+
+        private fun showAddQuickMomentBottomSheet() {
+        val sheet = AddNewMomentBottomSheetDialogFragment.newInstance()
+        sheet.onMomentCreated = {
+            viewModel.loadQuickMomentsCards()
+        }
+        sheet.show(childFragmentManager, AddNewMomentBottomSheetDialogFragment.TAG)
     }
 
     private fun setupEmptyStateRefresh() {
@@ -243,16 +303,10 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
                         binding.cardStackView.restoreCard(errorEvent.profile)
                         when (errorEvent) {
                             is DiscoveryActionError.DailyLikesExceeded -> {
-                                CommonConfirmationDialog.show(
-                                    context = requireContext(),
-                                    title = "Daily Likes Limit Reached",
-                                    message = errorEvent.message,
-                                    positiveText = "Upgrade Now",
-                                    negativeText = "Maybe Later",
-                                    onPositiveClick = {
-                                        Toast.makeText(requireContext(), "Redirecting to Upgrade...", Toast.LENGTH_SHORT).show()
-                                    }
-                                )
+                                // iOS `.likeLimitReached` → showSubscriptionPopUp(.unlimitedSwipes)
+                                if (!PremiumStatus.isPremium(userProfileViewModel)) {
+                                    SubscriptionPopUp.show(requireContext(), SubscriptionPopUpType.UNLIMITED_SWIPES)
+                                }
                             }
                             is DiscoveryActionError.InsufficientCoins -> {
                                 CommonConfirmationDialog.show(
@@ -277,6 +331,42 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
                 launch {
                     viewModel.coinBalanceState.collectLatest { coins ->
                         binding.tvCoinCount.text = coins.toString()
+                    }
+                }
+
+                // 6. Observe Quick Moments Cards
+                launch {
+                    viewModel.quickMomentsCardsState.collectLatest { resource ->
+                        when (resource) {
+                            is Resource.Loading -> {
+                                binding.progressBarQuickMoments.visibility = if (quickMomentsAdapter.itemCount == 0 && !binding.swipeRefreshQuickMoments.isRefreshing) View.VISIBLE else View.GONE
+                            }
+                            is Resource.Success -> {
+                                binding.progressBarQuickMoments.visibility = View.GONE
+                                binding.swipeRefreshQuickMoments.isRefreshing = false
+                                quickMomentsAdapter.submitList(resource.data)
+                            }
+                            is Resource.Error -> {
+                                binding.progressBarQuickMoments.visibility = View.GONE
+                                binding.swipeRefreshQuickMoments.isRefreshing = false
+                                Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }
+
+                // 7. Observe Quick Moment Creation State
+                launch {
+                    viewModel.quickMomentCreationState.collect { resource ->
+                        when (resource) {
+                            is Resource.Loading -> Unit
+                            is Resource.Success -> {
+                                Toast.makeText(requireContext(), "Quick Moment posted!", Toast.LENGTH_SHORT).show()
+                            }
+                            is Resource.Error -> {
+                                Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
                 }
             }
@@ -308,12 +398,12 @@ class MatchesFragment : Fragment(), SwipeCardStackView.OnCardSwipeListener {
         binding.pillInterests.setBackgroundResource(if (isInterests) R.drawable.bg_tab_pill_selected else R.drawable.bg_tab_pill_unselected)
         binding.pillInterests.setTextColor(if (isInterests) white else dark)
 
-        if (isInterests) {
-            binding.layoutPeopleContent.visibility = View.GONE
-            binding.layoutInterestsContent.visibility = View.VISIBLE
-        } else {
-            binding.layoutPeopleContent.visibility = View.VISIBLE
-            binding.layoutInterestsContent.visibility = View.GONE
+        binding.layoutPeopleContent.visibility = if (isPeople) View.VISIBLE else View.GONE
+        binding.swipeRefreshQuickMoments.visibility = if (isQuickMoments) View.VISIBLE else View.GONE
+        binding.layoutInterestsContent.visibility = if (isInterests) View.VISIBLE else View.GONE
+
+        if (isQuickMoments) {
+            viewModel.loadQuickMomentsCards()
         }
     }
 

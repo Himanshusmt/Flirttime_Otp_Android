@@ -13,6 +13,7 @@ import com.flirttime.feature.main.matches.UserLimitsResponseData
 import com.flirttime.feature.main.matches.WalletBalanceData
 import com.flirttime.feature.moments.MomentCommentsResponseData
 import com.flirttime.feature.moments.MomentGiftsCatalogResponseData
+import com.flirttime.feature.moments.MomentLikeResponseData
 import com.flirttime.feature.moments.MomentReceivedGiftsResponseData
 import com.flirttime.feature.moments.MomentsFeedResponseData
 import com.flirttime.feature.moments.PostCommentRequest
@@ -35,10 +36,14 @@ import com.flirttime.feature.profile.PresignedUrlResponseData
 import com.flirttime.feature.profile.UpdateInterestsRequest
 import com.flirttime.feature.profile.UpdateProfileRequest
 import com.flirttime.feature.profile.UserPhotosResponseData
+import com.flirttime.feature.quickmoments.CreateTextQuickMomentRequest
 import com.flirttime.feature.quickmoments.MyQuickMomentsResponseData
 import com.flirttime.feature.quickmoments.QuickMomentReactionRequest
 import com.flirttime.feature.quickmoments.QuickMomentReplyRequest
+import com.flirttime.feature.quickmoments.QuickMomentSlideDto
 import com.flirttime.feature.quickmoments.QuickMomentsTrayResponseData
+import com.flirttime.feature.quickmoments.QuickMomentViewersResponseData
+import com.flirttime.feature.quickmoments.QuickMomentReactionsResponseData
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -119,6 +124,20 @@ interface MainApiService {
     @GET("api/v1/wallet/balance")
     suspend fun getWalletBalance(): ApiResponse<WalletBalanceData>
 
+    /** The signed-in user's current Premium membership (iOS `AppEndPoint.mySubscription`). Parsed manually. */
+    @GET("api/v1/subscriptions/my")
+    suspend fun getMySubscription(): com.google.gson.JsonObject
+
+    /** Premium plans (iOS `AppEndPoint.subscriptions`). */
+    @GET("api/v1/subscriptions")
+    suspend fun getSubscriptionPlans(): ApiResponse<List<com.flirttime.feature.subscription.SubscriptionPlanDto>>
+
+    /** Verifies a store purchase and activates Premium (iOS `AppEndPoint.subscriptionsPurchaseVerify`). */
+    @POST("api/v1/subscriptions/purchase/verify")
+    suspend fun verifySubscriptionPurchase(
+        @Body body: Map<String, String>
+    ): com.google.gson.JsonObject
+
     @GET("api/v1/notifications/counts")
     suspend fun getNotificationCounts(): ApiResponse<NotificationCountsResponseData>
 
@@ -139,6 +158,14 @@ interface MainApiService {
         @Query("limit") limit: Int = 20,
         @Query("cursor") cursor: String? = null
     ): ApiResponse<InteractionsResponseData>
+
+    @GET("api/v1/interactions/counts")
+    suspend fun getInteractionCounts(): ApiResponse<com.flirttime.feature.main.explore.InteractionCountsData>
+
+    @POST("api/v1/interactions/{id}/read")
+    suspend fun markInteractionRead(
+        @Path("id") id: String
+    ): ApiResponse<Any>
 
 
     // ==========================================
@@ -169,11 +196,24 @@ interface MainApiService {
     suspend fun toggleLike(
         @Path("momentId") momentId: String,
         @Body request: ToggleLikeRequest? = null
-    ): ApiResponse<Any>
+    ): ApiResponse<MomentLikeResponseData>
+
+    @GET("api/v1/moments/{momentId}/likes")
+    suspend fun getMomentLikes(
+        @Path("momentId") momentId: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 30
+    ): ApiResponse<com.flirttime.feature.moments.MomentLikesResponseData>
 
     @DELETE("api/v1/moments/{momentId}")
     suspend fun deleteMoment(
         @Path("momentId") momentId: String
+    ): ApiResponse<Any>
+
+    @POST("api/v1/moments/{momentId}/report")
+    suspend fun reportMoment(
+        @Path("momentId") momentId: String,
+        @Body body: Map<String, String>
     ): ApiResponse<Any>
 
     @Multipart
@@ -253,6 +293,33 @@ interface MainApiService {
     suspend fun markQuickMomentViewed(
         @Path("momentId") momentId: String
     ): ApiResponse<Any>
+
+    @POST("api/v1/quick-moments")
+    suspend fun createTextQuickMoment(
+        @Body request: CreateTextQuickMomentRequest
+    ): ApiResponse<QuickMomentSlideDto>
+
+    @GET("api/v1/quick-moments/{momentId}/viewers")
+    suspend fun getQuickMomentViewers(
+        @Path("momentId") momentId: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 30
+    ): ApiResponse<QuickMomentViewersResponseData>
+
+    @GET("api/v1/quick-moments/{momentId}/reactions")
+    suspend fun getQuickMomentReactions(
+        @Path("momentId") momentId: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 50
+    ): ApiResponse<QuickMomentReactionsResponseData>
+
+    @Multipart
+    @POST("api/v1/quick-moments")
+    suspend fun createImageQuickMoment(
+        @Part image: MultipartBody.Part,
+        @Part("caption") caption: RequestBody? = null,
+        @Part("locationLabel") locationLabel: RequestBody? = null
+    ): ApiResponse<QuickMomentSlideDto>
 
 
     // ==========================================

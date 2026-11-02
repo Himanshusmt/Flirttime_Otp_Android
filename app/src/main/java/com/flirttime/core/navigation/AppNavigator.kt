@@ -68,6 +68,13 @@ sealed class Destination {
     data object Notification : Destination()
     data object AddMoment : Destination()
     data object MyMoments : Destination()
+    data class UserMoments(
+        val userId: String,
+        val userName: String,
+        val focusMomentId: String? = null,
+        val userAvatar: String? = null,
+        val isVerified: Boolean = false
+    ) : Destination()
     data object Settings : Destination()
     data object PersonalDetails : Destination()
     data object NotificationSettings : Destination()
@@ -79,8 +86,11 @@ sealed class Destination {
         val name: String? = null,
         val age: Int? = null,
         val profilePhotoUrl: String? = null,
+        val coverPhotoUrl: String? = null,
         val city: String? = null,
-        val bio: String? = null
+        val bio: String? = null,
+        val isMatched: Boolean = false,
+        val myAction: String? = null
     ) : Destination()
 
     data class ChatDetail(
@@ -120,8 +130,14 @@ object AppNavigator {
     const val EXTRA_NAME = "extra_name"
     const val EXTRA_AGE = "extra_age"
     const val EXTRA_PROFILE_PHOTO_URL = "extra_profile_photo_url"
+    const val EXTRA_COVER_PHOTO_URL = "extra_cover_photo_url"
     const val EXTRA_CITY = "extra_city"
     const val EXTRA_BIO = "extra_bio"
+    const val EXTRA_IS_MATCHED = "extra_is_matched"
+    const val EXTRA_MY_ACTION = "extra_my_action"
+    const val EXTRA_FOCUS_MOMENT_ID = "extra_focus_moment_id"
+    const val EXTRA_USER_AVATAR = "extra_user_avatar"
+    const val EXTRA_IS_VERIFIED = "extra_is_verified"
     const val EXTRA_CONVERSATION_ID = "extra_conversation_id"
     const val EXTRA_CHAT_TITLE = "extra_chat_title"
     const val EXTRA_CHAT_AVATAR = "extra_chat_avatar"
@@ -161,6 +177,7 @@ object AppNavigator {
             is Destination.Notification -> com.flirttime.feature.notification.NotificationActivity::class.java
             is Destination.AddMoment -> com.flirttime.feature.moments.add.AddMomentActivity::class.java
             is Destination.MyMoments -> com.flirttime.feature.main.profile.MyMomentsActivity::class.java
+            is Destination.UserMoments -> com.flirttime.feature.main.profile.MyMomentsActivity::class.java
             is Destination.Settings -> com.flirttime.feature.profile.settings.SettingsActivity::class.java
             is Destination.PersonalDetails -> com.flirttime.feature.profile.settings.PersonalDetailsActivity::class.java
             is Destination.NotificationSettings -> com.flirttime.feature.profile.settings.NotificationSettingsActivity::class.java
@@ -192,14 +209,24 @@ object AppNavigator {
                 is Destination.PicturePreview -> {
                     putExtra(EXTRA_IMAGE_URI, destination.imageUri)
                 }
+                is Destination.UserMoments -> {
+                    putExtra(EXTRA_USER_ID, destination.userId)
+                    putExtra(EXTRA_USERNAME, destination.userName)
+                    destination.focusMomentId?.let { putExtra(EXTRA_FOCUS_MOMENT_ID, it) }
+                    destination.userAvatar?.let { putExtra(EXTRA_USER_AVATAR, it) }
+                    putExtra(EXTRA_IS_VERIFIED, destination.isVerified)
+                }
                 is Destination.UserProfile -> {
                     putExtra(EXTRA_USER_ID, destination.userId)
                     destination.username?.let { putExtra(EXTRA_USERNAME, it) }
                     destination.name?.let { putExtra(EXTRA_NAME, it) }
                     destination.age?.let { putExtra(EXTRA_AGE, it) }
                     destination.profilePhotoUrl?.let { putExtra(EXTRA_PROFILE_PHOTO_URL, it) }
+                    destination.coverPhotoUrl?.let { putExtra(EXTRA_COVER_PHOTO_URL, it) }
                     destination.city?.let { putExtra(EXTRA_CITY, it) }
                     destination.bio?.let { putExtra(EXTRA_BIO, it) }
+                    putExtra(EXTRA_IS_MATCHED, destination.isMatched)
+                    destination.myAction?.let { putExtra(EXTRA_MY_ACTION, it) }
                 }
                 is Destination.ChatDetail -> {
                     putExtra(EXTRA_CONVERSATION_ID, destination.conversationId)

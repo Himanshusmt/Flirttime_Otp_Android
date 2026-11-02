@@ -1,17 +1,18 @@
 package com.flirttime.feature.notification
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.imagepipeline.common.ResizeOptions
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.flirttime.R
 import com.flirttime.databinding.ItemNotificationCardBinding
 import com.flirttime.databinding.ItemNotificationHeaderBinding
-import com.flirttime.feature.notification.NotificationItem
-import com.flirttime.feature.notification.NotificationListItem
-import com.flirttime.feature.notification.NotificationType
 
 class NotificationsAdapter(
     private val onItemClick: (NotificationItem) -> Unit
@@ -72,11 +73,19 @@ class NotificationsAdapter(
             binding.tvDescription.text = item.description
             binding.tvTimestamp.text = item.timestamp
 
-            // Avatar rendering
-            if (item.avatarUrl != null) {
+            // Avatar rendering - high performance downsampling and controller reuse
+            if (!item.avatarUrl.isNullOrBlank()) {
                 binding.ivAvatar.visibility = View.VISIBLE
                 binding.systemAvatarContainer.visibility = View.GONE
-                binding.ivAvatar.setImageURI(item.avatarUrl)
+
+                val imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(item.avatarUrl))
+                    .setResizeOptions(ResizeOptions(150, 150))
+                    .build()
+                val controller = Fresco.newDraweeControllerBuilder()
+                    .setOldController(binding.ivAvatar.controller)
+                    .setImageRequest(imageRequest)
+                    .build()
+                binding.ivAvatar.controller = controller
             } else {
                 binding.ivAvatar.visibility = View.GONE
                 binding.systemAvatarContainer.visibility = View.VISIBLE
@@ -111,6 +120,18 @@ class NotificationsAdapter(
                 NotificationType.PHOTO_NOT_APPROVED -> {
                     binding.badgeContainer.setBackgroundResource(R.drawable.bg_notif_badge_orange)
                     binding.ivBadgeIcon.setImageResource(R.drawable.ic_notif_badge_warning)
+                }
+                NotificationType.PROFILE_VISIT -> {
+                    binding.badgeContainer.setBackgroundResource(R.drawable.bg_notif_badge_pink)
+                    binding.ivBadgeIcon.setImageResource(R.drawable.ic_notif_badge_match)
+                }
+                NotificationType.MOMENT_COMMENT_REPLY -> {
+                    binding.badgeContainer.setBackgroundResource(R.drawable.bg_notif_badge_blue)
+                    binding.ivBadgeIcon.setImageResource(R.drawable.ic_notif_badge_message)
+                }
+                NotificationType.MOMENT_COMMENT_LIKE -> {
+                    binding.badgeContainer.setBackgroundResource(R.drawable.bg_notif_badge_red)
+                    binding.ivBadgeIcon.setImageResource(R.drawable.ic_notif_badge_like)
                 }
             }
 

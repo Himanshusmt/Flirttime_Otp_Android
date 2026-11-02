@@ -10,9 +10,16 @@ import com.flirttime.core.common.ShimmerHelper
 import com.flirttime.databinding.ItemProfileMomentBinding
 import com.flirttime.feature.moments.MomentDto
 
+data class ProfileMomentUiItem(
+    val moment: MomentDto,
+    val isOverflow: Boolean = false,
+    val overflowCount: Int = 0
+)
+
 class ProfileMomentsAdapter(
-    private val onMomentClick: ((MomentDto) -> Unit)? = null
-) : ListAdapter<MomentDto, ProfileMomentsAdapter.ProfileMomentViewHolder>(MomentDiffCallback()) {
+    private val onMomentClick: ((MomentDto) -> Unit)? = null,
+    private val onSeeAllClick: (() -> Unit)? = null
+) : ListAdapter<ProfileMomentUiItem, ProfileMomentsAdapter.ProfileMomentViewHolder>(MomentDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileMomentViewHolder {
         val binding = ItemProfileMomentBinding.inflate(
@@ -31,43 +38,62 @@ class ProfileMomentsAdapter(
         private val binding: ItemProfileMomentBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(moment: MomentDto) {
+        fun bind(item: ProfileMomentUiItem) {
+            val moment = item.moment
+
             // Media Image with Shimmer placeholder
             ShimmerHelper.loadWithShimmer(
                 draweeView = binding.ivMomentMedia,
                 url = moment.displayImageUrl
             )
 
-            // Multiple media indicator icon (top-right)
-            binding.ivMultiMedia.visibility = if (moment.isMultiMedia) View.VISIBLE else View.GONE
+            if (item.isOverflow) {
+                binding.layoutOverflowSeeAll.visibility = View.VISIBLE
+                binding.tvOverflowCount.text = "+${item.overflowCount}"
+                binding.layoutBottomDetails.visibility = View.GONE
+                binding.viewBottomScrim.visibility = View.GONE
+                binding.ivMultiMedia.visibility = View.GONE
 
-            // Caption (bottom)
-            if (!moment.caption.isNullOrBlank()) {
-                binding.tvCaption.visibility = View.VISIBLE
-                binding.tvCaption.text = moment.caption
+                binding.root.setOnClickListener {
+                    onSeeAllClick?.invoke()
+                }
             } else {
-                binding.tvCaption.visibility = View.GONE
-            }
+                binding.layoutOverflowSeeAll.visibility = View.GONE
+                binding.layoutBottomDetails.visibility = View.VISIBLE
+                binding.viewBottomScrim.visibility = View.VISIBLE
 
-            // Stats
-            binding.tvLikeCount.text = moment.effectiveLikes.toString()
-            binding.tvCommentCount.text = moment.effectiveComments.toString()
+                // Multiple media indicator icon (top-right)
+                binding.ivMultiMedia.visibility = if (moment.isMultiMedia) View.VISIBLE else View.GONE
 
-            // Click listener
-            binding.root.setOnClickListener {
-                onMomentClick?.invoke(moment)
+                // Caption (bottom)
+                if (!moment.caption.isNullOrBlank()) {
+                    binding.tvCaption.visibility = View.VISIBLE
+                    binding.tvCaption.text = moment.caption
+                } else {
+                    binding.tvCaption.visibility = View.GONE
+                }
+
+                // Stats
+                binding.tvLikeCount.text = moment.effectiveLikes.toString()
+                binding.tvCommentCount.text = moment.effectiveComments.toString()
+
+                // Click listener
+                binding.root.setOnClickListener {
+                    onMomentClick?.invoke(moment)
+                }
             }
         }
     }
 
-    class MomentDiffCallback : DiffUtil.ItemCallback<MomentDto>() {
-        override fun areItemsTheSame(oldItem: MomentDto, newItem: MomentDto): Boolean {
-            val oldId = oldItem.id ?: oldItem.momentId
-            val newId = newItem.id ?: newItem.momentId
+    class MomentDiffCallback : DiffUtil.ItemCallback<ProfileMomentUiItem>() {
+        override fun areItemsTheSame(oldItem: ProfileMomentUiItem, newItem: ProfileMomentUiItem): Boolean {
+            if (oldItem.isOverflow != newItem.isOverflow) return false
+            val oldId = oldItem.moment.id ?: oldItem.moment.momentId
+            val newId = newItem.moment.id ?: newItem.moment.momentId
             return if (oldId != null && newId != null) oldId == newId else oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: MomentDto, newItem: MomentDto): Boolean {
+        override fun areContentsTheSame(oldItem: ProfileMomentUiItem, newItem: ProfileMomentUiItem): Boolean {
             return oldItem == newItem
         }
     }

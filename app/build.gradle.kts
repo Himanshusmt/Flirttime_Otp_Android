@@ -78,6 +78,9 @@ dependencies {
     // Fresco Image Loading
     implementation(libs.fresco)
 
+    // Google Play Billing (Premium subscriptions - iOS StoreKit equivalent)
+    implementation(libs.play.billing)
+
     // Shimmer
     implementation(libs.shimmer)
 

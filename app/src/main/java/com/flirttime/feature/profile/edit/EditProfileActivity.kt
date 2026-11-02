@@ -764,6 +764,7 @@ class EditProfileActivity : AppCompatActivity() {
         )
     }
 
+    @Suppress("DEPRECATION")
     private fun bindSlot(
         slotIndex: Int,
         photo: UserPhotoDto?,

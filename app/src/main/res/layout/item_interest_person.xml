@@ -45,7 +45,7 @@
             android:textColor="#1A1A1A"
             android:textSize="13.5sp"
             android:textStyle="bold"
-            tools:text="dummy_yash,..." />
+            tools:text="" />
 
         <ImageView
             android:id="@+id/ivVerifiedBadge"
@@ -68,6 +68,6 @@
         android:maxLines="1"
         android:textColor="#8E8E93"
         android:textSize="12sp"
-        tools:text="Indore" />
+        tools:text="" />
 
 </LinearLayout>
