@@ -18,15 +18,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.lifecycle.lifecycleScope
 import com.flirttime.R
-import com.flirttime.Resource
 import com.flirttime.core.database.SessionManager
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
 import com.flirttime.databinding.ActivityLoginBinding
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -45,7 +41,6 @@ class LoginActivity : AppCompatActivity() {
         setupScreenSpecificEdgeToEdge()
         setupPrivacyPolicySpannable()
         setupListeners()
-        observeState()
     }
 
     /**
@@ -157,31 +152,23 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.linearGoogleLogin.setOnClickListener {
-            Toast.makeText(this, "Google Sign-In integration ready", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun observeState() {
-        lifecycleScope.launch {
-            viewModel.loginState.collectLatest { resource ->
-                when (resource) {
-                    is Resource.Loading -> {
-                        setButtonsEnabled(false)
-                    }
-                    is Resource.Success -> {
-                        setButtonsEnabled(true)
-                        Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
-                    }
-                    is Resource.Error -> {
-                        setButtonsEnabled(true)
-                        Toast.makeText(this@LoginActivity, resource.message, Toast.LENGTH_LONG).show()
-                    }
-                    null -> {
-                        setButtonsEnabled(true)
-                    }
+            launchGoogleSignIn(
+                loginViewModel = viewModel,
+                sessionManager = sessionManager,
+                onLoading = { loading -> setButtonsEnabled(!loading) },
+                onError = { message ->
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 }
-            }
+            )
         }
+
+        observeGoogleLoginState(
+            loginViewModel = viewModel,
+            onLoading = { loading -> setButtonsEnabled(!loading) },
+            onError = { message ->
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            }
+        )
     }
 
     private fun setButtonsEnabled(enabled: Boolean) {

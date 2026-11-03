@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -18,6 +19,12 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
         buildConfigField("String", "BASE_URL", "\"https://flirttimeapi.walit.in/\"")
+        // Web client ID from google-services.json (client_type 3) — used for Google ID token requests
+        buildConfigField(
+            "String",
+            "GOOGLE_WEB_CLIENT_ID",
+            "\"828544365224-4f1m6hemudd6c3b7r1eucs58ga3orm4s.apps.googleusercontent.com\""
+        )
     }
 
     buildFeatures {
@@ -92,6 +99,15 @@ dependencies {
 
     // Socket.IO (chat realtime)
     implementation(libs.socket.io.client)
+
+    // Firebase (FCM)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
+
+    // Google Sign-In via Credential Manager
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services)
+    implementation(libs.google.id)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

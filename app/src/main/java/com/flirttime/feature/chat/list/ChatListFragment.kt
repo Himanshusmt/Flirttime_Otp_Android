@@ -9,40 +9,55 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.flirttime.R
+import com.flirttime.Resource
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
 import com.flirttime.databinding.FragmentChatBinding
+import com.flirttime.feature.chat.model.CallHistoryUi
 import com.flirttime.feature.chat.model.ConversationUi
 import com.flirttime.feature.chat.settings.ChatSettingsSheetFragment
 import com.flirttime.feature.chat.socket.ChatConnectionState
+import com.flirttime.feature.notification.NotificationBadgeBinder
+import com.flirttime.feature.notification.NotificationBadgeStore
+import com.flirttime.feature.quickmoments.AddNewMomentBottomSheetDialogFragment
+import com.flirttime.feature.quickmoments.QuickMomentCardItem
+import com.flirttime.feature.quickmoments.QuickMomentsCardAdapter
+import com.flirttime.feature.quickmoments.QuickMomentsViewerDialogFragment
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 /**
- * Inbox tab: pinned + regular conversation sections backed by `GET /api/v1/chats`
- * and kept fresh through [com.flirttime.feature.chat.socket.ChatSocketManager].
+ * Inbox tab: Chats | Calls shell matching iOS Messages.
+ * Chats keep socket / swipe / multi-select; Calls are REST history with stubbed dial buttons.
  */
 class ChatListFragment : Fragment() {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: ChatListViewModel by viewModel()
+    private val viewModel: ChatListViewModel by activityViewModel()
+    private val badgeStore: NotificationBadgeStore by inject()
 
     private lateinit var pinnedAdapter: ConversationAdapter
     private lateinit var regularAdapter: ConversationAdapter
     private lateinit var archivedAdapter: ConversationAdapter
+    private lateinit var callHistoryAdapter: CallHistoryAdapter
+    private lateinit var quickMomentsAdapter: QuickMomentsCardAdapter
 
     private var currentQuery: String = ""
-
     private var isSelectionMode = false
     private val selectedConversationIds = linkedSetOf<String>()
 
@@ -61,7 +76,11 @@ class ChatListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupHeader()
+        setupSegmentControl()
         setupAdapters()
+        setupQuickMoments()
+        setupCallHistory()
         setupSearch()
         setupSwipeActions()
         setupInboxSelection()
@@ -69,6 +88,38 @@ class ChatListFragment : Fragment() {
         setupPagination()
         setupConnectionBanner()
         observeViewModel()
+        applyInboxSection(viewModel.inboxSection.value)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadHeaderInfo()
+        // Re-bind inbox rows after tab switches: NestedScrollView + wrap_content RVs can
+        // miss the first submitList measure pass while the ViewModel already has data.
+        if (_binding != null && viewModel.inboxSection.value == ChatInboxSection.CHATS) {
+            render(viewModel.visibleConversations())
+            renderArchived()
+        }
+    }
+
+    private fun setupHeader() {
+        NotificationBadgeBinder.bind(binding.btnNotification, viewLifecycleOwner, badgeStore)
+        binding.btnCoins.setOnClickListener {
+            AppNavigator.navigateTo(requireContext(), Destination.CoinShop)
+        }
+        binding.btnNotification.setOnClickListener {
+            AppNavigator.navigateTo(requireContext(), Destination.Notification)
+        }
+    }
+
+    private fun setupSegmentControl() {
+        binding.inboxSegment.btnSegmentChats.setOnClickListener {
+            viewModel.selectInboxSection(ChatInboxSection.CHATS)
+        }
+        binding.inboxSegment.btnSegmentCalls.setOnClickListener {
+            viewModel.selectInboxSection(ChatInboxSection.CALLS)
+        }
+        binding.btnDeleteAllCalls.setOnClickListener { confirmDeleteAllCalls() }
     }
 
     private fun setupAdapters() {
@@ -79,34 +130,124 @@ class ChatListFragment : Fragment() {
         regularAdapter = ConversationAdapter(onOpen, onLongPress, ::toggleInboxSelection)
         archivedAdapter = ConversationAdapter(onOpen, onLongPress, ::toggleInboxSelection)
 
+        // Do not setHasFixedSize(true): these RVs are wrap_content inside NestedScrollView,
+        // so height must grow with item count or the first inbox paint stays empty.
         binding.rvPinnedChats.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = pinnedAdapter
-            setHasFixedSize(true)
+            isNestedScrollingEnabled = false
         }
-
         binding.rvRegularChats.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = regularAdapter
-            setHasFixedSize(true)
+            isNestedScrollingEnabled = false
         }
-
         binding.rvArchivedChats.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = archivedAdapter
-            setHasFixedSize(true)
+            isNestedScrollingEnabled = false
         }
-
         binding.layoutArchivedHeader.setOnClickListener {
             viewModel.toggleArchivedExpanded()
         }
+    }
+
+    private fun setupQuickMoments() {
+        quickMomentsAdapter = QuickMomentsCardAdapter(
+            onAddNewClick = { showAddQuickMomentBottomSheet() },
+            onStoryClick = { storyCard ->
+                val allStories = quickMomentsAdapter.currentList
+                    .filterIsInstance<QuickMomentCardItem.StoryCard>()
+                val initialIndex = allStories.indexOf(storyCard).coerceAtLeast(0)
+                val viewer = QuickMomentsViewerDialogFragment.newInstance(
+                    storyList = if (allStories.isNotEmpty()) allStories else listOf(storyCard),
+                    initialIndex = initialIndex
+                )
+                viewer.onDeleteClick = { storyId ->
+                    viewModel.deleteQuickMoment(storyId) {
+                        Toast.makeText(requireContext(), "Story deleted", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                viewer.onReactClick = { storyId, emoji ->
+                    viewModel.reactToQuickMoment(storyId, emoji)
+                }
+                viewer.onReplyClick = { storyId, message ->
+                    viewModel.replyToQuickMoment(storyId, message)
+                }
+                viewer.show(childFragmentManager, "StoryViewer")
+            }
+        )
+        binding.rvQuickMoments.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = quickMomentsAdapter
+            setHasFixedSize(true)
+            addOnChildAttachStateChangeListener(object : RecyclerView.OnChildAttachStateChangeListener {
+                override fun onChildViewAttachedToWindow(view: View) {
+                    val density = resources.displayMetrics.density
+                    val lp = (view.layoutParams as? RecyclerView.LayoutParams)
+                        ?: RecyclerView.LayoutParams(
+                            (108 * density).toInt(),
+                            (140 * density).toInt()
+                        )
+                    lp.width = (108 * density).toInt()
+                    lp.height = (140 * density).toInt()
+                    lp.marginEnd = (8 * density).toInt()
+                    view.layoutParams = lp
+                }
+
+                override fun onChildViewDetachedFromWindow(view: View) = Unit
+            })
+        }
+    }
+
+    private fun showAddQuickMomentBottomSheet() {
+        val sheet = AddNewMomentBottomSheetDialogFragment.newInstance()
+        sheet.onMomentCreated = { viewModel.loadQuickMomentsCards(forceRefresh = true) }
+        sheet.show(childFragmentManager, AddNewMomentBottomSheetDialogFragment.TAG)
+    }
+
+    private fun setupCallHistory() {
+        callHistoryAdapter = CallHistoryAdapter(
+            onCallActionClick = {
+                Toast.makeText(requireContext(), "Coming soon", Toast.LENGTH_SHORT).show()
+            },
+            onItemLongClick = { call -> confirmDeleteCall(call) }
+        )
+        binding.rvCallHistory.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = callHistoryAdapter
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy <= 0) return
+                    val lm = recyclerView.layoutManager as? LinearLayoutManager ?: return
+                    val last = lm.findLastVisibleItemPosition()
+                    if (last >= callHistoryAdapter.itemCount - 3) {
+                        viewModel.loadMoreCallHistoryIfNeeded()
+                    }
+                }
+            })
+        }
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                @Suppress("DEPRECATION")
+                val position = viewHolder.adapterPosition
+                if (position == RecyclerView.NO_POSITION) return
+                val item = callHistoryAdapter.currentList.getOrNull(position) ?: return
+                viewModel.deleteCallHistoryItem(item.id)
+            }
+        }).attachToRecyclerView(binding.rvCallHistory)
     }
 
     private fun setupSearch() {
         binding.btnClearSearch.setOnClickListener {
             binding.etSearch.text?.clear()
         }
-
         binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
@@ -114,8 +255,12 @@ class ChatListFragment : Fragment() {
                 currentQuery = s?.toString()?.trim().orEmpty()
                 binding.btnClearSearch.isVisible = currentQuery.isNotEmpty()
                 viewModel.onSearchQueryChanged(currentQuery)
-                render(viewModel.visibleConversations())
-                renderArchived()
+                if (viewModel.inboxSection.value == ChatInboxSection.CHATS) {
+                    render(viewModel.visibleConversations())
+                    renderArchived()
+                } else {
+                    renderCalls(viewModel.visibleCallHistory())
+                }
             }
 
             override fun afterTextChanged(s: Editable?) = Unit
@@ -123,10 +268,15 @@ class ChatListFragment : Fragment() {
     }
 
     private fun setupSwipeRefresh() {
-        binding.swipeRefresh.setOnRefreshListener { viewModel.refresh() }
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.refresh()
+            viewModel.loadQuickMomentsCards(forceRefresh = true)
+        }
+        binding.swipeRefreshCalls.setOnRefreshListener {
+            viewModel.refreshCallHistory()
+        }
     }
 
-    /** iOS inbox swipe actions: right = read / unread, left = archive / unarchive. */
     private fun setupSwipeActions() {
         val callback = ChatRowSwipeCallback(
             context = requireContext(),
@@ -139,7 +289,6 @@ class ChatListFragment : Fragment() {
                 }
             }
         )
-        // One helper per list: attachToRecyclerView moves the helper rather than cloning it.
         ItemTouchHelper(callback).attachToRecyclerView(binding.rvPinnedChats)
         ItemTouchHelper(callback).attachToRecyclerView(binding.rvRegularChats)
         ItemTouchHelper(callback).attachToRecyclerView(binding.rvArchivedChats)
@@ -162,6 +311,7 @@ class ChatListFragment : Fragment() {
 
     private fun enterSelectionMode() {
         if (isSelectionMode) return
+        if (viewModel.inboxSection.value != ChatInboxSection.CHATS) return
         isSelectionMode = true
         selectedConversationIds.clear()
         selectionBackCallback.isEnabled = true
@@ -205,7 +355,8 @@ class ChatListFragment : Fragment() {
         val active = isSelectionMode
         binding.layoutInboxSelectionBar.isVisible = active
         binding.layoutSearchBar.isVisible = !active
-        binding.btnInboxSelect.isVisible = !active
+        binding.btnInboxSelect.isVisible =
+            !active && viewModel.inboxSection.value == ChatInboxSection.CHATS
         if (!active) return
 
         binding.tvInboxSelectionCount.text = when (selectedConversationIds.size) {
@@ -266,7 +417,6 @@ class ChatListFragment : Fragment() {
 
     // endregion
 
-    /** Loads the next inbox page once the user is roughly one screen from the bottom. */
     private fun setupPagination() {
         binding.scrollChats.setOnScrollChangeListener(
             NestedScrollView.OnScrollChangeListener { view, _, scrollY, _, _ ->
@@ -284,10 +434,6 @@ class ChatListFragment : Fragment() {
         binding.btnConnectionRetry.setOnClickListener { viewModel.forceReconnect() }
     }
 
-    /**
-     * Renders the socket state like the iOS connect flow: a hidden banner while live, a
-     * soft reminder while reconnecting and an explicit offline notice with a retry action.
-     */
     private fun renderConnectionBanner(state: ChatConnectionState) {
         if (_binding == null) return
         binding.layoutConnectionBanner.isVisible = state != ChatConnectionState.CONNECTED
@@ -303,8 +449,13 @@ class ChatListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
+                    viewModel.inboxSection.collect { section -> applyInboxSection(section) }
+                }
+                launch {
                     viewModel.conversations.collect {
-                        render(viewModel.visibleConversations())
+                        if (viewModel.inboxSection.value == ChatInboxSection.CHATS) {
+                            render(viewModel.visibleConversations())
+                        }
                     }
                 }
                 launch {
@@ -315,7 +466,8 @@ class ChatListFragment : Fragment() {
                 }
                 launch {
                     viewModel.isLoading.collect { isLoading ->
-                        binding.progressBar.isVisible = isLoading
+                        binding.progressBar.isVisible =
+                            isLoading && viewModel.inboxSection.value == ChatInboxSection.CHATS
                     }
                 }
                 launch {
@@ -332,6 +484,44 @@ class ChatListFragment : Fragment() {
                     viewModel.connectionState.collect { state -> renderConnectionBanner(state) }
                 }
                 launch {
+                    viewModel.coinBalance.collectLatest { coins ->
+                        binding.tvCoinCount.text = coins.toString()
+                    }
+                }
+                launch {
+                    viewModel.quickMomentsCards.collectLatest { resource ->
+                        when (resource) {
+                            is Resource.Success -> quickMomentsAdapter.submitList(resource.data)
+                            is Resource.Error -> {
+                                Toast.makeText(
+                                    requireContext(),
+                                    resource.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            is Resource.Loading -> Unit
+                        }
+                    }
+                }
+                launch {
+                    viewModel.callHistory.collect {
+                        if (viewModel.inboxSection.value == ChatInboxSection.CALLS) {
+                            renderCalls(viewModel.visibleCallHistory())
+                        }
+                    }
+                }
+                launch {
+                    viewModel.isLoadingCallHistory.collect { loading ->
+                        binding.progressCalls.isVisible =
+                            loading && callHistoryAdapter.itemCount == 0
+                    }
+                }
+                launch {
+                    viewModel.isRefreshingCallHistory.collect { refreshing ->
+                        binding.swipeRefreshCalls.isRefreshing = refreshing
+                    }
+                }
+                launch {
                     viewModel.errorMessage.collect { message ->
                         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                     }
@@ -345,17 +535,61 @@ class ChatListFragment : Fragment() {
         }
     }
 
+    private fun applyInboxSection(section: ChatInboxSection) {
+        if (_binding == null) return
+        val chatsSelected = section == ChatInboxSection.CHATS
+        if (!chatsSelected && isSelectionMode) exitSelectionMode()
+
+        binding.swipeRefresh.isVisible = chatsSelected
+        binding.layoutCallsContent.isVisible = !chatsSelected
+        binding.btnInboxSelect.isVisible = chatsSelected && !isSelectionMode
+        binding.btnDeleteAllCalls.isVisible =
+            !chatsSelected && viewModel.callHistory.value.isNotEmpty()
+
+        styleSegment(chatsSelected)
+
+        if (chatsSelected) {
+            render(viewModel.visibleConversations())
+            renderArchived()
+        } else {
+            renderCalls(viewModel.visibleCallHistory())
+        }
+    }
+
+    private fun styleSegment(chatsSelected: Boolean) {
+        val segment = binding.inboxSegment
+        val selectedBg = R.drawable.bg_inbox_segment_selected
+        val white = ContextCompat.getColor(requireContext(), R.color.white)
+        val dark = ContextCompat.getColor(requireContext(), android.R.color.black)
+
+        if (chatsSelected) {
+            segment.btnSegmentChats.setBackgroundResource(selectedBg)
+            segment.tvSegmentChats.setTextColor(white)
+            segment.ivSegmentChats.setColorFilter(white)
+            segment.btnSegmentCalls.background = null
+            segment.tvSegmentCalls.setTextColor(dark)
+            segment.ivSegmentCalls.setColorFilter(dark)
+        } else {
+            segment.btnSegmentCalls.setBackgroundResource(selectedBg)
+            segment.tvSegmentCalls.setTextColor(white)
+            segment.ivSegmentCalls.setColorFilter(white)
+            segment.btnSegmentChats.background = null
+            segment.tvSegmentChats.setTextColor(dark)
+            segment.ivSegmentChats.setColorFilter(dark)
+        }
+    }
+
     private fun render(conversations: List<ConversationUi>) {
         if (_binding == null) return
 
         val pinned = conversations.filter { it.isPinned }
         val regular = conversations.filterNot { it.isPinned }
 
-        pinnedAdapter.submitList(pinned)
-        regularAdapter.submitList(regular)
-
         binding.layoutPinnedSection.isVisible = pinned.isNotEmpty()
         binding.layoutChatsSection.isVisible = regular.isNotEmpty()
+
+        pinnedAdapter.submitList(pinned) { requestInboxLayout() }
+        regularAdapter.submitList(regular) { requestInboxLayout() }
 
         val isEmpty = pinned.isEmpty() && regular.isEmpty() &&
             viewModel.archivedConversations.value.isEmpty()
@@ -372,9 +606,18 @@ class ChatListFragment : Fragment() {
         }
     }
 
-    /** Collapsible archived bucket; the rows only bind while the group is expanded. */
+    /** Force NestedScrollView to remeasure wrap_content chat RVs after async DiffUtil commits. */
+    private fun requestInboxLayout() {
+        val b = _binding ?: return
+        b.rvPinnedChats.requestLayout()
+        b.rvRegularChats.requestLayout()
+        b.rvArchivedChats.requestLayout()
+        b.scrollChats.requestLayout()
+    }
+
     private fun renderArchived() {
         if (_binding == null) return
+        if (viewModel.inboxSection.value != ChatInboxSection.CHATS) return
 
         val archived = viewModel.visibleArchivedConversations()
         val expanded = viewModel.isArchivedExpanded.value
@@ -383,7 +626,41 @@ class ChatListFragment : Fragment() {
         binding.tvArchivedCount.text = archived.size.toString()
         binding.ivArchivedChevron.rotation = if (expanded) 0f else -90f
         binding.rvArchivedChats.isVisible = expanded && archived.isNotEmpty()
-        archivedAdapter.submitList(if (expanded) archived else emptyList())
+        archivedAdapter.submitList(if (expanded) archived else emptyList()) {
+            requestInboxLayout()
+        }
+    }
+
+    private fun renderCalls(calls: List<CallHistoryUi>) {
+        if (_binding == null) return
+        callHistoryAdapter.submitList(calls)
+        val empty = calls.isEmpty() && !viewModel.isLoadingCallHistory.value
+        binding.layoutEmptyCalls.isVisible = empty
+        binding.rvCallHistory.isVisible = !empty
+        binding.btnDeleteAllCalls.isVisible =
+            viewModel.inboxSection.value == ChatInboxSection.CALLS && calls.isNotEmpty()
+    }
+
+    private fun confirmDeleteCall(call: CallHistoryUi) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete call?")
+            .setMessage("Remove this call from your history?")
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Delete") { _, _ ->
+                viewModel.deleteCallHistoryItem(call.id)
+            }
+            .show()
+    }
+
+    private fun confirmDeleteAllCalls() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete all calls?")
+            .setMessage("This will clear your entire call history. This cannot be undone.")
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Delete All") { _, _ ->
+                viewModel.deleteAllCallHistory()
+            }
+            .show()
     }
 
     private fun openConversation(conversation: ConversationUi) {
@@ -427,7 +704,8 @@ class ChatListFragment : Fragment() {
                 }
                 ChatSettingsSheetFragment.Action.TOGGLE_MUTE -> viewModel.toggleMute(conversation)
                 ChatSettingsSheetFragment.Action.TOGGLE_PIN -> viewModel.togglePin(conversation)
-                ChatSettingsSheetFragment.Action.TOGGLE_ARCHIVE -> viewModel.toggleArchive(conversation)
+                ChatSettingsSheetFragment.Action.TOGGLE_ARCHIVE ->
+                    viewModel.toggleArchive(conversation)
                 ChatSettingsSheetFragment.Action.MARK_READ -> viewModel.markRead(conversation)
                 ChatSettingsSheetFragment.Action.MARK_UNREAD -> viewModel.markUnread(conversation)
                 ChatSettingsSheetFragment.Action.TOGGLE_BLOCK -> {
@@ -521,6 +799,8 @@ class ChatListFragment : Fragment() {
         binding.rvPinnedChats.adapter = null
         binding.rvRegularChats.adapter = null
         binding.rvArchivedChats.adapter = null
+        binding.rvCallHistory.adapter = null
+        binding.rvQuickMoments.adapter = null
         _binding = null
     }
 

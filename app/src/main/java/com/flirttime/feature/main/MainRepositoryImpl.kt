@@ -136,6 +136,14 @@ class MainRepositoryImpl(
         emit(result)
     }.flowOn(Dispatchers.IO)
 
+    override fun updateProfileFields(fields: Map<String, Any?>): Flow<Resource<AuthUserDto>> = flow {
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            mainApiService.updateProfileRaw(fields)
+        }
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
     private data class S3PresignedUploadResult(
         val uploadUrl: String,
         val publicUrl: String,

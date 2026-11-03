@@ -8,10 +8,10 @@ import com.flirttime.core.navigation.Destination
 import com.flirttime.feature.auth.AuthRepository
 import com.flirttime.feature.main.MainRepository
 import com.flirttime.feature.main.matches.FreeTierLimitsStore
+import com.flirttime.feature.notification.FcmTokenRegistrar
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 
 class SplashViewModel(
@@ -45,8 +45,8 @@ class SplashViewModel(
                     is Resource.Loading -> Unit
                     is Resource.Success -> {
                         val user = resource.data
-                        // Register FCM device token with backend
-                        authRepository.registerDevice().launchIn(viewModelScope)
+                        // Fetch real FCM token and register with backend
+                        FcmTokenRegistrar.refreshAndRegister(sessionManager, authRepository)
 
                         limitsStore.refresh()
                         if (user.isProfileComplete == true) {

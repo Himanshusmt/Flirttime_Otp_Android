@@ -76,6 +76,42 @@ object ChatTimeFormatter {
         return format(date, "dd/MM/yy")
     }
 
+    /**
+     * iOS-style relative inbox / call-history label:
+     * `Just now`, `5 min ago`, `20 hr ago`, `3 d ago`, `1 wk ago`, `2 mo ago`.
+     */
+    fun inboxRelativeLabel(raw: String?, now: Long = System.currentTimeMillis()): String {
+        val date = parse(raw) ?: return ""
+        val seconds = ((now - date.time) / 1000L).coerceAtLeast(0L)
+        return when {
+            seconds < 60L -> "Just now"
+            seconds < 3600L -> {
+                val mins = (seconds / 60L).toInt().coerceAtLeast(1)
+                "$mins min ago"
+            }
+            seconds < 86_400L -> {
+                val hours = (seconds / 3600L).toInt().coerceAtLeast(1)
+                "$hours hr ago"
+            }
+            seconds < 604_800L -> {
+                val days = (seconds / 86_400L).toInt().coerceAtLeast(1)
+                "$days d ago"
+            }
+            seconds < 2_592_000L -> {
+                val weeks = (seconds / 604_800L).toInt().coerceAtLeast(1)
+                "$weeks wk ago"
+            }
+            seconds < 31_536_000L -> {
+                val months = (seconds / 2_592_000L).toInt().coerceAtLeast(1)
+                "$months mo ago"
+            }
+            else -> {
+                val years = (seconds / 31_536_000L).toInt().coerceAtLeast(1)
+                "$years yr ago"
+            }
+        }
+    }
+
     /** Bubble-side label — always time-of-day for today, otherwise a short date. */
     fun messageTimeLabel(raw: String?): String {
         val date = parse(raw) ?: return ""

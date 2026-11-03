@@ -4,8 +4,13 @@ import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
@@ -81,6 +86,9 @@ class OtherUserProfileActivity : AppCompatActivity() {
     private var voiceProgressJob: Job? = null
     private var currentVoiceUrl: String? = null
     private var currentVoiceDurationSec: Int = 0
+    private var pendingReaction: MomentsReaction? = null
+    private var lastConnectionReaction: MomentsReaction? = null
+    private val partialReactionButtons = mutableMapOf<MomentsReaction.Target, ImageView>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,6 +98,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
         setupAdapters()
         setupClickListeners()
+        setupPartialReactions()
         setupInsets()
         observeViewModel()
         parseIntentData()
@@ -181,10 +190,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
         binding.btnLike.setOnClickListener {
             animateButtonClick(it)
-            actionBeforeOptimistic = currentMyAction
-            currentMyAction = "like"
-            updateActionBar()
-            viewModel.submitAction(targetUserId, "like")
+            showConnectBecauseSheet()
         }
 
         binding.btnChat.setOnClickListener {
@@ -214,6 +220,101 @@ class OtherUserProfileActivity : AppCompatActivity() {
             currentPhotoUrls,
             startIndex.coerceIn(0, currentPhotoUrls.lastIndex)
         )
+    }
+
+    private fun setupPartialReactions() {
+        addPartialReactionAffordance(
+            host = binding.coverContainer,
+            target = MomentsReaction.Target.Photo(0),
+            overlay = true
+        )
+        addPartialReactionAffordance(
+            host = binding.cardVoiceIntro,
+            target = MomentsReaction.Target.Voice,
+            overlay = false
+        )
+        addPartialReactionAffordance(
+            host = binding.layoutMomentsHeader,
+            target = MomentsReaction.Target.Moments,
+            overlay = false
+        )
+        partialReactionButtons[MomentsReaction.Target.Voice]?.visibility = View.GONE
+    }
+
+    private fun addPartialReactionAffordance(
+        host: ViewGroup,
+        target: MomentsReaction.Target,
+        overlay: Boolean
+    ) {
+        val density = resources.displayMetrics.density
+        val size = (34 * density).toInt()
+        val margin = (10 * density).toInt()
+        val button = ImageView(this).apply {
+            setImageResource(R.drawable.ic_heart_action_white)
+            background = ContextCompat.getDrawable(context, R.drawable.bg_translucent_action_circle)
+            val pad = (7 * density).toInt()
+            setPadding(pad, pad, pad, pad)
+            contentDescription = "Like this part of the profile"
+            setOnClickListener { togglePartialReaction(MomentsReaction(target)) }
+        }
+        if (overlay && host is FrameLayout) {
+            button.layoutParams = FrameLayout.LayoutParams(size, size, Gravity.BOTTOM or Gravity.END).apply {
+                setMargins(margin, margin, margin, margin)
+            }
+            host.addView(button)
+        } else if (host is LinearLayout && host.orientation == LinearLayout.HORIZONTAL) {
+            host.addView(
+                View(this).apply {
+                    layoutParams = LinearLayout.LayoutParams(0, 0, 1f)
+                }
+            )
+            host.addView(button, LinearLayout.LayoutParams(size, size))
+        } else {
+            host.addView(button, ViewGroup.LayoutParams(size, size))
+        }
+        partialReactionButtons[target] = button
+    }
+
+    private fun togglePartialReaction(reaction: MomentsReaction) {
+        pendingReaction = if (pendingReaction?.target == reaction.target) null else reaction
+        updatePartialReactionVisuals()
+    }
+
+    private fun updatePartialReactionVisuals() {
+        partialReactionButtons.forEach { (target, view) ->
+            val selected = pendingReaction?.target == target
+            if (selected) {
+                view.setColorFilter(ContextCompat.getColor(this, R.color.brand_primary))
+            } else {
+                view.clearColorFilter()
+            }
+            view.alpha = if (selected) 1f else 0.88f
+        }
+    }
+
+    private fun clearPartialReactionSelection() {
+        pendingReaction = null
+        updatePartialReactionVisuals()
+    }
+
+    private fun showConnectBecauseSheet() {
+        val profile = (viewModel.profileState.value as? Resource.Success)?.data
+        val sharedCount = profile?.sharedInterests?.size ?: 0
+        val hasMoments = viewModel.momentsState.value.isNotEmpty() || !profile?.moments.isNullOrEmpty()
+        val sheet = ConnectBecauseBottomSheetDialogFragment.newInstance(
+            displayName = currentUserName,
+            hasSharedInterests = sharedCount > 0,
+            hasMoments = hasMoments
+        )
+        sheet.onSend = { reason ->
+            actionBeforeOptimistic = currentMyAction
+            currentMyAction = "like"
+            updateActionBar()
+            lastConnectionReaction = pendingReaction
+            viewModel.sendConnectionRequest(targetUserId, reason)
+            clearPartialReactionSelection()
+        }
+        sheet.show(supportFragmentManager, ConnectBecauseBottomSheetDialogFragment.TAG)
     }
 
     private fun openMoments(focusMomentId: String? = null) {
@@ -502,6 +603,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
         if (url.isNullOrBlank()) {
             binding.layoutVoiceIntroHeader.visibility = View.GONE
             binding.cardVoiceIntro.visibility = View.GONE
+            partialReactionButtons[MomentsReaction.Target.Voice]?.visibility = View.GONE
             return
         }
 
@@ -510,6 +612,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
         binding.layoutVoiceIntroHeader.visibility = View.VISIBLE
         binding.cardVoiceIntro.visibility = View.VISIBLE
+        partialReactionButtons[MomentsReaction.Target.Voice]?.visibility = View.VISIBLE
         binding.tvVoiceDuration.text = formatDuration(currentVoiceDurationSec)
         binding.waveformVoice.setProgress(0f)
         binding.ivVoicePlayIcon.setImageResource(R.drawable.ic_voice_play_triangle)
@@ -608,6 +711,8 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
     private fun handleLikeResult(action: String, didMatch: Boolean) {
         val sharedCount = (viewModel.profileState.value as? Resource.Success)?.data?.sharedInterests?.size ?: 0
+        val reactionSubtitle = lastConnectionReaction?.title
+        lastConnectionReaction = null
         if (didMatch) {
             ConnectionResultDialog.showMatch(
                 context = this,
@@ -619,13 +724,15 @@ class OtherUserProfileActivity : AppCompatActivity() {
                         context = this,
                         destination = Destination.Main(targetTab = 3)
                     )
-                }
+                },
+                subtitleOverride = reactionSubtitle
             )
         } else if (action == "like") {
             ConnectionResultDialog.showLikeSent(
                 context = this,
                 name = currentUserName,
-                avatarUrl = currentUserAvatar
+                avatarUrl = currentUserAvatar,
+                subtitleOverride = reactionSubtitle
             )
         } else {
             Toast.makeText(this, "Super like sent", Toast.LENGTH_SHORT).show()

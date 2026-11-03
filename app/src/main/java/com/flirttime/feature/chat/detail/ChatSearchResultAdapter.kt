@@ -70,6 +70,8 @@ class ChatSearchResultAdapter(
                 MessageKind.IMAGE -> "Photo"
                 MessageKind.VIDEO -> "Video"
                 MessageKind.AUDIO -> "Voice message"
+                MessageKind.LOCATION -> message.locationLabel?.takeIf { it.isNotBlank() }
+                    ?: message.body.ifBlank { "📍 Location" }
                 else -> "Message"
             }
         }

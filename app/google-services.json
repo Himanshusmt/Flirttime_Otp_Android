@@ -1,0 +1,126 @@
+{
+  "project_info": {
+    "project_number": "828544365224",
+    "project_id": "flirttime-de302",
+    "storage_bucket": "flirttime-de302.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:828544365224:android:917cf638f3d6768b0ec89d",
+        "android_client_info": {
+          "package_name": "com.flirttime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "828544365224-0cctru8eiage8506bllfba467oign0s6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flirttime",
+            "certificate_hash": "eb132a7bbe49369ce190bfa42309e62e0701efe9"
+          }
+        },
+        {
+          "client_id": "828544365224-3ohuokiltdidhpavao5q33q7o99flmlm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flirttime",
+            "certificate_hash": "50d9134e18a11402c668635988f2e95ba3d11663"
+          }
+        },
+        {
+          "client_id": "828544365224-55u187jt8bkmvoi0avtft9vcb31ib7vg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flirttime",
+            "certificate_hash": "d241bfff8408b2f29d20aa6f780acbcaaf183cf5"
+          }
+        },
+        {
+          "client_id": "828544365224-9skjkrgtqnt8p8cv228cfrki78o0iagh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flirttime",
+            "certificate_hash": "4652e1a2f8bede69817b7b32da6940fc3f587720"
+          }
+        },
+        {
+          "client_id": "828544365224-bcthhamligj448aupjoi89pnekmmrjlp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flirttime",
+            "certificate_hash": "08e4a0c5d2e344c9fba5b7cbeb3f6a427ed3d298"
+          }
+        },
+        {
+          "client_id": "828544365224-g1fd2gf0oee20dfbto7ik7h24rc5r74u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flirttime",
+            "certificate_hash": "f7dbcf6dbb8ed88bd8bba0c470f15d77f6b9430e"
+          }
+        },
+        {
+          "client_id": "828544365224-osh3pqomrd9sjriqcot5n1vnl56teb4f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flirttime",
+            "certificate_hash": "5b27fed83b8cd49938583d4998e56290d9b52cc3"
+          }
+        },
+        {
+          "client_id": "828544365224-rtdhiionp4qghg246vppmel1niga0a4k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flirttime",
+            "certificate_hash": "bd00855e22b4ee0ed031a303b05384711214d8bf"
+          }
+        },
+        {
+          "client_id": "828544365224-tpj6m0anm9gkpmtpgie3ol5ddnr5q8h9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flirttime",
+            "certificate_hash": "b06cb54598ee2bfcd2fdad11110c3b49d39accbe"
+          }
+        },
+        {
+          "client_id": "828544365224-tqqit2vo4d89ke2mcivi9pijbheev5gl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flirttime",
+            "certificate_hash": "73850791362c93e277de2c9da963ae5ff90a47f1"
+          }
+        },
+        {
+          "client_id": "828544365224-4f1m6hemudd6c3b7r1eucs58ga3orm4s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjy9uh8jCfLgQvxWFAloDvUDc6sWV-0Y4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "828544365224-1bmom1h73dvimfnjbod2i8l6nlq5e6m7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "828544365224-vcjmf8737lh60nj86jhskmioagfvjja7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.flirttime"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

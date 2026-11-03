@@ -30,7 +30,7 @@ data class ConversationUi(
 
 enum class DeliveryState { NONE, SENDING, SENT, DELIVERED, READ, FAILED }
 
-enum class MessageKind { TEXT, IMAGE, VIDEO, AUDIO, UNSUPPORTED }
+enum class MessageKind { TEXT, IMAGE, VIDEO, AUDIO, LOCATION, UNSUPPORTED }
 
 /** One aggregated emoji reaction group under a bubble. */
 data class ReactionUi(
@@ -96,9 +96,13 @@ data class MessageUi(
     val isDeleted: Boolean = false,
     /** Per-recipient receipt status (`userId -> read|delivered|sent`), used by Message Info. */
     val receipts: Map<String, String> = emptyMap(),
-    val reply: ReplyPreviewUi? = null
+    val reply: ReplyPreviewUi? = null,
+    val locationLatitude: Double? = null,
+    val locationLongitude: Double? = null,
+    val locationLabel: String? = null
 ) {
-    val isMedia: Boolean get() = kind != MessageKind.TEXT && kind != MessageKind.UNSUPPORTED
+    val isMedia: Boolean get() =
+        kind != MessageKind.TEXT && kind != MessageKind.LOCATION && kind != MessageKind.UNSUPPORTED
 
     /** True while the bubble is an unacknowledged local temp (`local-uuid`). */
     val isOptimisticTemporary: Boolean get() = id.startsWith("local-")
@@ -122,6 +126,7 @@ private const val TYPE_IMAGE = "image"
 private const val TYPE_VIDEO = "video"
 private const val TYPE_AUDIO = "audio"
 private const val TYPE_VOICE = "voice"
+private const val TYPE_LOCATION = "location"
 private const val TYPE_SYSTEM = "system"
 
 private val IMAGE_EXTENSIONS = listOf(".jpg", ".jpeg", ".png", ".webp", ".gif", ".heic")
@@ -162,7 +167,7 @@ fun ConversationRowDto.toUi(currentUserId: String): ConversationUi? {
         isGroup = type.equals("group", ignoreCase = true) || (participantsCount ?: 0) > 2,
         lastMessagePreview = preview,
         lastMessageAtRaw = lastMessageAt ?: lastMessage?.createdAt,
-        timestampLabel = ChatTimeFormatter.inboxLabel(lastMessageAt ?: lastMessage?.createdAt),
+        timestampLabel = ChatTimeFormatter.inboxRelativeLabel(lastMessageAt ?: lastMessage?.createdAt),
         unreadCount = resolvedUnread,
         isLastMessageFromMe = fromMe,
         isLastMessageRead = isReadReceipt(lastMessage?.status ?: lastMessageReceiptStatus),
@@ -192,6 +197,7 @@ private fun buildLastMessagePreview(type: String?, content: String?): String {
         TYPE_IMAGE -> "Photo"
         TYPE_VIDEO -> "Video"
         TYPE_AUDIO, TYPE_VOICE -> "Voice message"
+        TYPE_LOCATION -> trimmed.ifEmpty { "📍 Location" }
         TYPE_SYSTEM -> trimmed
         else -> trimmed
     }.let { if (it.isEmpty()) "Say hi to start the conversation" else it }
@@ -220,6 +226,13 @@ fun ChatMessageDto.toUi(currentUserId: String, fallbackConversationId: String): 
     val width = firstMedia?.width ?: this.metadata?.intValue("width") ?: 0
     val height = firstMedia?.height ?: this.metadata?.intValue("height") ?: 0
 
+    val locationLat = metadata?.doubleValue("latitude", "lat")
+    val locationLng = metadata?.doubleValue("longitude", "lng", "lon")
+    val locationName = metadata?.stringValue("name")
+    val locationAddress = metadata?.stringValue("address")
+        ?: locationName
+        ?: content?.trim()?.takeIf { resolvedKind == MessageKind.LOCATION && it.isNotEmpty() }
+
     return MessageUi(
         id = id ?: clientMessageId ?: "",
         conversationId = conversationId?.takeIf { it.isNotBlank() } ?: fallbackConversationId,
@@ -246,7 +259,10 @@ fun ChatMessageDto.toUi(currentUserId: String, fallbackConversationId: String): 
         isEdited = isEdited == true,
         isDeleted = isDeleted == true,
         receipts = resolvedReceipts(),
-        reply = resolvedReply().parseReply(currentUserId)
+        reply = resolvedReply().parseReply(currentUserId),
+        locationLatitude = locationLat,
+        locationLongitude = locationLng,
+        locationLabel = locationAddress?.takeIf { it.isNotBlank() }
     )
 }
 
@@ -266,6 +282,7 @@ private fun ChatMessageDto.resolveKind(): MessageKind {
         resolvedType == TYPE_IMAGE -> MessageKind.IMAGE
         resolvedType == TYPE_VIDEO -> MessageKind.VIDEO
         resolvedType == TYPE_AUDIO || resolvedType == TYPE_VOICE -> MessageKind.AUDIO
+        resolvedType == TYPE_LOCATION -> MessageKind.LOCATION
         resolvedType == TYPE_TEXT || resolvedType.isNullOrEmpty() -> MessageKind.TEXT
         isDeleted == true -> MessageKind.TEXT
         else -> MessageKind.UNSUPPORTED
@@ -277,6 +294,11 @@ private fun ChatMessageDto.resolvedBody(kind: MessageKind, mediaId: String?, isM
     val trimmed = content?.trim().orEmpty()
     return when (kind) {
         MessageKind.TEXT -> trimmed
+        MessageKind.LOCATION -> {
+            metadata?.stringValue("address")
+                ?: metadata?.stringValue("name")
+                ?: trimmed.ifEmpty { "📍 Location" }
+        }
         MessageKind.UNSUPPORTED -> trimmed.ifEmpty { "Unsupported message" }
         // Media bubbles carry the URL/key in `content`; only real captions are shown.
         else -> trimmed.takeIf {
@@ -354,13 +376,18 @@ internal fun Any?.parseReply(currentUserId: String): ReplyPreviewUi? = when (val
                 TYPE_IMAGE -> MessageKind.IMAGE
                 TYPE_VIDEO -> MessageKind.VIDEO
                 TYPE_AUDIO, TYPE_VOICE -> MessageKind.AUDIO
+                TYPE_LOCATION -> MessageKind.LOCATION
                 TYPE_TEXT, "" -> MessageKind.TEXT
                 else -> MessageKind.UNSUPPORTED
             }
             ReplyPreviewUi(
                 id = id,
                 senderName = senderName,
-                body = if (kind == MessageKind.TEXT) content else "",
+                body = when (kind) {
+                    MessageKind.TEXT -> content
+                    MessageKind.LOCATION -> content.ifEmpty { "📍 Location" }
+                    else -> ""
+                },
                 kind = kind,
                 isMine = !senderId.isNullOrEmpty() && senderId == currentUserId
             )

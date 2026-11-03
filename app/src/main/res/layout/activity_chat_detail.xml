@@ -75,48 +75,74 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvSubtitle"
+            <LinearLayout
+                android:id="@+id/layoutSubtitleRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:ellipsize="end"
-                android:fontFamily="@font/fredokaregular"
-                android:includeFontPadding="false"
-                android:maxLines="1"
-                android:textColor="@color/text_tertiary"
-                android:textSize="12sp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:visibility="gone"
-                tools:text="typing…"
-                tools:visibility="visible" />
+                tools:visibility="visible">
+
+                <View
+                    android:id="@+id/viewOnlineDot"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/ic_online_dot"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/tvSubtitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/fredokaregular"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="12sp"
+                    tools:text="Online" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/btnSearch"
-            android:layout_width="40dp"
+            android:id="@+id/btnVoiceCall"
+            android:layout_width="36dp"
             android:layout_height="40dp"
-            android:layout_marginStart="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:contentDescription="Search in conversation"
+            android:contentDescription="Voice call"
             android:focusable="true"
-            android:padding="10dp"
-            android:src="@drawable/ic_search_gray"
-            app:tint="#18181B" />
+            android:padding="8dp"
+            android:src="@drawable/ic_chat_call_red" />
+
+        <ImageView
+            android:id="@+id/btnVideoCall"
+            android:layout_width="36dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Video call"
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_chat_video_red" />
 
         <ImageView
             android:id="@+id/btnMore"
-            android:layout_width="40dp"
+            android:layout_width="36dp"
             android:layout_height="40dp"
-            android:layout_marginStart="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="Chat settings"
             android:focusable="true"
-            android:padding="10dp"
-            android:src="@drawable/ic_more_dots"
-            app:tint="#18181B" />
+            android:padding="8dp"
+            android:src="@drawable/ic_chat_more_red" />
 
     </LinearLayout>
 
@@ -313,7 +339,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="@drawable/chat_bg_pattern">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvMessages"
@@ -695,76 +722,216 @@
             android:id="@+id/layoutComposerRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="bottom"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/btnAttach"
-                android:layout_width="40dp"
-                android:layout_height="46dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="Attach photo"
-                android:focusable="true"
-                android:padding="10dp"
-                android:src="@drawable/ic_plus_red" />
-
+            <!-- iOS: + and mic live inside the gray pill; send sits outside -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_chat_input_pill"
                 android:gravity="center_vertical"
-                android:minHeight="46dp"
+                android:minHeight="52dp"
                 android:orientation="horizontal"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="6dp">
+                android:paddingStart="4dp"
+                android:paddingEnd="6dp"
+                android:paddingVertical="4dp">
+
+                <ImageView
+                    android:id="@+id/btnAttach"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Attach"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_plus_red" />
 
                 <EditText
                     android:id="@+id/etMessage"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:background="@null"
                     android:fontFamily="@font/fredokaregular"
                     android:hint="Message"
                     android:importantForAutofill="no"
                     android:inputType="textCapSentences|textMultiLine"
                     android:maxLines="4"
-                    android:minHeight="30dp"
-                    android:paddingVertical="4dp"
+                    android:minHeight="34dp"
+                    android:paddingVertical="6dp"
                     android:textColor="#18181B"
                     android:textColorHint="#9CA3AF"
                     android:textSize="15sp" />
 
+                <ImageView
+                    android:id="@+id/btnMic"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Record voice note"
+                    android:focusable="true"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_mic_red" />
+
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/btnMic"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
-                android:layout_marginStart="6dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="Record voice note"
-                android:focusable="true"
-                android:padding="12dp"
-                android:src="@drawable/ic_mic_red"
-                android:visibility="gone" />
-
-            <ImageView
                 android:id="@+id/btnSend"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
-                android:layout_marginStart="8dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="10dp"
+                android:alpha="0.4"
                 android:background="@drawable/bg_send_button"
                 android:clickable="true"
                 android:contentDescription="Send"
+                android:enabled="false"
                 android:focusable="true"
-                android:padding="12dp"
-                android:src="@drawable/ic_send_white"
-                android:visibility="gone" />
+                android:padding="13dp"
+                android:src="@drawable/ic_send_white" />
 
+        </LinearLayout>
+
+        <!-- iOS AttachmentPanelView: below the composer row -->
+        <LinearLayout
+            android:id="@+id/layoutAttachmentPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="6dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/btnAttachPhoto"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingVertical="4dp">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_attach_option_circle"
+                    android:contentDescription="Photo"
+                    android:padding="16dp"
+                    android:src="@drawable/ic_gallery_white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:includeFontPadding="false"
+                    android:text="Photo"
+                    android:textColor="#18181B"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnAttachCamera"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingVertical="4dp">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_attach_option_circle"
+                    android:contentDescription="Camera"
+                    android:padding="16dp"
+                    android:src="@drawable/ic_camera_white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:includeFontPadding="false"
+                    android:text="Camera"
+                    android:textColor="#18181B"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnAttachLocation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingVertical="4dp">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_attach_option_circle"
+                    android:contentDescription="Location"
+                    android:padding="16dp"
+                    android:src="@drawable/ic_location_white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:includeFontPadding="false"
+                    android:text="Location"
+                    android:textColor="#18181B"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnAttachContact"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingVertical="4dp">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_attach_option_circle"
+                    android:contentDescription="Contact"
+                    android:padding="16dp"
+                    android:src="@drawable/ic_contact_white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/fredokaregular"
+                    android:includeFontPadding="false"
+                    android:text="Contact"
+                    android:textColor="#18181B"
+                    android:textSize="12sp" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Voice note recorder: replaces the text row while recording -->

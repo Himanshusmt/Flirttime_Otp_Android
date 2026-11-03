@@ -27,17 +27,24 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flirttime.Resource
+import com.flirttime.core.database.SessionManager
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
 import com.flirttime.databinding.ActivityEmailVerifyBinding
+import com.flirttime.feature.auth.login.LoginViewModel
+import com.flirttime.feature.auth.login.launchGoogleSignIn
+import com.flirttime.feature.auth.login.observeGoogleLoginState
 import com.intuit.sdp.R
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EmailVerifyActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEmailVerifyBinding
     private val viewModel: EmailVerifyViewModel by viewModel()
+    private val loginViewModel: LoginViewModel by viewModel()
+    private val sessionManager: SessionManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +64,11 @@ class EmailVerifyActivity : AppCompatActivity() {
         setupPrivacyPolicySpannable()
         setupListeners()
         observeViewModel()
+        observeGoogleLoginState(
+            loginViewModel = loginViewModel,
+            onLoading = { loading -> binding.linearGoogle.isEnabled = !loading },
+            onError = { message -> Toast.makeText(this, message, Toast.LENGTH_LONG).show() }
+        )
     }
 
     private fun setupEdgeToEdge() {
@@ -261,7 +273,12 @@ class EmailVerifyActivity : AppCompatActivity() {
         }
 
         binding.linearGoogle.setOnClickListener {
-            Toast.makeText(this, "Google Sign-In integration ready", Toast.LENGTH_SHORT).show()
+            launchGoogleSignIn(
+                loginViewModel = loginViewModel,
+                sessionManager = sessionManager,
+                onLoading = { loading -> binding.linearGoogle.isEnabled = !loading },
+                onError = { message -> Toast.makeText(this, message, Toast.LENGTH_LONG).show() }
+            )
         }
     }
 

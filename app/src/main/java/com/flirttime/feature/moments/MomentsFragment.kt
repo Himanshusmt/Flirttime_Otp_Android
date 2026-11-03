@@ -24,6 +24,7 @@ import com.flirttime.feature.moments.options.MomentMoreOptionsBottomSheetDialogF
 import com.flirttime.feature.moments.options.ReportMomentBottomSheetDialogFragment
 import com.flirttime.feature.notification.NotificationBadgeBinder
 import com.flirttime.feature.notification.NotificationBadgeStore
+import com.flirttime.feature.notification.NotificationPendingStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -65,6 +66,23 @@ class MomentsFragment : Fragment() {
         super.onResume()
         if (momentsAdapter.itemCount == 0) {
             momentsViewModel.loadMoments(isRefresh = false)
+        }
+        NotificationPendingStore.consumeMoment()?.let { (momentId, sheet) ->
+            openMomentDeepLink(momentId, sheet)
+        }
+    }
+
+    private fun openMomentDeepLink(momentId: String, sheet: String?) {
+        if (momentId.isBlank()) return
+        when (sheet?.lowercase()) {
+            "gifts" -> {
+                ReceivedGiftsBottomSheetDialogFragment.newInstance(momentId = momentId)
+                    .show(childFragmentManager, ReceivedGiftsBottomSheetDialogFragment.TAG)
+            }
+            else -> {
+                CommentsBottomSheetDialogFragment.newInstance(postId = momentId)
+                    .show(childFragmentManager, CommentsBottomSheetDialogFragment.TAG)
+            }
         }
     }
 

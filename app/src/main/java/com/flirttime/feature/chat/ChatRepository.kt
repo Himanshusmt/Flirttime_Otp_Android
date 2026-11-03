@@ -1,6 +1,7 @@
 package com.flirttime.feature.chat
 
 import com.flirttime.Resource
+import com.flirttime.feature.chat.model.CallHistoryPage
 import com.flirttime.feature.chat.model.ChatMediaUpload
 import com.flirttime.feature.chat.model.ChatMessageDto
 import com.flirttime.feature.chat.model.ConversationRowDto
@@ -36,6 +37,18 @@ interface ChatRepository {
     suspend fun sendMessage(
         conversationId: String,
         text: String,
+        clientMessageId: String,
+        replyToId: String? = null,
+        messageType: String = "text",
+        metadata: Map<String, Any>? = null
+    ): Resource<ChatMessageDto>
+
+    suspend fun sendLocationMessage(
+        conversationId: String,
+        latitude: Double,
+        longitude: Double,
+        name: String?,
+        address: String,
         clientMessageId: String,
         replyToId: String? = null
     ): Resource<ChatMessageDto>
@@ -132,4 +145,13 @@ interface ChatRepository {
     suspend fun blockUser(userId: String, conversationId: String? = null): Resource<Unit>
 
     suspend fun unblockUser(userId: String): Resource<Unit>
+
+    /** `GET /api/v1/calls` — paginated call history for the Calls tab. */
+    suspend fun getCallHistory(page: Int = 1, limit: Int = 20): Resource<CallHistoryPage>
+
+    /** `DELETE /api/v1/calls/{id}`. */
+    suspend fun deleteCallHistoryItem(id: String): Resource<Unit>
+
+    /** `DELETE /api/v1/calls`. */
+    suspend fun deleteAllCallHistory(): Resource<Unit>
 }

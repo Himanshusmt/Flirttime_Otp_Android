@@ -53,6 +53,8 @@ interface MainRepository {
 
     fun updateProfile(request: UpdateProfileRequest): Flow<Resource<AuthUserDto>>
 
+    fun updateProfileFields(fields: Map<String, Any?>): Flow<Resource<AuthUserDto>>
+
     fun uploadProfilePhoto(context: Context, imageUri: Uri): Flow<Resource<AuthUserDto>>
 
     fun uploadCoverPhoto(context: Context, imageUri: Uri): Flow<Resource<String>>

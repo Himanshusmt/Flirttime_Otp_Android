@@ -3,6 +3,7 @@ package com.flirttime.feature.chat.list
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -76,8 +77,24 @@ class ConversationAdapter(
                 binding.layoutMessagePreview.visibility = View.VISIBLE
                 binding.tvLastMessage.text = conversation.lastMessagePreview
 
-                binding.ivDoubleCheck.visibility = if (conversation.isLastMessageFromMe) View.VISIBLE else View.GONE
-                binding.ivDoubleCheck.alpha = if (conversation.isLastMessageRead) 1f else 0.45f
+                if (conversation.isLastMessageFromMe) {
+                    binding.ivDoubleCheck.visibility = View.VISIBLE
+                    binding.ivDoubleCheck.setImageResource(
+                        if (conversation.isLastMessageRead) {
+                            R.drawable.ic_chat_tick_double
+                        } else {
+                            R.drawable.ic_chat_tick_single
+                        }
+                    )
+                    binding.ivDoubleCheck.setColorFilter(
+                        ContextCompat.getColor(
+                            context,
+                            if (conversation.isLastMessageRead) R.color.brand_primary else R.color.tick_pending
+                        )
+                    )
+                } else {
+                    binding.ivDoubleCheck.visibility = View.GONE
+                }
 
                 // Unread threads keep the bold/dark treatment, read ones drop back to grey.
                 val isUnread = conversation.unreadCount > 0

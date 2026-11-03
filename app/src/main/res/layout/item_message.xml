@@ -452,25 +452,40 @@
                 app:tint="@color/text_tertiary" />
 
             <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:fontFamily="@font/fredokaregular"
-                android:includeFontPadding="false"
-                android:textColor="@color/text_tertiary"
-                android:textSize="10.5sp"
-                tools:text="✓✓" />
-
-            <TextView
                 android:id="@+id/tvOutgoingTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/fredokaregular"
                 android:includeFontPadding="false"
-                android:textColor="@color/text_tertiary"
+                android:textColor="@color/brand_primary"
                 android:textSize="10.5sp"
                 tools:text="21:05" />
+
+            <!-- iOS delivery ticks (chat_tick_single / chat_tick_double) -->
+            <ImageView
+                android:id="@+id/ivStatus"
+                android:layout_width="16dp"
+                android:layout_height="14dp"
+                android:layout_marginStart="4dp"
+                android:contentDescription="Delivery status"
+                android:src="@drawable/ic_chat_tick_double"
+                android:visibility="gone"
+                app:tint="@color/brand_primary"
+                tools:visibility="visible" />
+
+            <!-- Failed / sending text (replaces ticks) -->
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:fontFamily="@font/fredokaregular"
+                android:includeFontPadding="false"
+                android:textColor="@color/brand_primary"
+                android:textSize="10.5sp"
+                android:visibility="gone"
+                tools:text="Not sent · Tap to retry"
+                tools:visibility="gone" />
 
         </LinearLayout>
 

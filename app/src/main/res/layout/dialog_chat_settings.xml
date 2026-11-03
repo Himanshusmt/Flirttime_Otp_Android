@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- iOS conversation action sheet parity (avatar header + text rows + Cancel). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@drawable/bg_bottom_sheet_top"
     android:orientation="vertical"
-    android:paddingBottom="18dp">
+    android:paddingBottom="10dp">
 
     <View
-        android:layout_width="48dp"
-        android:layout_height="5dp"
+        android:layout_width="36dp"
+        android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/bg_sheet_handle" />
 
-    <!-- Thread header: tapping it opens the other user's profile -->
+    <!-- Thread header: tapping opens the peer profile -->
     <LinearLayout
         android:id="@+id/layoutProfile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="12dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="20dp"
-        android:paddingVertical="10dp">
+        android:paddingVertical="12dp">
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/ivAvatar"
@@ -53,8 +54,8 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:textColor="#18181B"
-                android:textSize="16sp"
-                tools:text="Sofia" />
+                android:textSize="17sp"
+                tools:text="Tushar" />
 
             <TextView
                 android:id="@+id/tvSubtitle"
@@ -66,7 +67,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:textColor="#8E8E93"
-                android:textSize="13.5sp"
+                android:textSize="13sp"
                 tools:text="View profile" />
         </LinearLayout>
     </LinearLayout>
@@ -74,15 +75,14 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="4dp"
         android:background="#EFEFEF" />
 
     <TextView
         android:id="@+id/tvMute"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="54dp"
         android:background="?attr/selectableItemBackground"
+        android:fontFamily="@font/fredokaregular"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
         android:paddingHorizontal="20dp"
@@ -93,8 +93,9 @@
     <TextView
         android:id="@+id/tvPin"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="54dp"
         android:background="?attr/selectableItemBackground"
+        android:fontFamily="@font/fredokaregular"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
         android:paddingHorizontal="20dp"
@@ -105,8 +106,9 @@
     <TextView
         android:id="@+id/tvArchive"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="54dp"
         android:background="?attr/selectableItemBackground"
+        android:fontFamily="@font/fredokaregular"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
         android:paddingHorizontal="20dp"
@@ -117,8 +119,9 @@
     <TextView
         android:id="@+id/tvReadState"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="54dp"
         android:background="?attr/selectableItemBackground"
+        android:fontFamily="@font/fredokaregular"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
         android:paddingHorizontal="20dp"
@@ -129,13 +132,14 @@
     <TextView
         android:id="@+id/tvBlock"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="54dp"
         android:background="?attr/selectableItemBackground"
+        android:fontFamily="@font/fredokaregular"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
         android:paddingHorizontal="20dp"
         android:text="Block"
-        android:textColor="@color/brand_red"
+        android:textColor="@color/brand_primary"
         android:textSize="16sp"
         android:visibility="gone"
         tools:visibility="visible" />
@@ -143,8 +147,9 @@
     <TextView
         android:id="@+id/tvClearChat"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="54dp"
         android:background="?attr/selectableItemBackground"
+        android:fontFamily="@font/fredokaregular"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
         android:paddingHorizontal="20dp"
@@ -155,31 +160,31 @@
     <TextView
         android:id="@+id/tvDelete"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="54dp"
         android:background="?attr/selectableItemBackground"
+        android:fontFamily="@font/fredokaregular"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
         android:paddingHorizontal="20dp"
         android:text="Delete chat"
-        android:textColor="@color/brand_red"
+        android:textColor="@color/brand_primary"
         android:textSize="16sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="4dp"
         android:background="#EFEFEF" />
 
     <TextView
         android:id="@+id/tvCancel"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="54dp"
         android:background="?attr/selectableItemBackground"
+        android:fontFamily="@font/fredokamedium"
         android:gravity="center"
         android:includeFontPadding="false"
         android:text="Cancel"
-        android:textColor="#6B7280"
+        android:textColor="#8E8E93"
         android:textSize="16sp" />
 
 </LinearLayout>

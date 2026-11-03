@@ -8,6 +8,7 @@ import com.flirttime.core.common.AppForegroundTracker
 import com.flirttime.core.database.SessionManager
 import com.flirttime.feature.chat.ChatRepository
 import com.flirttime.feature.chat.cache.ChatCacheStore
+import com.flirttime.feature.chat.model.CallHistoryUi
 import com.flirttime.feature.chat.model.ChatMessageDto
 import com.flirttime.feature.chat.model.ConversationUi
 import com.flirttime.feature.chat.model.toUi
@@ -15,6 +16,9 @@ import com.flirttime.feature.chat.notification.ChatNotificationCenter
 import com.flirttime.feature.chat.socket.ChatConnectionState
 import com.flirttime.feature.chat.socket.ChatSocketManager
 import com.flirttime.feature.chat.util.ChatTimeFormatter
+import com.flirttime.feature.coins.CoinWallet
+import com.flirttime.feature.main.matches.MatchesRepository
+import com.flirttime.feature.quickmoments.QuickMomentCardItem
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -24,11 +28,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+enum class ChatInboxSection {
+    CHATS,
+    CALLS
+}
+
 class ChatListViewModel(
     private val repository: ChatRepository,
     private val socketManager: ChatSocketManager,
     private val sessionManager: SessionManager,
     private val cache: ChatCacheStore,
+    private val matchesRepository: MatchesRepository,
+    private val coinWallet: CoinWallet,
     private val appContext: Context
 ) : ViewModel() {
 
@@ -78,6 +89,32 @@ class ChatListViewModel(
     private var inboxPage = 1
     private var hasMoreInbox = false
 
+    private val _inboxSection = MutableStateFlow(ChatInboxSection.CHATS)
+    val inboxSection: StateFlow<ChatInboxSection> = _inboxSection.asStateFlow()
+
+    val coinBalance: StateFlow<Int> = coinWallet.balance
+
+    private val _callHistory = MutableStateFlow<List<CallHistoryUi>>(emptyList())
+    val callHistory: StateFlow<List<CallHistoryUi>> = _callHistory.asStateFlow()
+
+    private val _isLoadingCallHistory = MutableStateFlow(false)
+    val isLoadingCallHistory: StateFlow<Boolean> = _isLoadingCallHistory.asStateFlow()
+
+    private val _isRefreshingCallHistory = MutableStateFlow(false)
+    val isRefreshingCallHistory: StateFlow<Boolean> = _isRefreshingCallHistory.asStateFlow()
+
+    private val _isLoadingMoreCallHistory = MutableStateFlow(false)
+    val isLoadingMoreCallHistory: StateFlow<Boolean> = _isLoadingMoreCallHistory.asStateFlow()
+
+    private val _quickMomentsCards =
+        MutableStateFlow<Resource<List<QuickMomentCardItem>>>(Resource.Loading)
+    val quickMomentsCards: StateFlow<Resource<List<QuickMomentCardItem>>> =
+        _quickMomentsCards.asStateFlow()
+
+    private var callHistoryPage = 1
+    private var hasMoreCallHistory = true
+    private var didLoadCallHistory = false
+
     init {
         socketManager.connect()
         observeIncomingMessages()
@@ -89,6 +126,222 @@ class ChatListViewModel(
         observeGroupChanges()
         observeReconnects()
         loadConversations(isRefresh = true)
+        loadQuickMomentsCards()
+        loadHeaderInfo()
+    }
+
+    fun selectInboxSection(section: ChatInboxSection) {
+        if (_inboxSection.value == section) return
+        _inboxSection.value = section
+        if (section == ChatInboxSection.CALLS) {
+            loadCallHistoryIfNeeded()
+        }
+    }
+
+    fun loadHeaderInfo() {
+        viewModelScope.launch { coinWallet.refresh() }
+    }
+
+    fun loadQuickMomentsCards(forceRefresh: Boolean = false) {
+        viewModelScope.launch {
+            if (forceRefresh || _quickMomentsCards.value !is Resource.Success) {
+                _quickMomentsCards.value = Resource.Loading
+            }
+            matchesRepository.getQuickMomentsTray().collect { trayRes ->
+                when (trayRes) {
+                    is Resource.Success -> {
+                        val trayData = trayRes.data
+                        val myStatus = trayData.myStatus
+                        val cards = mutableListOf<QuickMomentCardItem>()
+                        val profilePhoto = myStatus?.avatar?.ifBlank { null }
+                            ?: myStatus?.user?.profilePhoto
+                            ?: sessionManager.getProfileImageUri().ifBlank { null }
+                        cards.add(QuickMomentCardItem.AddNewCard(userProfilePhoto = profilePhoto))
+                        val ownLatest = myStatus?.latestTimeAgo
+                        myStatus?.stories.orEmpty().forEach { slide ->
+                            cards.add(
+                                QuickMomentCardItem.StoryCard(
+                                    storyId = slide.id ?: "own_${System.currentTimeMillis()}",
+                                    userId = sessionManager.getUserId(),
+                                    userName = "My story",
+                                    userAvatar = profilePhoto,
+                                    relativeAge = slide.relativeAge ?: ownLatest ?: "1m",
+                                    textContent = slide.effectiveText,
+                                    mediaUrl = slide.displayImageUrl,
+                                    backgroundColor = slide.backgroundColor,
+                                    isOwnStory = true,
+                                    hasUnread = false,
+                                    viewCount = slide.effectiveViewCount,
+                                    originalSlide = slide
+                                )
+                            )
+                        }
+                        trayData.otherUsers.orEmpty().forEach { otherUser ->
+                            val userStories = otherUser.stories.orEmpty()
+                            if (userStories.isNotEmpty()) {
+                                userStories.forEach { slide ->
+                                    cards.add(
+                                        QuickMomentCardItem.StoryCard(
+                                            storyId = slide.id ?: otherUser.effectiveId,
+                                            userId = otherUser.effectiveUserId,
+                                            userName = otherUser.effectiveName,
+                                            userAvatar = otherUser.effectiveAvatar,
+                                            relativeAge = slide.relativeAge
+                                                ?: otherUser.effectiveTimeAgo,
+                                            textContent = slide.effectiveText
+                                                ?: otherUser.effectiveText,
+                                            mediaUrl = slide.displayImageUrl
+                                                ?: otherUser.effectiveMediaUrl,
+                                            backgroundColor = slide.backgroundColor
+                                                ?: otherUser.effectiveBackground,
+                                            isOwnStory = false,
+                                            hasUnread = otherUser.hasUnread == true,
+                                            viewCount = slide.effectiveViewCount,
+                                            originalSlide = slide
+                                        )
+                                    )
+                                }
+                            } else {
+                                cards.add(
+                                    QuickMomentCardItem.StoryCard(
+                                        storyId = otherUser.effectiveId,
+                                        userId = otherUser.effectiveUserId,
+                                        userName = otherUser.effectiveName,
+                                        userAvatar = otherUser.effectiveAvatar,
+                                        relativeAge = otherUser.effectiveTimeAgo,
+                                        textContent = otherUser.effectiveText,
+                                        mediaUrl = otherUser.effectiveMediaUrl,
+                                        backgroundColor = otherUser.effectiveBackground,
+                                        isOwnStory = false,
+                                        hasUnread = otherUser.hasUnread == true,
+                                        viewCount = 0
+                                    )
+                                )
+                            }
+                        }
+                        _quickMomentsCards.value = Resource.Success(cards)
+                    }
+                    is Resource.Error -> {
+                        _quickMomentsCards.value = Resource.Error(trayRes.message)
+                    }
+                    is Resource.Loading -> Unit
+                }
+            }
+        }
+    }
+
+    fun deleteQuickMoment(momentId: String, onDeleted: () -> Unit = {}) {
+        viewModelScope.launch {
+            matchesRepository.deleteQuickMoment(momentId).collect { res ->
+                if (res is Resource.Success) {
+                    onDeleted()
+                    loadQuickMomentsCards(forceRefresh = true)
+                }
+            }
+        }
+    }
+
+    fun reactToQuickMoment(momentId: String, reaction: String) {
+        viewModelScope.launch {
+            matchesRepository.reactToQuickMoment(momentId, reaction).collect { }
+        }
+    }
+
+    fun replyToQuickMoment(momentId: String, message: String) {
+        viewModelScope.launch {
+            matchesRepository.replyToQuickMoment(momentId, message).collect { }
+        }
+    }
+
+    fun loadCallHistoryIfNeeded() {
+        if (didLoadCallHistory || _isLoadingCallHistory.value) return
+        refreshCallHistory()
+    }
+
+    fun refreshCallHistory() {
+        hasMoreCallHistory = true
+        fetchCallHistory(page = 1, reset = true)
+    }
+
+    fun loadMoreCallHistoryIfNeeded() {
+        if (!hasMoreCallHistory || _isLoadingCallHistory.value || _isLoadingMoreCallHistory.value) {
+            return
+        }
+        fetchCallHistory(page = callHistoryPage + 1, reset = false)
+    }
+
+    fun deleteCallHistoryItem(id: String) {
+        val previous = _callHistory.value
+        _callHistory.value = previous.filterNot { it.id == id }
+        viewModelScope.launch {
+            when (val result = repository.deleteCallHistoryItem(id)) {
+                is Resource.Success -> Unit
+                is Resource.Error -> {
+                    _callHistory.value = previous
+                    _errorMessage.tryEmit(result.message.ifBlank { "Could not delete call" })
+                }
+                is Resource.Loading -> Unit
+            }
+        }
+    }
+
+    fun deleteAllCallHistory() {
+        val previous = _callHistory.value
+        _callHistory.value = emptyList()
+        hasMoreCallHistory = false
+        viewModelScope.launch {
+            when (val result = repository.deleteAllCallHistory()) {
+                is Resource.Success -> {
+                    didLoadCallHistory = true
+                    callHistoryPage = 1
+                }
+                is Resource.Error -> {
+                    _callHistory.value = previous
+                    hasMoreCallHistory = true
+                    _errorMessage.tryEmit(result.message.ifBlank { "Could not delete calls" })
+                }
+                is Resource.Loading -> Unit
+            }
+        }
+    }
+
+    fun visibleCallHistory(): List<CallHistoryUi> {
+        val query = _searchQuery.value.trim()
+        if (query.isEmpty()) return _callHistory.value
+        return _callHistory.value.filter { it.peerName.contains(query, ignoreCase = true) }
+    }
+
+    private fun fetchCallHistory(page: Int, reset: Boolean) {
+        viewModelScope.launch {
+            if (reset) {
+                _isLoadingCallHistory.value = _callHistory.value.isEmpty()
+                _isRefreshingCallHistory.value = true
+            } else {
+                _isLoadingMoreCallHistory.value = true
+            }
+            when (val result = repository.getCallHistory(page = page, limit = CALL_HISTORY_PAGE_SIZE)) {
+                is Resource.Success -> {
+                    if (currentUserId.isEmpty()) {
+                        currentUserId = sessionManager.getUserId()
+                    }
+                    val mapped = result.data.calls.mapNotNull { it.toUi(currentUserId) }
+                    _callHistory.update { existing ->
+                        if (reset) mapped else (existing + mapped).distinctBy { it.id }
+                    }
+                    callHistoryPage = result.data.page
+                    hasMoreCallHistory = result.data.hasMore
+                    didLoadCallHistory = true
+                }
+                is Resource.Error -> {
+                    if (reset) didLoadCallHistory = false
+                    _errorMessage.tryEmit(result.message.ifBlank { "Could not load calls" })
+                }
+                is Resource.Loading -> Unit
+            }
+            _isLoadingCallHistory.value = false
+            _isRefreshingCallHistory.value = false
+            _isLoadingMoreCallHistory.value = false
+        }
     }
 
     fun visibleConversations(): List<ConversationUi> {
@@ -198,44 +451,50 @@ class ChatListViewModel(
                 _isLoading.value = true
             }
 
-            if (currentUserId.isEmpty()) {
-                currentUserId = sessionManager.getUserId()
-            }
-
-            when (val result = repository.getConversations(page = 1, limit = INBOX_PAGE_SIZE)) {
-                is Resource.Success -> {
-                    val mapped = result.data.mapNotNull { it.toUi(currentUserId) }
-                        .sortedByDescending { ChatTimeFormatter.parse(it.lastMessageAtRaw)?.time ?: 0L }
-                    // Rows flagged as archived never belong in the inbox sections.
-                    val archivedIds = mapped.filter { it.isArchived }
-                    if (archivedIds.isNotEmpty()) {
-                        _archivedConversations.value = archivedIds
-                    }
-                    val hiddenIds = _archivedConversations.value.map { it.id }.toSet()
-                    val visible = mapped.filterNot { it.isArchived || it.id in hiddenIds }
-                    _conversations.value = visible
-                    _unreadTotal.value = visible.sumOf { it.unreadCount }
-                    // Pagination restarts with every refresh, matching iOS `startApiSync`.
-                    inboxPage = 1
-                    hasMoreInbox = result.data.size >= INBOX_PAGE_SIZE
-                    // Subscribe to every visible thread so the inbox updates without opening it.
-                    visible.forEach { socketManager.joinConversation(it.id) }
-                    cache.saveConversations(visible, archived = false)
+            try {
+                if (currentUserId.isEmpty()) {
+                    currentUserId = sessionManager.getUserId()
                 }
-                is Resource.Error -> {
-                    if (_conversations.value.isEmpty()) {
-                        // Offline cold start: show the last successfully loaded inbox.
-                        loadCachedConversations()
-                        if (_conversations.value.isEmpty()) _errorMessage.tryEmit(result.message)
+
+                when (val result = repository.getConversations(page = 1, limit = INBOX_PAGE_SIZE)) {
+                    is Resource.Success -> {
+                        val mapped = result.data.mapNotNull { it.toUi(currentUserId) }
+                            .sortedByDescending {
+                                ChatTimeFormatter.parse(it.lastMessageAtRaw)?.time ?: 0L
+                            }
+                        // Rows flagged as archived never belong in the inbox sections.
+                        val archivedIds = mapped.filter { it.isArchived }
+                        if (archivedIds.isNotEmpty()) {
+                            _archivedConversations.value = archivedIds
+                        }
+                        val hiddenIds = _archivedConversations.value.map { it.id }.toSet()
+                        val visible = mapped.filterNot { it.isArchived || it.id in hiddenIds }
+                        _conversations.value = visible
+                        _unreadTotal.value = visible.sumOf { it.unreadCount }
+                        // Pagination restarts with every refresh, matching iOS `startApiSync`.
+                        inboxPage = 1
+                        hasMoreInbox = result.data.size >= INBOX_PAGE_SIZE
+                        // Subscribe to every visible thread so the inbox updates without opening it.
+                        visible.forEach { socketManager.joinConversation(it.id) }
+                        cache.saveConversations(visible, archived = false)
                     }
+                    is Resource.Error -> {
+                        if (_conversations.value.isEmpty()) {
+                            // Offline cold start: show the last successfully loaded inbox.
+                            loadCachedConversations()
+                            if (_conversations.value.isEmpty()) {
+                                _errorMessage.tryEmit(result.message)
+                            }
+                        }
+                    }
+                    is Resource.Loading -> Unit
                 }
-                is Resource.Loading -> Unit
+
+                if (isRefresh) loadArchivedConversations()
+            } finally {
+                _isLoading.value = false
+                _isRefreshing.value = false
             }
-
-            if (isRefresh) loadArchivedConversations()
-
-            _isLoading.value = false
-            _isRefreshing.value = false
         }
     }
 
@@ -487,7 +746,7 @@ class ChatListViewModel(
                         lastMessagePreview = dto.content?.trim()?.takeIf { it.isNotEmpty() }
                             ?: existing.lastMessagePreview,
                         lastMessageAtRaw = timestamp ?: existing.lastMessageAtRaw,
-                        timestampLabel = ChatTimeFormatter.inboxLabel(timestamp),
+                        timestampLabel = ChatTimeFormatter.inboxRelativeLabel(timestamp),
                         unreadCount = if (isMine) existing.unreadCount else existing.unreadCount + 1,
                         isLastMessageFromMe = isMine,
                         isLastMessageRead = false
@@ -621,5 +880,6 @@ class ChatListViewModel(
     private companion object {
         /** Matches the page size already used for the inbox and the archived bucket. */
         const val INBOX_PAGE_SIZE = 40
+        const val CALL_HISTORY_PAGE_SIZE = 20
     }
 }

@@ -361,6 +361,67 @@
                         android:layout_marginStart="70dp"
                         android:background="@color/border_subtle" />
 
+                    <!-- Privacy & safety -->
+                    <LinearLayout
+                        android:id="@+id/rowPrivacySafety"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_settings_icon_green"
+                            android:contentDescription="Privacy and safety"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_settings_privacy" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredokamedium"
+                                android:text="Privacy &amp; safety"
+                                android:textColor="@color/text_primary"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:fontFamily="@font/fredokaregular"
+                                android:text="Control what others see"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:contentDescription="Go"
+                            android:src="@drawable/ic_chevron_right_thin" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.6dp"
+                        android:layout_marginStart="70dp"
+                        android:background="@color/border_subtle" />
+
                     <!-- Blocked & reported -->
                     <LinearLayout
                         android:id="@+id/rowBlockedReported"

@@ -3,12 +3,14 @@ package com.flirttime.feature.auth.otp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flirttime.Resource
+import com.flirttime.core.database.SessionManager
 import com.flirttime.core.navigation.Destination
 import com.flirttime.feature.auth.AuthRepository
 import com.flirttime.feature.auth.OtpResponseData
 import com.flirttime.feature.auth.VerifyOtpResponseData
 import com.flirttime.feature.main.MainRepository
 import com.flirttime.feature.main.matches.FreeTierLimitsStore
+import com.flirttime.feature.notification.FcmTokenRegistrar
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -20,7 +22,8 @@ import kotlinx.coroutines.launch
 class OtpViewModel(
     private val authRepository: AuthRepository,
     private val mainRepository: MainRepository,
-    private val limitsStore: FreeTierLimitsStore
+    private val limitsStore: FreeTierLimitsStore,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val _verifyOtpState = MutableStateFlow<Resource<VerifyOtpResponseData>?>(null)
@@ -60,6 +63,7 @@ class OtpViewModel(
 
     fun routeAfterLogin(isProfileComplete: Boolean) {
         viewModelScope.launch {
+            FcmTokenRegistrar.refreshAndRegister(sessionManager, authRepository)
             limitsStore.refresh()
             if (isProfileComplete) {
                 _postLoginDestination.emit(Destination.Main())

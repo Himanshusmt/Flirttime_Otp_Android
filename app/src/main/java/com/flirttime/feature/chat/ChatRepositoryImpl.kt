@@ -5,6 +5,7 @@ import com.flirttime.core.network.safeRawApiCall
 import com.flirttime.feature.chat.media.ChatMediaUploader
 import com.flirttime.feature.chat.model.ArchiveConversationRequest
 import com.flirttime.feature.chat.model.BlockUserRequest
+import com.flirttime.feature.chat.model.CallHistoryPage
 import com.flirttime.feature.chat.model.ChatMediaUpload
 import com.flirttime.feature.chat.model.ChatMessageDto
 import com.flirttime.feature.chat.model.ConversationRowDto
@@ -65,15 +66,50 @@ class ChatRepositoryImpl(
         conversationId: String,
         text: String,
         clientMessageId: String,
-        replyToId: String?
+        replyToId: String?,
+        messageType: String,
+        metadata: Map<String, Any>?
     ): Resource<ChatMessageDto> = safeRawApiCall {
+        val resolvedType = messageType.ifBlank { "text" }
         val response = api.sendMessage(
             conversationId = conversationId,
             body = SendMessageRequest(
                 content = text,
-                messageType = "text",
-                type = "text",
+                messageType = resolvedType,
+                type = resolvedType,
                 clientMessageId = clientMessageId,
+                metadata = metadata,
+                replyToId = replyToId?.takeIf { it.isNotBlank() }
+            )
+        )
+        val message = response.data?.toMessage()
+        response.success.failureMessage(message != null)?.let { error(it) }
+        message ?: error(response.message ?: "Message could not be sent")
+    }
+
+    override suspend fun sendLocationMessage(
+        conversationId: String,
+        latitude: Double,
+        longitude: Double,
+        name: String?,
+        address: String,
+        clientMessageId: String,
+        replyToId: String?
+    ): Resource<ChatMessageDto> = safeRawApiCall {
+        val metadata = buildMap<String, Any> {
+            put("latitude", latitude)
+            put("longitude", longitude)
+            name?.takeIf { it.isNotBlank() }?.let { put("name", it) }
+            put("address", address)
+        }
+        val response = api.sendMessage(
+            conversationId = conversationId,
+            body = SendMessageRequest(
+                content = address,
+                messageType = "location",
+                type = "location",
+                clientMessageId = clientMessageId,
+                metadata = metadata,
                 replyToId = replyToId?.takeIf { it.isNotBlank() }
             )
         )
@@ -346,6 +382,37 @@ class ChatRepositoryImpl(
         val response = api.unblockUser(userId)
         response.success?.takeIf { !it }
             ?.let { error(response.message ?: "Could not unblock the user") }
+        Unit
+    }
+
+    override suspend fun getCallHistory(page: Int, limit: Int): Resource<CallHistoryPage> =
+        safeRawApiCall {
+            val safePage = page.coerceAtLeast(1)
+            val safeLimit = limit.coerceAtLeast(1)
+            val response = api.getCallHistory(page = safePage, limit = safeLimit)
+            val calls = response.resolvedCalls()
+            response.success.failureMessage(calls.isNotEmpty() || response.data != null)?.let {
+                error(it)
+            }
+            CallHistoryPage(
+                calls = calls,
+                page = response.data?.page ?: response.page ?: safePage,
+                hasMore = response.resolvedHasMore(safePage, safeLimit, calls.size)
+            )
+        }
+
+    override suspend fun deleteCallHistoryItem(id: String): Resource<Unit> = safeRawApiCall {
+        if (id.isBlank()) error("Missing call id")
+        val response = api.deleteCallHistoryItem(id)
+        response.success?.takeIf { !it }
+            ?.let { error(response.message ?: "Could not delete call") }
+        Unit
+    }
+
+    override suspend fun deleteAllCallHistory(): Resource<Unit> = safeRawApiCall {
+        val response = api.deleteAllCallHistory()
+        response.success?.takeIf { !it }
+            ?.let { error(response.message ?: "Could not delete calls") }
         Unit
     }
 

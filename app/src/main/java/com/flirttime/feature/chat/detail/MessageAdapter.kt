@@ -43,7 +43,8 @@ class MessageAdapter(
     private val onLongPress: (MessageUi) -> Unit = {},
     private val onSelectToggle: (MessageUi) -> Unit = {},
     private val onReplyPreviewClick: (MessageUi, String) -> Unit = { _, _ -> },
-    private val onReactionClick: (MessageUi, ReactionUi) -> Unit = { _, _ -> }
+    private val onReactionClick: (MessageUi, ReactionUi) -> Unit = { _, _ -> },
+    private val onLocationClick: (MessageUi) -> Unit = {}
 ) : ListAdapter<MessageRow, RecyclerView.ViewHolder>(DIFF) {
 
     private var playingMessageId: String? = null
@@ -193,7 +194,7 @@ class MessageAdapter(
                 body = binding.tvIncomingReplyBody
             )
             bindIncomingMedia(message)
-            bindCaption(binding.tvIncomingBody, message.body, message.isDeleted)
+            bindTextBubble(binding.tvIncomingBody, message)
             bindReactions(binding.layoutIncomingReactions, message)
         }
 
@@ -214,28 +215,43 @@ class MessageAdapter(
                 body = binding.tvOutgoingReplyBody
             )
             bindOutgoingMedia(message)
-            bindCaption(binding.tvOutgoingBody, message.body, message.isDeleted)
+            bindTextBubble(binding.tvOutgoingBody, message)
             bindReactions(binding.layoutOutgoingReactions, message)
 
             binding.ivOutgoingPinned.isVisible = message.isPinned
             binding.tvOutgoingTime.text = timeLabel(message)
-            binding.tvStatus.text = statusLabel(message, failed)
-            binding.tvStatus.setTextColor(
-                ContextCompat.getColor(
-                    context,
-                    when {
-                        failed -> R.color.brand_primary
-                        // Seen wins over the delivered double tick, exactly like iOS.
-                        message.deliveryState == DeliveryState.READ -> R.color.brand_primary
-                        else -> R.color.text_tertiary
-                    }
+            binding.tvOutgoingTime.setTextColor(
+                ContextCompat.getColor(context, R.color.brand_primary)
+            )
+            bindDeliveryStatus(message, failed)
+        }
+
+        /** iOS ticks: single gray (sent), double gray (delivered), double Punch (read). */
+        private fun bindDeliveryStatus(message: MessageUi, failed: Boolean) {
+            val context = binding.root.context
+            if (failed || message.deliveryState == DeliveryState.SENDING) {
+                binding.ivStatus.isVisible = false
+                binding.tvStatus.isVisible = true
+                binding.tvStatus.text = statusLabel(message, failed)
+                binding.tvStatus.setTextColor(ContextCompat.getColor(context, R.color.brand_primary))
+                binding.tvStatus.isClickable = failed
+                binding.tvStatus.isFocusable = failed
+                binding.tvStatus.setOnClickListener(
+                    if (failed) View.OnClickListener { onRetry(message) } else null
                 )
-            )
-            binding.tvStatus.isClickable = failed
-            binding.tvStatus.isFocusable = failed
-            binding.tvStatus.setOnClickListener(
-                if (failed) View.OnClickListener { onRetry(message) } else null
-            )
+                return
+            }
+
+            binding.tvStatus.isVisible = false
+            binding.tvStatus.setOnClickListener(null)
+            binding.ivStatus.isVisible = true
+            val (icon, tint) = when (message.deliveryState) {
+                DeliveryState.READ -> R.drawable.ic_chat_tick_double to R.color.brand_primary
+                DeliveryState.DELIVERED -> R.drawable.ic_chat_tick_double to R.color.tick_pending
+                else -> R.drawable.ic_chat_tick_single to R.color.tick_pending
+            }
+            binding.ivStatus.setImageResource(icon)
+            binding.ivStatus.setColorFilter(ContextCompat.getColor(context, tint))
         }
 
         /** Long-press opens the action sheet; while selecting it toggles the row instead. */
@@ -246,11 +262,42 @@ class MessageAdapter(
             }
         }
 
+        private fun bindTextBubble(view: TextView, message: MessageUi) {
+            if (message.isDeleted) {
+                bindCaption(view, message.body, deleted = true)
+                view.setOnClickListener(null)
+                view.isClickable = false
+                return
+            }
+            if (message.kind == MessageKind.LOCATION) {
+                bindLocationBubble(view, message)
+                return
+            }
+            bindCaption(view, message.body, deleted = false)
+            view.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+            view.setOnClickListener(null)
+            view.isClickable = false
+        }
+
         private fun bindCaption(view: TextView, body: String, deleted: Boolean) {
             val caption = body.trim()
             view.isVisible = caption.isNotEmpty()
             view.text = caption
             view.typeface = Typeface.create(view.typeface, if (deleted) Typeface.ITALIC else Typeface.NORMAL)
+        }
+
+        private fun bindLocationBubble(view: TextView, message: MessageUi) {
+            val label = message.locationLabel?.takeIf { it.isNotBlank() }
+                ?: message.body.trim().ifEmpty { "📍 Location" }
+            view.isVisible = true
+            view.text = label
+            view.typeface = Typeface.create(view.typeface, Typeface.NORMAL)
+            val pin = ContextCompat.getDrawable(view.context, R.drawable.ic_location_pin_red)
+            view.setCompoundDrawablesWithIntrinsicBounds(pin, null, null, null)
+            view.compoundDrawablePadding = (8 * view.resources.displayMetrics.density).toInt()
+            view.isClickable = true
+            view.isFocusable = true
+            view.setOnClickListener { onLocationClick(message) }
         }
 
         private fun bindReplyPreview(
@@ -454,6 +501,7 @@ class MessageAdapter(
             reply.kind == MessageKind.IMAGE -> "Photo"
             reply.kind == MessageKind.VIDEO -> "Video"
             reply.kind == MessageKind.AUDIO -> "Voice message"
+            reply.kind == MessageKind.LOCATION -> reply.body.ifBlank { "📍 Location" }
             else -> "Message"
         }
 

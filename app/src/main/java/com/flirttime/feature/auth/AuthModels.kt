@@ -67,7 +67,13 @@ data class AuthUserDto(
     @SerializedName("activeSubscriptionPlanId") val activeSubscriptionPlanId: String? = null,
     @SerializedName("notificationSettings") val notificationSettings: NotificationSettingsDto? = null,
     @SerializedName("countryCode") val countryCode: String? = null,
-    @SerializedName("pageRedirect") val pageRedirect: String? = null
+    @SerializedName("pageRedirect") val pageRedirect: String? = null,
+    // Privacy & Safety visibility (iOS VisibilitySettingKey)
+    @SerializedName(value = "ageShow", alternate = ["age_show"]) val ageShow: Boolean? = null,
+    @SerializedName(value = "distanceShow", alternate = ["distance_show"]) val distanceShow: Boolean? = null,
+    @SerializedName(value = "onlineShow", alternate = ["online_show"]) val onlineShow: Boolean? = null,
+    @SerializedName(value = "enablePublicSearch", alternate = ["enable_public_search"])
+    val enablePublicSearch: Boolean? = null
 ) {
     val effectiveCoverPhotoUrl: String?
         get() = coverPhotoUrl?.ifBlank { null }
@@ -89,6 +95,14 @@ data class UsernameAvailabilityResponseData(
     val isUsernameAvailable: Boolean
         get() = available ?: isAvailable ?: taken?.not() ?: false
 }
+
+data class VisibilitySettingsDto(
+    @SerializedName(value = "ageShow", alternate = ["age_show"]) val ageShow: Boolean? = true,
+    @SerializedName(value = "distanceShow", alternate = ["distance_show"]) val distanceShow: Boolean? = true,
+    @SerializedName(value = "onlineShow", alternate = ["online_show"]) val onlineShow: Boolean? = true,
+    @SerializedName(value = "enablePublicSearch", alternate = ["enable_public_search"])
+    val enablePublicSearch: Boolean? = true
+)
 
 data class NotificationSettingsDto(
     @SerializedName("push_notifications", alternate = ["push"]) val pushNotifications: Boolean? = true,

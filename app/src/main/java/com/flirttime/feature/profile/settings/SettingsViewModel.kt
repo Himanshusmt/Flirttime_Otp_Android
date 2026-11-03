@@ -6,6 +6,7 @@ import com.flirttime.Resource
 import com.flirttime.core.database.SessionManager
 import com.flirttime.feature.auth.AuthUserDto
 import com.flirttime.feature.auth.NotificationSettingsDto
+import com.flirttime.feature.auth.VisibilitySettingsDto
 import com.flirttime.feature.auth.AuthRepository
 import com.flirttime.feature.main.MainRepository
 import com.flirttime.feature.profile.BlockedUsersResponseData
@@ -30,6 +31,12 @@ class SettingsViewModel(
 
     private val _updateSettingsState = MutableStateFlow<Resource<NotificationSettingsDto>?>(null)
     val updateSettingsState: StateFlow<Resource<NotificationSettingsDto>?> = _updateSettingsState.asStateFlow()
+
+    private val _visibilitySettingsState = MutableStateFlow<Resource<VisibilitySettingsDto>?>(null)
+    val visibilitySettingsState: StateFlow<Resource<VisibilitySettingsDto>?> = _visibilitySettingsState.asStateFlow()
+
+    private val _updateVisibilityState = MutableStateFlow<Resource<VisibilitySettingsDto>?>(null)
+    val updateVisibilityState: StateFlow<Resource<VisibilitySettingsDto>?> = _updateVisibilityState.asStateFlow()
 
     private val _blockedUsersState = MutableStateFlow<Resource<BlockedUsersResponseData>?>(null)
     val blockedUsersState: StateFlow<Resource<BlockedUsersResponseData>?> = _blockedUsersState.asStateFlow()
@@ -59,6 +66,7 @@ class SettingsViewModel(
     val deleteAccountState: StateFlow<Resource<Unit>?> = _deleteAccountState.asStateFlow()
 
     private var currentSettings: NotificationSettingsDto = NotificationSettingsDto()
+    private var currentVisibility: VisibilitySettingsDto = VisibilitySettingsDto()
 
     init {
         refreshHeaderUser()
@@ -81,6 +89,78 @@ class SettingsViewModel(
                     currentSettings = resource.data
                 }
                 _notificationSettingsState.value = resource
+            }
+        }
+    }
+
+    fun loadVisibilitySettings() {
+        viewModelScope.launch {
+            authRepository.getCurrentUser().collectLatest { resource ->
+                when (resource) {
+                    is Resource.Success -> {
+                        val user = resource.data
+                        currentVisibility = VisibilitySettingsDto(
+                            ageShow = user.ageShow,
+                            distanceShow = user.distanceShow,
+                            onlineShow = user.onlineShow,
+                            enablePublicSearch = user.enablePublicSearch
+                        )
+                        _visibilitySettingsState.value = Resource.Success(currentVisibility)
+                    }
+                    is Resource.Error -> _visibilitySettingsState.value = Resource.Error(resource.message)
+                    is Resource.Loading -> _visibilitySettingsState.value = Resource.Loading
+                }
+            }
+        }
+    }
+
+    fun toggleAgeShow(enabled: Boolean) {
+        optimisticVisibilityUpdate(mapOf("age_show" to enabled)) { it.copy(ageShow = enabled) }
+    }
+
+    fun toggleDistanceShow(enabled: Boolean) {
+        optimisticVisibilityUpdate(mapOf("distance_show" to enabled)) { it.copy(distanceShow = enabled) }
+    }
+
+    fun toggleOnlineShow(enabled: Boolean) {
+        optimisticVisibilityUpdate(mapOf("online_show" to enabled)) { it.copy(onlineShow = enabled) }
+    }
+
+    fun togglePublicSearch(enabled: Boolean) {
+        optimisticVisibilityUpdate(mapOf("enable_public_search" to enabled)) {
+            it.copy(enablePublicSearch = enabled)
+        }
+    }
+
+    private fun optimisticVisibilityUpdate(
+        fields: Map<String, Any?>,
+        transform: (VisibilitySettingsDto) -> VisibilitySettingsDto
+    ) {
+        val previous = currentVisibility
+        val updated = transform(currentVisibility)
+        currentVisibility = updated
+        _visibilitySettingsState.value = Resource.Success(updated)
+
+        viewModelScope.launch {
+            mainRepository.updateProfileFields(fields).collectLatest { resource ->
+                when (resource) {
+                    is Resource.Success -> {
+                        val user = resource.data
+                        currentVisibility = VisibilitySettingsDto(
+                            ageShow = user.ageShow,
+                            distanceShow = user.distanceShow,
+                            onlineShow = user.onlineShow,
+                            enablePublicSearch = user.enablePublicSearch
+                        )
+                        _visibilitySettingsState.value = Resource.Success(currentVisibility)
+                    }
+                    is Resource.Error -> {
+                        currentVisibility = previous
+                        _visibilitySettingsState.value = Resource.Success(previous)
+                        _updateVisibilityState.value = resource
+                    }
+                    is Resource.Loading -> Unit
+                }
             }
         }
     }

@@ -30,6 +30,8 @@ import com.flirttime.feature.subscription.MySubscription
 import com.flirttime.feature.quickmoments.QuickMomentsTrayAdapter
 import com.flirttime.feature.quickmoments.AddNewMomentBottomSheetDialogFragment
 import com.flirttime.feature.quickmoments.QuickMomentCardItem
+import com.flirttime.feature.notification.NotificationPendingStore
+import com.flirttime.feature.quickmoments.QuickMomentSlideDto
 import com.flirttime.feature.quickmoments.QuickMomentsViewerDialogFragment
 import com.flirttime.core.ui.dialog.CommonConfirmationDialog
 import kotlinx.coroutines.flow.collectLatest
@@ -56,6 +58,7 @@ class ProfileFragment : Fragment() {
     private var membershipExpanded = false
     private var voiceTotalSeconds = 0
     private var renderedBenefits: List<String>? = null
+    private var pendingQuickMomentId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,6 +133,10 @@ class ProfileFragment : Fragment() {
         // Atomic profile refresh matching iOS loadData()
         // profile + quick moments + my moments + wallet + membership
         userProfileViewModel.loadAll()
+        NotificationPendingStore.consumeQuickMomentId()?.let { id ->
+            pendingQuickMomentId = id
+            tryOpenPendingQuickMoment()
+        }
 
         // Ensure status bar icons are white over the cover photo
         activity?.window?.let { window ->
@@ -564,28 +571,7 @@ class ProfileFragment : Fragment() {
 
     private fun setupQuickMomentsSection() {
         quickMomentsAdapter = QuickMomentsTrayAdapter { story ->
-            val currentProfile = userProfileViewModel.userProfileState.value
-            val storyCard = QuickMomentCardItem.StoryCard(
-                storyId = story.id ?: "",
-                userId = currentProfile?.name,
-                userName = currentProfile?.name ?: "You",
-                userAvatar = currentProfile?.profilePhotoUrl,
-                relativeAge = story.relativeAge,
-                textContent = story.caption,
-                mediaUrl = story.displayImageUrl,
-                backgroundColor = story.backgroundColor,
-                isOwnStory = true,
-                hasUnread = false,
-                viewCount = story.viewsCount,
-                originalSlide = story
-            )
-            val viewer = QuickMomentsViewerDialogFragment.newInstance(storyCard)
-            viewer.onDeleteClick = { storyId ->
-                userProfileViewModel.deleteQuickMoment(storyId) {
-                    Toast.makeText(requireContext(), "Quick moment deleted", Toast.LENGTH_SHORT).show()
-                }
-            }
-            viewer.show(childFragmentManager, "QuickMomentViewer")
+            openQuickMomentViewer(story)
         }
 
         binding.rvQuickMoments.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
@@ -603,8 +589,44 @@ class ProfileFragment : Fragment() {
                 quickMomentsAdapter.submitList(stories)
                 // Show hint when user has no quick moments, matching iOS
                 binding.tvQuickMomentsHint.visibility = if (stories.isEmpty()) View.VISIBLE else View.GONE
+                tryOpenPendingQuickMoment()
             }
         }
+    }
+
+    private fun tryOpenPendingQuickMoment() {
+        val targetId = pendingQuickMomentId ?: return
+        val stories = userProfileViewModel.myQuickMomentsState.value?.getOrNull()?.getEffectiveStories().orEmpty()
+        val story = stories.firstOrNull { it.id == targetId }
+        if (story != null) {
+            pendingQuickMomentId = null
+            openQuickMomentViewer(story)
+        }
+    }
+
+    private fun openQuickMomentViewer(story: QuickMomentSlideDto) {
+        val currentProfile = userProfileViewModel.userProfileState.value
+        val storyCard = QuickMomentCardItem.StoryCard(
+            storyId = story.id ?: "",
+            userId = currentProfile?.name,
+            userName = currentProfile?.name ?: "You",
+            userAvatar = currentProfile?.profilePhotoUrl,
+            relativeAge = story.relativeAge,
+            textContent = story.caption,
+            mediaUrl = story.displayImageUrl,
+            backgroundColor = story.backgroundColor,
+            isOwnStory = true,
+            hasUnread = false,
+            viewCount = story.viewsCount,
+            originalSlide = story
+        )
+        val viewer = QuickMomentsViewerDialogFragment.newInstance(storyCard)
+        viewer.onDeleteClick = { storyId ->
+            userProfileViewModel.deleteQuickMoment(storyId) {
+                Toast.makeText(requireContext(), "Quick moment deleted", Toast.LENGTH_SHORT).show()
+            }
+        }
+        viewer.show(childFragmentManager, "QuickMomentViewer")
     }
 
     private fun setupMomentsSection() {

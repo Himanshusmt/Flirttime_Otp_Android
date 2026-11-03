@@ -2,6 +2,7 @@ package com.flirttime.feature.chat
 
 import com.flirttime.feature.chat.model.ArchiveConversationRequest
 import com.flirttime.feature.chat.model.BlockUserRequest
+import com.flirttime.feature.chat.model.CallHistoryResponseDto
 import com.flirttime.feature.chat.model.ChatActionResponseDto
 import com.flirttime.feature.chat.model.ConversationsResponseDto
 import com.flirttime.feature.chat.model.DeleteConversationRequest
@@ -163,4 +164,17 @@ interface ChatApiService {
     /** Opens a presigned attachment upload session (`purpose = chat`). */
     @POST("api/v1/media/uploads")
     suspend fun createMediaUpload(@Body body: MediaUploadRequest): MediaUploadResponseDto
+
+    /** Call history list (REST only — no live VoIP). */
+    @GET("api/v1/calls")
+    suspend fun getCallHistory(
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 20
+    ): CallHistoryResponseDto
+
+    @DELETE("api/v1/calls/{id}")
+    suspend fun deleteCallHistoryItem(@Path("id") id: String): SimpleResponseDto
+
+    @DELETE("api/v1/calls")
+    suspend fun deleteAllCallHistory(): SimpleResponseDto
 }

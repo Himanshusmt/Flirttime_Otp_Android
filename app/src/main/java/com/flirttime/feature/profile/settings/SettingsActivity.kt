@@ -172,6 +172,10 @@ class SettingsActivity : AppCompatActivity() {
             AppNavigator.navigateTo(this, Destination.NotificationSettings)
         }
 
+        binding.rowPrivacySafety.setOnClickListener {
+            AppNavigator.navigateTo(this, Destination.PrivacySafety)
+        }
+
         binding.rowBlockedReported.setOnClickListener {
             AppNavigator.navigateTo(this, Destination.BlockedReported)
         }

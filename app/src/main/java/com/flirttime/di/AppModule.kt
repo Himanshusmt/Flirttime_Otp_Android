@@ -137,7 +137,7 @@ val appModule = module {
     single { ChatSocketManager(get(), get()) }
     single { MomentsSocketService(get(), get()) }
     single { NotificationBadgeStore(get(), get(), get()) }
-    viewModel { ChatListViewModel(get(), get(), get(), get(), androidContext()) }
+    viewModel { ChatListViewModel(get(), get(), get(), get(), get(), get(), androidContext()) }
     viewModel { (conversationId: String, peerUserId: String, settings: ThreadSettings) ->
         ChatDetailViewModel(conversationId, peerUserId, settings, get(), get(), get(), get(), get())
     }

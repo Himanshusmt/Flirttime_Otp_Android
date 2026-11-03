@@ -174,6 +174,10 @@ class ChatDetailViewModel(
     /** Temp ids currently owned by the send loop, so a replay cannot double-send. */
     private val inFlightSends: MutableSet<String> = mutableSetOf()
 
+    /** Debounce identical composer sends (double-tap / race before `_isSending` flips). */
+    private var lastQueuedText: String = ""
+    private var lastQueuedAtMs: Long = 0L
+
     /** True when the last history fetch failed and only the cache (or nothing) is shown. */
     private var loadFailed = false
 
@@ -410,8 +414,44 @@ class ChatDetailViewModel(
     // endregion
 
     fun sendMessage(rawText: String) {
+        enqueueOutgoing(
+            rawText = rawText,
+            messageType = "text",
+            metadata = null
+        )
+    }
+
+    /** iOS contact share: `messageType = contact` + contactName/contactPhone metadata. */
+    fun sendContact(name: String, phone: String) {
+        val safeName = name.trim().ifBlank { "Contact" }
+        val safePhone = phone.trim()
+        val body = if (safePhone.isBlank()) {
+            "Contact: $safeName"
+        } else {
+            "Contact: $safeName\nPhone: $safePhone"
+        }
+        enqueueOutgoing(
+            rawText = body,
+            messageType = "contact",
+            metadata = buildMap {
+                put("contactName", safeName)
+                if (safePhone.isNotBlank()) put("contactPhone", safePhone)
+            }
+        )
+    }
+
+    private fun enqueueOutgoing(
+        rawText: String,
+        messageType: String,
+        metadata: Map<String, Any>?
+    ) {
         val text = rawText.trim()
-        if (text.isEmpty() || _isSending.value) return
+        if (text.isEmpty()) return
+
+        // Guard against double-tap / IME+button races before async dispatch flips `_isSending`.
+        val now = android.os.SystemClock.elapsedRealtime()
+        if (text == lastQueuedText && now - lastQueuedAtMs < SEND_DEBOUNCE_MS) return
+        if (_isSending.value && text == lastQueuedText) return
 
         if (_threadSettings.value.isBlocked) {
             _notice.tryEmit("Unblock this user to send messages")
@@ -419,10 +459,13 @@ class ChatDetailViewModel(
         }
 
         val editing = _editTarget.value
-        if (editing != null) {
+        if (editing != null && messageType == "text") {
             submitEdit(editing, text)
             return
         }
+
+        lastQueuedText = text
+        lastQueuedAtMs = now
 
         val replyTargetSnapshot = _replyTarget.value
         val replyToId = replyTargetSnapshot
@@ -457,7 +500,9 @@ class ChatDetailViewModel(
             tempId = tempId,
             conversationId = conversationId,
             text = text,
-            replyToId = replyToId
+            replyToId = replyToId,
+            messageType = messageType,
+            metadata = metadata
         )
         viewModelScope.launch {
             cache.enqueue(entry)
@@ -519,7 +564,9 @@ class ChatDetailViewModel(
                         conversationId = conversationId,
                         text = entry.text,
                         clientMessageId = entry.tempId,
-                        replyToId = entry.replyToId
+                        replyToId = entry.replyToId,
+                        messageType = entry.messageType,
+                        metadata = entry.metadata
                     )
                     _isSending.value = false
 
@@ -1151,6 +1198,80 @@ class ChatDetailViewModel(
         else -> MessageKind.TEXT
     }
 
+    fun sendLocation(latitude: Double, longitude: Double, address: String, name: String? = null) {
+        if (_isSending.value) return
+        if (_threadSettings.value.isBlocked) {
+            _notice.tryEmit("Unblock this user to send messages")
+            return
+        }
+
+        val replyTargetSnapshot = _replyTarget.value
+        val replyToId = replyTargetSnapshot
+            ?.takeUnless { it.isOptimisticTemporary }
+            ?.id
+            ?.takeIf { it.isNotBlank() }
+
+        val tempId = "local-${UUID.randomUUID()}"
+        val createdAt = ChatTimeFormatter.formatIsoUtc(Date())
+        val label = address.ifBlank { "Current location" }
+        val optimistic = MessageUi(
+            id = tempId,
+            conversationId = conversationId,
+            body = label,
+            kind = MessageKind.LOCATION,
+            mediaUrl = null,
+            isMine = true,
+            isSystem = false,
+            senderName = null,
+            createdAtRaw = createdAt,
+            timeLabel = ChatTimeFormatter.messageTimeLabel(createdAt),
+            deliveryState = DeliveryState.SENDING,
+            pendingId = tempId,
+            reply = replyPreviewFor(replyTargetSnapshot),
+            locationLatitude = latitude,
+            locationLongitude = longitude,
+            locationLabel = label
+        )
+        messages.add(optimistic)
+        _replyTarget.value = null
+        publish()
+        _scrollToBottom.tryEmit(Unit)
+        stopTyping()
+
+        viewModelScope.launch {
+            _isSending.value = true
+            when (
+                val result = repository.sendLocationMessage(
+                    conversationId = conversationId,
+                    latitude = latitude,
+                    longitude = longitude,
+                    name = name,
+                    address = label,
+                    clientMessageId = tempId,
+                    replyToId = replyToId
+                )
+            ) {
+                is Resource.Success -> {
+                    replacePending(tempId, result.data.toUi(currentUserId, conversationId))
+                    cache.saveMessages(conversationId, messages)
+                }
+                is Resource.Error -> {
+                    if (isMatchRequired(result)) {
+                        markFailed(tempId)
+                        if (!limitsStore.isPremium) {
+                            _matchRequiredToChat.tryEmit(Unit)
+                        }
+                    } else {
+                        _errorMessage.tryEmit(result.message)
+                        markFailed(tempId)
+                    }
+                }
+                is Resource.Loading -> Unit
+            }
+            _isSending.value = false
+        }
+    }
+
     /** Keeps the picked-file preview on the bubble until the server URL is usable. */
     private fun MessageUi.keepingLocalPreview(local: MessageUi): MessageUi = copy(
         localUri = localUri ?: local.localUri,
@@ -1193,17 +1314,50 @@ class ChatDetailViewModel(
     private fun replacePending(tempId: String, serverMessage: MessageUi) {
         val index = messages.indexOfFirst { it.id == tempId || it.pendingId == tempId }
         if (index == -1) {
-            if (messages.none { it.id == serverMessage.id }) {
-                messages.add(serverMessage)
-                messages.sortBy { sortKey(it) }
+            // Socket may have already promoted the optimistic bubble.
+            if (serverMessage.id.isNotBlank() && messages.any { it.id == serverMessage.id }) {
+                absorbMatchingOptimistic(serverMessage)
                 publish()
-                _scrollToBottom.tryEmit(Unit)
+                return
             }
+            messages.add(serverMessage)
+            absorbMatchingOptimistic(serverMessage)
+            messages.sortBy { sortKey(it) }
+            publish()
+            _scrollToBottom.tryEmit(Unit)
             return
         }
         messages[index] = serverMessage
+        dedupeByServerId(serverMessage.id, preferredIndex = index)
+        absorbMatchingOptimistic(serverMessage)
         messages.sortBy { sortKey(it) }
         publish()
+    }
+
+    /** Drops leftover optimistic rows keyed by the same clientMessageId. */
+    private fun absorbMatchingOptimistic(serverMessage: MessageUi) {
+        if (!serverMessage.isMine || serverMessage.isOptimisticTemporary) return
+        val clientId = serverMessage.pendingId?.takeIf { it.isNotBlank() } ?: return
+        for (i in messages.lastIndex downTo 0) {
+            val row = messages[i]
+            if (row.id == serverMessage.id) continue
+            if (row.isOptimisticTemporary && (row.id == clientId || row.pendingId == clientId)) {
+                messages.removeAt(i)
+            }
+        }
+    }
+
+    private fun dedupeByServerId(serverId: String, preferredIndex: Int = -1) {
+        if (serverId.isBlank()) return
+        var keep = preferredIndex.takeIf { it in messages.indices && messages[it].id == serverId }
+            ?: messages.indexOfFirst { it.id == serverId }
+        if (keep < 0) return
+        for (i in messages.lastIndex downTo 0) {
+            if (i == keep) continue
+            if (messages[i].id != serverId) continue
+            messages.removeAt(i)
+            if (i < keep) keep--
+        }
     }
 
     private fun markFailed(tempId: String) {
@@ -1422,20 +1576,34 @@ class ChatDetailViewModel(
     private fun onRealtimeMessage(dto: ChatMessageDto) {
         val incoming = dto.toUi(currentUserId, conversationId)
 
-        // Our own optimistic bubble wins until its REST response lands.
-        val pendingIndex = messages.indexOfFirst {
-            it.pendingId != null && (it.pendingId == dto.clientMessageId || it.id == dto.clientMessageId)
+        // Prefer matching our optimistic bubble — including when server omits clientMessageId.
+        val pendingIndex = messages.indexOfFirst { row ->
+            val byClientId = !dto.clientMessageId.isNullOrBlank() &&
+                (row.pendingId == dto.clientMessageId || row.id == dto.clientMessageId)
+            val byOptimisticBody = incoming.isMine &&
+                row.isOptimisticTemporary &&
+                row.isMine &&
+                row.kind == incoming.kind &&
+                row.body == incoming.body
+            byClientId || byOptimisticBody
         }
         if (pendingIndex != -1) {
             messages[pendingIndex] = incoming
+            dedupeByServerId(incoming.id, preferredIndex = pendingIndex)
+            absorbMatchingOptimistic(incoming)
             messages.sortBy { sortKey(it) }
             publish()
             return
         }
 
-        if (messages.any { it.id == incoming.id }) return
+        if (incoming.id.isNotBlank() && messages.any { it.id == incoming.id }) {
+            dedupeByServerId(incoming.id)
+            publish()
+            return
+        }
 
         messages.add(incoming)
+        absorbMatchingOptimistic(incoming)
         messages.sortBy { sortKey(it) }
         oldestLoadedRaw = messages.firstOrNull()?.createdAtRaw ?: oldestLoadedRaw
         publish()
@@ -1596,5 +1764,6 @@ class ChatDetailViewModel(
         const val MAX_AUTO_RETRIES = 3
         const val RETRY_BASE_DELAY_MS = 2_000L
         const val RETRY_MAX_DELAY_MS = 8_000L
+        const val SEND_DEBOUNCE_MS = 900L
     }
 }

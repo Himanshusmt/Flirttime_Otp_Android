@@ -7,57 +7,111 @@
     android:background="@color/screen_bg"
     android:orientation="vertical">
 
-    <!-- Top Screen Header Bar -->
+    <!-- Matches-style header: logo + coins + bell -->
     <LinearLayout
         android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="12dp">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="4dp">
 
-        <!-- Title row: screen title + multi-select entry -->
+        <ImageView
+            android:id="@+id/ivAppLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="FlirtTime Logo"
+            android:src="@drawable/img_app_title" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/btnCoins"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_coin_pill"
+            android:elevation="3.5dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:contentDescription="Coins Icon"
+                android:src="@drawable/ic_coin_profile" />
 
             <TextView
-                android:id="@+id/tvScreenTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/fredokasemibold"
-                android:includeFontPadding="false"
-                android:text="Chats"
-                android:textColor="#18181B"
-                android:textSize="28sp" />
-
-            <TextView
-                android:id="@+id/btnInboxSelect"
+                android:id="@+id/tvCoinCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="@font/fredokasemibold"
-                android:includeFontPadding="false"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="6dp"
-                android:text="Select"
-                android:textColor="@color/brand_primary"
-                android:textSize="14sp" />
+                android:layout_marginStart="7dp"
+                android:layout_marginEnd="9dp"
+                android:fontFamily="@font/fredokamedium"
+                android:text="0"
+                android:textColor="#1F1F1F"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="Add Coins"
+                android:src="@drawable/ic_plus_circle_red" />
 
         </LinearLayout>
 
-        <!-- Search Input Pill -->
+        <FrameLayout
+            android:id="@+id/btnNotification"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_circle_icon_button"
+            android:elevation="3.5dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:contentDescription="Notifications"
+                android:src="@drawable/ic_notification" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- Chats | Calls segmented control -->
+    <include
+        android:id="@+id/inboxSegment"
+        layout="@layout/view_chat_inbox_segment"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="10dp" />
+
+    <!-- Search + Select row -->
+    <LinearLayout
+        android:id="@+id/layoutSearchRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp">
+
         <LinearLayout
             android:id="@+id/layoutSearchBar"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="44dp"
-            android:layout_marginTop="14dp"
+            android:layout_weight="1"
             android:background="@drawable/bg_search_pill_gray"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -101,9 +155,43 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/btnInboxSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/fredokasemibold"
+            android:includeFontPadding="false"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="6dp"
+            android:text="Select"
+            android:textColor="@color/brand_primary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/btnDeleteAllCalls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/fredokasemibold"
+            android:includeFontPadding="false"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="6dp"
+            android:text="Delete All"
+            android:textColor="@color/brand_primary"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
     </LinearLayout>
 
-    <!-- Inbox multi-select toolbar (iOS `MultiSelectActionBar`) -->
+    <!-- Inbox multi-select toolbar (iOS MultiSelectActionBar) -->
     <LinearLayout
         android:id="@+id/layoutInboxSelectionBar"
         android:layout_width="match_parent"
@@ -218,7 +306,7 @@
 
     </LinearLayout>
 
-    <!-- Connection / reconnect state (hidden while the socket is up) -->
+    <!-- Connection / reconnect state -->
     <LinearLayout
         android:id="@+id/layoutConnectionBanner"
         android:layout_width="match_parent"
@@ -262,12 +350,12 @@
 
     </LinearLayout>
 
-    <!-- Scrollable Conversations Container -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <!-- Chats section -->
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
@@ -281,197 +369,291 @@
                 android:overScrollMode="never">
 
                 <LinearLayout
+                    android:id="@+id/layoutChatsContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:paddingBottom="100dp">
 
-            <!-- 0. Archived Chats Section (collapsible, hidden when empty) -->
-            <LinearLayout
-                android:id="@+id/layoutArchivedSection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <LinearLayout
-                    android:id="@+id/layoutArchivedHeader"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="20dp">
-
-                    <ImageView
-                        android:id="@+id/ivArchivedChevron"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:contentDescription="Expand archived chats"
-                        android:rotation="-90"
-                        android:src="@drawable/ic_chevron_down" />
-
-                    <TextView
-                        android:layout_width="0dp"
+                    <!-- Quick Moments horizontal strip -->
+                    <LinearLayout
+                        android:id="@+id/layoutQuickMoments"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/fredokasemibold"
-                        android:includeFontPadding="false"
-                        android:text="Archived"
-                        android:textColor="#18181B"
-                        android:textSize="16sp" />
+                        android:orientation="vertical"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="8dp">
 
-                    <TextView
-                        android:id="@+id/tvArchivedCount"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokamedium"
+                            android:includeFontPadding="false"
+                            android:paddingHorizontal="20dp"
+                            android:paddingBottom="8dp"
+                            android:text="Quick Moments"
+                            android:textColor="#18181B"
+                            android:textSize="15sp" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvQuickMoments"
+                            android:layout_width="match_parent"
+                            android:layout_height="148dp"
+                            android:clipToPadding="false"
+                            android:overScrollMode="never"
+                            android:paddingHorizontal="12dp" />
+
+                    </LinearLayout>
+
+                    <!-- Archived -->
+                    <LinearLayout
+                        android:id="@+id/layoutArchivedSection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <LinearLayout
+                            android:id="@+id/layoutArchivedHeader"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="20dp">
+
+                            <ImageView
+                                android:id="@+id/ivArchivedChevron"
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:contentDescription="Expand archived chats"
+                                android:rotation="-90"
+                                android:src="@drawable/ic_chevron_down" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/fredokasemibold"
+                                android:includeFontPadding="false"
+                                android:text="Archived"
+                                android:textColor="#18181B"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:id="@+id/tvArchivedCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredokaregular"
+                                android:includeFontPadding="false"
+                                android:textColor="#8E8E93"
+                                android:textSize="13.5sp"
+                                tools:text="3" />
+
+                        </LinearLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvArchivedChats"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            android:overScrollMode="never"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
+
+                    <!-- Pinned -->
+                    <LinearLayout
+                        android:id="@+id/layoutPinnedSection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="20dp"
+                            android:paddingBottom="8dp">
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@drawable/ic_pinned_bell_gray" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:fontFamily="@font/fredokamedium"
+                                android:includeFontPadding="false"
+                                android:text="Pinned chats"
+                                android:textColor="#8E8E93"
+                                android:textSize="13.5sp" />
+
+                        </LinearLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvPinnedChats"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            android:overScrollMode="never" />
+
+                    </LinearLayout>
+
+                    <!-- Regular chats -->
+                    <LinearLayout
+                        android:id="@+id/layoutChatsSection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokasemibold"
+                            android:includeFontPadding="false"
+                            android:paddingHorizontal="20dp"
+                            android:paddingBottom="8dp"
+                            android:text="Chats"
+                            android:textColor="#18181B"
+                            android:textSize="18sp" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvRegularChats"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            android:overScrollMode="never" />
+
+                    </LinearLayout>
+
+                    <!-- Empty search / empty inbox -->
+                    <LinearLayout
+                        android:id="@+id/layoutEmptySearch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="60dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="32dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tvEmptyTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredokasemibold"
+                            android:text="No chats found"
+                            android:textColor="#18181B"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tvEmptyMessage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:fontFamily="@font/fredokaregular"
+                            android:gravity="center"
+                            android:text="Check your spelling or search for another name"
+                            android:textColor="#8E8E93"
+                            android:textSize="13.5sp" />
+
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/progressLoadMore"
+                        style="?android:attr/progressBarStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/fredokaregular"
-                        android:includeFontPadding="false"
-                        android:textColor="#8E8E93"
-                        android:textSize="13.5sp"
-                        tools:text="3" />
-
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvArchivedChats"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:overScrollMode="never"
-                    android:visibility="gone" />
-
-            </LinearLayout>
-
-            <!-- 1. Pinned Chats Section -->
-            <LinearLayout
-                android:id="@+id/layoutPinnedSection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical">
-
-                <!-- Pinned Chats Header with Bell Icon -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="20dp"
-                    android:paddingBottom="8dp">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_pinned_bell_gray" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:fontFamily="@font/fredokamedium"
-                        android:includeFontPadding="false"
-                        android:text="Pinned chats"
-                        android:textColor="#8E8E93"
-                        android:textSize="13.5sp" />
-
-                </LinearLayout>
-
-                <!-- Pinned Chats List -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvPinnedChats"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:overScrollMode="never" />
-
-            </LinearLayout>
-
-            <!-- 2. Regular Chats Section -->
-            <LinearLayout
-                android:id="@+id/layoutChatsSection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:orientation="vertical">
-
-                <!-- "Chats" Section Header -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredokasemibold"
-                    android:includeFontPadding="false"
-                    android:paddingHorizontal="20dp"
-                    android:paddingBottom="8dp"
-                    android:text="Chats"
-                    android:textColor="#18181B"
-                    android:textSize="18sp" />
-
-                <!-- Regular Chats List -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvRegularChats"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:overScrollMode="never" />
-
-            </LinearLayout>
-
-            <!-- 3. Empty Search State -->
-            <LinearLayout
-                android:id="@+id/layoutEmptySearch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingHorizontal="32dp"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/tvEmptyTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredokasemibold"
-                    android:text="No chats found"
-                    android:textColor="#18181B"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/tvEmptyMessage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:fontFamily="@font/fredokaregular"
-                    android:gravity="center"
-                    android:text="Check your spelling or search for another name"
-                    android:textColor="#8E8E93"
-                    android:textSize="13.5sp" />
-
-            </LinearLayout>
-
-                <!-- Pagination footer: visible only while the next inbox page is loading -->
-                <ProgressBar
-                    android:id="@+id/progressLoadMore"
-                    style="?android:attr/progressBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="8dp"
-                    android:indeterminateTint="@color/brand_primary"
-                    android:visibility="gone" />
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="8dp"
+                        android:indeterminateTint="@color/brand_primary"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <!-- Calls section -->
+        <LinearLayout
+            android:id="@+id/layoutCallsContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshCalls"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvCallHistory"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clipToPadding="false"
+                        android:overScrollMode="never"
+                        android:paddingBottom="100dp" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutEmptyCalls"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="32dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_phone_receiver"
+                            app:tint="#C4C4C8" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="@font/fredokamedium"
+                            android:text="No calls yet"
+                            android:textColor="#8E8E93"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/progressCalls"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:indeterminateTint="@color/brand_primary"
+                        android:visibility="gone" />
+
+                </FrameLayout>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/progressBar"

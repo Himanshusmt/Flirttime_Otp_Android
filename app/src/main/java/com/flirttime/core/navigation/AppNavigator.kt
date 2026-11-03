@@ -81,6 +81,7 @@ sealed class Destination {
     data class Faq(val category: String? = null) : Destination()
     data object PersonalDetails : Destination()
     data object NotificationSettings : Destination()
+    data object PrivacySafety : Destination()
     data object BlockedReported : Destination()
     data object EditProfile : Destination()
     data class UserProfile(
@@ -188,6 +189,7 @@ object AppNavigator {
             is Destination.Faq -> com.flirttime.feature.profile.settings.FaqActivity::class.java
             is Destination.PersonalDetails -> com.flirttime.feature.profile.settings.PersonalDetailsActivity::class.java
             is Destination.NotificationSettings -> com.flirttime.feature.profile.settings.NotificationSettingsActivity::class.java
+            is Destination.PrivacySafety -> com.flirttime.feature.profile.settings.PrivacySafetyActivity::class.java
             is Destination.BlockedReported -> com.flirttime.feature.profile.settings.BlockedReportedActivity::class.java
             is Destination.EditProfile -> com.flirttime.feature.profile.edit.EditProfileActivity::class.java
             is Destination.UserProfile -> com.flirttime.feature.profile.otherUser.OtherUserProfileActivity::class.java

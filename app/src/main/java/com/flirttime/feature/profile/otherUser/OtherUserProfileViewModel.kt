@@ -100,6 +100,44 @@ class OtherUserProfileViewModel(
         }
     }
 
+    fun sendConnectionRequest(targetUserId: String, reason: ConnectReason?) {
+        if (!limitsStore.canLike) {
+            viewModelScope.launch { _actionGate.emit(OtherUserActionGate.LikeLimit) }
+            return
+        }
+        val reasonText = reason?.apiValue
+        viewModelScope.launch {
+            matchesRepository.sendConnectionRequest(targetUserId, reasonText).collect { resource ->
+                when (resource) {
+                    is Resource.Success -> {
+                        limitsStore.refresh()
+                        val payload = resource.data
+                        val mapped = DiscoveryActionResponseData(
+                            action = "like",
+                            targetUserId = payload?.targetUserId ?: targetUserId,
+                            isMatched = payload?.isMatched,
+                            matchId = payload?.matchId
+                        )
+                        _actionEvent.emit("like" to mapped)
+                    }
+                    is Resource.Error -> {
+                        val msg = resource.message.orEmpty()
+                        val body = resource.errorBody.orEmpty()
+                        val isDailyLimit = resource.code == 429 ||
+                            msg.contains("DAILY_LIKE_LIMIT_REACHED", ignoreCase = true) ||
+                            body.contains("DAILY_LIKE_LIMIT_REACHED", ignoreCase = true) ||
+                            msg.contains("DAILY_SWIPE_LIMIT_REACHED", ignoreCase = true)
+                        when {
+                            isDailyLimit -> _actionGate.emit(OtherUserActionGate.LikeLimit)
+                            else -> _errorMessage.emit(resource.message ?: "Failed to send connection")
+                        }
+                    }
+                    is Resource.Loading -> Unit
+                }
+            }
+        }
+    }
+
     fun submitAction(targetUserId: String, action: String) {
         val normalized = action.lowercase()
         if (normalized == "like" && !limitsStore.canLike) {

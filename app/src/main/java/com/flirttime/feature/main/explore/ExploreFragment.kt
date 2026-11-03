@@ -85,6 +85,8 @@ class ExploreFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        com.flirttime.feature.notification.NotificationPendingStore.consumeExploreTab()
+            ?.let { tab -> updateTabSelection(tab) }
         viewModel.loadCounts()
         viewModel.refreshLimits()
     }

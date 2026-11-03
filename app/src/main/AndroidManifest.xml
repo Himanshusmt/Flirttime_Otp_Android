@@ -25,6 +25,12 @@
     <!-- Audio Recording Permission -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+    <!-- Share contact from chat attachment panel -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <!-- Chat thread screenshot detection (Android 14+ ScreenCaptureCallback) -->
+    <uses-permission android:name="android.permission.DETECT_SCREEN_CAPTURE" />
+
     <!-- Storage / Media Permissions -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission
@@ -34,6 +40,10 @@
     <queries>
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <data android:mimeType="vnd.android.cursor.dir/contact" />
         </intent>
         <intent>
             <action android:name="android.intent.action.SENDTO" />
@@ -237,6 +247,12 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Privacy & Safety Screen -->
+        <activity
+            android:name=".feature.profile.settings.PrivacySafetyActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Blocked and Reported Screen -->
         <activity
             android:name=".feature.profile.settings.BlockedReportedActivity"
@@ -273,6 +289,27 @@
                 <action android:name="com.flirttime.action.CHAT_PUSH" />
             </intent-filter>
         </receiver>
+
+        <!-- FCM: receives system pushes and routes taps via NotificationClickActivity -->
+        <service
+            android:name=".feature.notification.FlirtTimeFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".feature.notification.NotificationClickActivity"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="flirttime_general" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
 
     </application>
 

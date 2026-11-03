@@ -7,10 +7,12 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
+import android.provider.ContactsContract
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -33,6 +35,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flirttime.R
 import com.flirttime.core.common.EdgeToEdgeHelper
+import com.flirttime.core.location.DeviceLocationHelper
 import com.flirttime.core.common.MediaUrlHelper
 import com.flirttime.core.database.SessionManager
 import com.flirttime.core.navigation.AppNavigator
@@ -171,6 +174,21 @@ class ChatDetailActivity : AppCompatActivity() {
         if (uris.isNotEmpty()) sendPickedImages(uris)
     }
 
+    private var pendingCameraUri: Uri? = null
+    private val takePictureLauncher = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success ->
+        val uri = pendingCameraUri
+        pendingCameraUri = null
+        if (success && uri != null) sendPickedImages(listOf(uri))
+    }
+
+    private val pickContactLauncher = registerForActivityResult(
+        ActivityResultContracts.PickContact()
+    ) { uri ->
+        if (uri != null) sendPickedContact(uri)
+    }
+
     private val audioPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -184,6 +202,38 @@ class ChatDetailActivity : AppCompatActivity() {
             ).show()
         }
     }
+
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            sendCurrentLocation()
+        } else {
+            Toast.makeText(
+                this,
+                "Location permission is required to share your location.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private val cameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) launchCameraCapture() else {
+            Toast.makeText(this, "Camera permission is required.", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private val contactsPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) pickContactLauncher.launch(null) else {
+            Toast.makeText(this, "Contacts permission is required.", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private var isAttachmentPanelOpen = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -253,7 +303,15 @@ class ChatDetailActivity : AppCompatActivity() {
     private fun setupHeader() {
         binding.btnBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.btnMore.setOnClickListener { showChatSettings() }
-        binding.btnSearch.setOnClickListener { openMessageSearch() }
+        binding.btnVoiceCall.setOnClickListener {
+            Toast.makeText(this, "Voice calls coming soon", Toast.LENGTH_SHORT).show()
+        }
+        binding.btnVideoCall.setOnClickListener {
+            Toast.makeText(this, "Video calls coming soon", Toast.LENGTH_SHORT).show()
+        }
+        // Call buttons match iOS 1:1 chats only.
+        binding.btnVoiceCall.isVisible = !isGroupChat
+        binding.btnVideoCall.isVisible = !isGroupChat
 
         binding.tvTitle.text = intent.getStringExtra(AppNavigator.EXTRA_CHAT_TITLE)
             ?.takeIf { it.isNotBlank() }
@@ -280,6 +338,7 @@ class ChatDetailActivity : AppCompatActivity() {
         binding.ivAvatar.setOnClickListener(headerClick)
         binding.tvTitle.setOnClickListener(headerClick)
         binding.tvSubtitle.setOnClickListener(headerClick)
+        binding.layoutSubtitleRow.setOnClickListener(headerClick)
         binding.ivHeaderVerified.setOnClickListener(headerClick)
     }
 
@@ -319,7 +378,8 @@ class ChatDetailActivity : AppCompatActivity() {
             onLongPress = ::showMessageOptions,
             onSelectToggle = ::toggleMessageSelection,
             onReplyPreviewClick = { _, replyId -> jumpToMessage(replyId) },
-            onReactionClick = { _, reaction -> showReactionUsers(reaction) }
+            onReactionClick = { _, reaction -> showReactionUsers(reaction) },
+            onLocationClick = ::openLocationMessage
         )
 
         binding.rvMessages.apply {
@@ -429,7 +489,9 @@ class ChatDetailActivity : AppCompatActivity() {
 
     private fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+        val token = binding.etMessage.windowToken ?: binding.root.windowToken
+        imm.hideSoftInputFromWindow(token, 0)
+        binding.etMessage.clearFocus()
     }
 
     // endregion
@@ -440,6 +502,7 @@ class ChatDetailActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 viewModel.onComposerTextChanged(s?.toString().orEmpty())
+                if (!s.isNullOrBlank()) dismissAttachmentPanel()
                 updateComposerButtons()
             }
 
@@ -447,7 +510,23 @@ class ChatDetailActivity : AppCompatActivity() {
         })
 
         binding.btnSend.setOnClickListener { sendCurrentMessage() }
-        binding.btnAttach.setOnClickListener { launchImagePicker() }
+        binding.btnAttach.setOnClickListener { toggleAttachmentPanel() }
+        binding.btnAttachPhoto.setOnClickListener {
+            dismissAttachmentPanel()
+            launchImagePicker()
+        }
+        binding.btnAttachCamera.setOnClickListener {
+            dismissAttachmentPanel()
+            requestCameraAndCapture()
+        }
+        binding.btnAttachLocation.setOnClickListener {
+            dismissAttachmentPanel()
+            requestLocationAndSend()
+        }
+        binding.btnAttachContact.setOnClickListener {
+            dismissAttachmentPanel()
+            requestContactAndSend()
+        }
         binding.btnMic.setOnClickListener { onMicClicked() }
         binding.btnCancelRecording.setOnClickListener { cancelRecording() }
         binding.btnSendRecording.setOnClickListener { finishRecording(send = true) }
@@ -476,18 +555,160 @@ class ChatDetailActivity : AppCompatActivity() {
     private fun updateComposerButtons() {
         if (voiceRecorder.isRecording) return
         val hasText = !binding.etMessage.text.isNullOrBlank()
-        binding.btnSend.isVisible = hasText
+        // iOS keeps send visible at reduced alpha when empty.
+        binding.btnSend.isVisible = true
         binding.btnSend.isEnabled = hasText
         binding.btnSend.alpha = if (hasText) 1f else 0.4f
+        binding.btnSend.scaleX = if (hasText) 1f else 0.85f
+        binding.btnSend.scaleY = if (hasText) 1f else 0.85f
         binding.btnMic.isVisible = !hasText
+        // iOS hides the + while typing.
+        binding.btnAttach.isVisible = !hasText
+        if (hasText) dismissAttachmentPanel()
     }
 
     private fun sendCurrentMessage() {
         val text = binding.etMessage.text?.toString().orEmpty()
         if (text.isBlank()) return
+        binding.btnSend.isEnabled = false
         binding.etMessage.setText("")
         lifecycleScope.launch { draftStore.clear(conversationId) }
         viewModel.sendMessage(text)
+        updateComposerButtons()
+    }
+
+    // region Attachments
+
+    private fun toggleAttachmentPanel() {
+        if (isAttachmentPanelOpen) {
+            dismissAttachmentPanel()
+        } else {
+            hideKeyboard()
+            isAttachmentPanelOpen = true
+            binding.layoutAttachmentPanel.isVisible = true
+            binding.btnAttach.animate().rotation(45f).setDuration(180).start()
+        }
+    }
+
+    private fun dismissAttachmentPanel() {
+        if (!isAttachmentPanelOpen && !binding.layoutAttachmentPanel.isVisible) return
+        isAttachmentPanelOpen = false
+        binding.layoutAttachmentPanel.isVisible = false
+        binding.btnAttach.animate().rotation(0f).setDuration(180).start()
+    }
+
+    private fun requestLocationAndSend() {
+        if (DeviceLocationHelper.hasLocationPermission(this)) {
+            sendCurrentLocation()
+        } else {
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
+    private fun requestCameraAndCapture() {
+        val granted = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
+            PackageManager.PERMISSION_GRANTED
+        if (granted) launchCameraCapture() else cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+    }
+
+    private fun launchCameraCapture() {
+        val file = File(cacheDir, "chat_camera_${System.currentTimeMillis()}.jpg")
+        val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
+        pendingCameraUri = uri
+        takePictureLauncher.launch(uri)
+    }
+
+    private fun requestContactAndSend() {
+        val granted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) ==
+            PackageManager.PERMISSION_GRANTED
+        if (granted) {
+            pickContactLauncher.launch(null)
+        } else {
+            contactsPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
+        }
+    }
+
+    private fun sendPickedContact(contactUri: Uri) {
+        lifecycleScope.launch {
+            val contact = withContext(Dispatchers.IO) { readContact(contactUri) }
+            if (contact == null) {
+                Toast.makeText(this@ChatDetailActivity, "Could not read that contact", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+            viewModel.sendContact(contact.first, contact.second)
+        }
+    }
+
+    private fun readContact(uri: Uri): Pair<String, String>? {
+        var name = ""
+        contentResolver.query(
+            uri,
+            arrayOf(ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME),
+            null,
+            null,
+            null
+        )?.use { cursor: Cursor ->
+            if (!cursor.moveToFirst()) return null
+            name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME))
+                ?.trim().orEmpty()
+            val id = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts._ID))
+            var phone = ""
+            contentResolver.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
+                "${ContactsContract.CommonDataKinds.Phone.CONTACT_ID}=?",
+                arrayOf(id),
+                null
+            )?.use { phoneCursor ->
+                if (phoneCursor.moveToFirst()) {
+                    phone = phoneCursor.getString(0)?.trim().orEmpty()
+                }
+            }
+            return name.ifBlank { "Contact" } to phone
+        }
+        return null
+    }
+
+    private fun sendCurrentLocation() {
+        setMediaBusy(true)
+        lifecycleScope.launch {
+            val location = DeviceLocationHelper.getCurrentLocation(this@ChatDetailActivity)
+            if (location == null) {
+                setMediaBusy(false)
+                Toast.makeText(this@ChatDetailActivity, "Could not get your location", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+            val address = withContext(Dispatchers.IO) {
+                DeviceLocationHelper.reverseGeocode(
+                    this@ChatDetailActivity,
+                    location.latitude,
+                    location.longitude
+                )?.let { DeviceLocationHelper.toCityStateCountry(it) }
+            }
+            val label = address?.takeIf { it.isNotBlank() } ?: "Current location"
+            setMediaBusy(false)
+            viewModel.sendLocation(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                address = label,
+                name = label
+            )
+        }
+    }
+
+    private fun openLocationMessage(message: MessageUi) {
+        val lat = message.locationLatitude
+        val lng = message.locationLongitude
+        if (lat == null || lng == null) return
+        val geoUri = Uri.parse("geo:$lat,$lng?q=$lat,$lng(${Uri.encode(message.locationLabel ?: "Location")})")
+        val mapIntent = Intent(Intent.ACTION_VIEW, geoUri).apply {
+            setPackage("com.google.android.apps.maps")
+        }
+        if (mapIntent.resolveActivity(packageManager) != null) {
+            startActivity(mapIntent)
+        } else {
+            startActivity(Intent(Intent.ACTION_VIEW, geoUri))
+        }
     }
 
     // region Photos
@@ -552,6 +773,7 @@ class ChatDetailActivity : AppCompatActivity() {
     // region Voice notes
 
     private fun onMicClicked() {
+        dismissAttachmentPanel()
         val granted = ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.RECORD_AUDIO
@@ -562,6 +784,7 @@ class ChatDetailActivity : AppCompatActivity() {
 
     private fun startRecording() {
         if (voiceRecorder.isRecording) return
+        dismissAttachmentPanel()
         audioPlayer.stop()
 
         if (!voiceRecorder.start()) {
@@ -840,6 +1063,7 @@ class ChatDetailActivity : AppCompatActivity() {
         binding.layoutComposerRow.isVisible = !settings.isBlocked
         if (settings.isBlocked) {
             binding.layoutComposerBanner.isVisible = false
+            dismissAttachmentPanel()
             if (voiceRecorder.isRecording) cancelRecording()
         } else {
             renderComposerBanner(viewModel.editTarget.value, viewModel.replyTarget.value)
@@ -1309,6 +1533,8 @@ class ChatDetailActivity : AppCompatActivity() {
             MessageKind.IMAGE -> "Photo"
             MessageKind.VIDEO -> "Video"
             MessageKind.AUDIO -> "Voice message"
+            MessageKind.LOCATION -> message.locationLabel?.takeIf { it.isNotBlank() }
+                ?: message.body.ifBlank { "📍 Location" }
             else -> "Message"
         }
     }
@@ -1331,12 +1557,14 @@ class ChatDetailActivity : AppCompatActivity() {
         isTypingIndicator = isTyping
         when {
             isTyping -> {
-                binding.tvSubtitle.isVisible = true
+                binding.layoutSubtitleRow.isVisible = true
+                binding.viewOnlineDot.isVisible = false
                 binding.tvSubtitle.setTextColor(ContextCompat.getColor(this, R.color.brand_primary))
                 binding.tvSubtitle.text = "typing…"
             }
             presenceText != null -> {
-                binding.tvSubtitle.isVisible = true
+                binding.layoutSubtitleRow.isVisible = true
+                binding.viewOnlineDot.isVisible = presenceIsOnline
                 binding.tvSubtitle.setTextColor(
                     ContextCompat.getColor(
                         this,
@@ -1346,7 +1574,9 @@ class ChatDetailActivity : AppCompatActivity() {
                 binding.tvSubtitle.text = presenceText
             }
             else -> {
-                binding.tvSubtitle.isVisible = subtitleDefault != null
+                val hasDefault = subtitleDefault != null
+                binding.layoutSubtitleRow.isVisible = hasDefault
+                binding.viewOnlineDot.isVisible = false
                 binding.tvSubtitle.setTextColor(ContextCompat.getColor(this, R.color.text_tertiary))
                 binding.tvSubtitle.text = subtitleDefault
             }
@@ -1372,15 +1602,26 @@ class ChatDetailActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return
         if (screenCaptureCallback != null) return
         val callback = ScreenCaptureCallback { viewModel.notifyScreenshot() }
-        screenCaptureCallback = callback
-        registerScreenCaptureCallback(mainExecutor, callback)
+        try {
+            registerScreenCaptureCallback(mainExecutor, callback)
+            screenCaptureCallback = callback
+        } catch (_: SecurityException) {
+            // Some API 35+ images still throw without DETECT_SCREEN_CAPTURE granted.
+            screenCaptureCallback = null
+        } catch (_: RuntimeException) {
+            screenCaptureCallback = null
+        }
     }
 
     private fun unregisterScreenCaptureWatcher() {
         val callback = screenCaptureCallback ?: return
         screenCaptureCallback = null
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            unregisterScreenCaptureCallback(callback)
+            try {
+                unregisterScreenCaptureCallback(callback)
+            } catch (_: RuntimeException) {
+                // Ignore teardown races / missing callback registration.
+            }
         }
     }
 

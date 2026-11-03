@@ -18,9 +18,10 @@ object ConnectionResultDialog {
         avatarUrl: String?,
         hasSharedInterests: Boolean,
         onStartConversation: () -> Unit,
-        onKeepExploring: () -> Unit = {}
+        onKeepExploring: () -> Unit = {},
+        subtitleOverride: String? = null
     ) {
-        val subtitle = if (hasSharedInterests) {
+        val subtitle = subtitleOverride ?: if (hasSharedInterests) {
             "You and $name have connected based on shared interests."
         } else {
             "You and $name are into each other."
@@ -42,12 +43,13 @@ object ConnectionResultDialog {
         context: Context,
         name: String,
         avatarUrl: String?,
-        onKeepExploring: () -> Unit = {}
+        onKeepExploring: () -> Unit = {},
+        subtitleOverride: String? = null
     ) {
         show(
             context = context,
             title = "Like Sent",
-            subtitle = "If $name feels it too, you'll connect. We'll let you know.",
+            subtitle = subtitleOverride ?: "If $name feels it too, you'll connect. We'll let you know.",
             avatarUrl = avatarUrl,
             primaryText = "",
             secondaryText = "Keep Exploring",

@@ -20,6 +20,8 @@ data class OutboxEntry(
     val conversationId: String,
     val text: String,
     val replyToId: String? = null,
+    val messageType: String = "text",
+    val metadata: Map<String, Any>? = null,
     val attempts: Int = 0,
     val createdAt: Long = System.currentTimeMillis()
 )

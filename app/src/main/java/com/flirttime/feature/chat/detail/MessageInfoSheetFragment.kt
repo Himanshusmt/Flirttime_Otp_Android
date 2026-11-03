@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -142,10 +143,17 @@ class MessageInfoSheetFragment : BottomSheetDialogFragment() {
                 itemBinding.tvInfoStatus.text = statusLabel(row.status)
                 itemBinding.ivInfoStatusIcon.setImageResource(
                     when (row.status) {
-                        STATUS_READ -> R.drawable.ic_action_check_circle
-                        STATUS_DELIVERED -> R.drawable.ic_double_check_red
-                        else -> R.drawable.ic_action_circle_outline
+                        STATUS_READ -> R.drawable.ic_chat_tick_double
+                        STATUS_DELIVERED -> R.drawable.ic_chat_tick_double
+                        STATUS_SENT -> R.drawable.ic_chat_tick_single
+                        else -> R.drawable.ic_chat_tick_single
                     }
+                )
+                itemBinding.ivInfoStatusIcon.setColorFilter(
+                    ContextCompat.getColor(
+                        itemBinding.root.context,
+                        if (row.status == STATUS_READ) R.color.brand_primary else R.color.tick_pending
+                    )
                 )
                 val avatar: SimpleDraweeView = itemBinding.ivInfoAvatar
                 val avatarUrl = MediaUrlHelper.resolveMediaUrl(row.avatarUrl)

@@ -20,6 +20,8 @@
     <color name="text_primary">#1A1A1A</color>
     <color name="text_secondary">#555555</color>
     <color name="text_tertiary">#8E8E93</color>
+    <!-- iOS ChatTheme.tickPending (SilverChalice) -->
+    <color name="tick_pending">#9E9E9E</color>
     <color name="text_on_brand">#FFFFFFFF</color>
     <color name="text_brand">#D92B2B</color>
 
