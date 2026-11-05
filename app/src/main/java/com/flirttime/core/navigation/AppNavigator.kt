@@ -36,7 +36,16 @@ sealed class Destination {
     data object Intro2 : Destination()
     data object Intro3 : Destination()
     data object Permission : Destination()
-    data object Login : Destination()
+    open class Login(val sessionExpired: Boolean = false) : Destination() {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Login) return false
+            return sessionExpired == other.sessionExpired
+        }
+        override fun hashCode(): Int = sessionExpired.hashCode()
+        override fun toString(): String = "Login(sessionExpired=$sessionExpired)"
+        companion object : Login(false)
+    }
     
     data class PhoneInput(
         val prefilledPhone: String? = null,
@@ -119,6 +128,7 @@ object AppNavigator {
 
     private val gson = Gson()
 
+    const val EXTRA_SESSION_EXPIRED = "extra_session_expired"
     const val EXTRA_OTP_FROM = "extra_otp_from"
     const val EXTRA_PREFILLED_PHONE = "extra_prefilled_phone"
     const val EXTRA_DEFAULT_COUNTRY_CODE = "extra_default_country_code"
@@ -198,6 +208,11 @@ object AppNavigator {
 
         val intent = Intent(context, targetClass).apply {
             when (destination) {
+                is Destination.Login -> {
+                    if (destination.sessionExpired) {
+                        putExtra(EXTRA_SESSION_EXPIRED, true)
+                    }
+                }
                 is Destination.PhoneInput -> {
                     destination.prefilledPhone?.let { putExtra(EXTRA_PREFILLED_PHONE, it) }
                     putExtra(EXTRA_DEFAULT_COUNTRY_CODE, destination.defaultCountryCode)

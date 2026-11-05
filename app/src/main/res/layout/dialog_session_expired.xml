@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_rounded_white"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="32dp"
+    android:paddingBottom="28dp">
+
+    <!-- Header Icon Container (Soft pink circular badge with brand red lock) -->
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:background="@drawable/bg_empty_circle_pink">
+
+        <ImageView
+            android:id="@+id/ivDialogIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_lock_red" />
+
+    </FrameLayout>
+
+    <!-- Dialog Title -->
+    <TextView
+        android:id="@+id/tvDialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/fredokasemibold"
+        android:gravity="center"
+        android:text="Session Expired"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp" />
+
+    <!-- Subtitle / Explanation Message -->
+    <TextView
+        android:id="@+id/tvDialogMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/fredokamedium"
+        android:gravity="center"
+        android:lineSpacingExtra="3dp"
+        android:text="Your session has expired. Redirecting to login..."
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp" />
+
+    <!-- Action Button (Brand red filled pill) -->
+    <TextView
+        android:id="@+id/btnPositive"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/bg_btn_dialog_filled_red"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/fredokasemibold"
+        android:gravity="center"
+        android:text="Log In Now"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+</LinearLayout>

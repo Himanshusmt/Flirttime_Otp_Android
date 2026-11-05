@@ -3,6 +3,7 @@ package com.flirttime.core.network
 import android.content.Context
 import com.flirttime.BuildConfig
 import com.flirttime.core.common.NetworkUtils
+import com.flirttime.core.common.SessionExpiryManager
 import com.flirttime.core.database.SessionManager
 import okhttp3.Cache
 import okhttp3.CacheControl
@@ -19,7 +20,11 @@ object NetworkModuleProvider {
     private const val CACHE_SIZE = 20L * 1024 * 1024 // 20 MB Cache
     private const val TIMEOUT_SECONDS = 30L
 
-    fun provideOkHttpClient(context: Context, sessionManager: SessionManager): OkHttpClient {
+    fun provideOkHttpClient(
+        context: Context,
+        sessionManager: SessionManager,
+        sessionExpiryManager: SessionExpiryManager? = null
+    ): OkHttpClient {
         val cacheDir = File(context.cacheDir, "http_cache")
         val cache = Cache(cacheDir, CACHE_SIZE)
 
@@ -48,7 +53,22 @@ object NetworkModuleProvider {
             requestBuilder.header("Accept", "application/json")
             requestBuilder.header("Accept-Language", "en")
             requestBuilder.header("Device", "android")
-            chain.proceed(requestBuilder.build())
+            val response = chain.proceed(requestBuilder.build())
+
+            if (response.code == 401 && token.isNotBlank() && sessionExpiryManager != null) {
+                val path = original.url.encodedPath
+                // Exclude public auth endpoints that do not rely on an active session
+                val isAuthVerificationEndpoint = path.contains("auth/phone/verify-otp") ||
+                        path.contains("auth/email/verify-otp") ||
+                        path.contains("auth/phone/request-otp") ||
+                        path.contains("auth/email/request-otp")
+
+                if (!isAuthVerificationEndpoint) {
+                    sessionExpiryManager.handleSessionExpired("HTTP 401 Unauthorized at $path")
+                }
+            }
+
+            response
         }
 
         val offlineCacheInterceptor = Interceptor { chain ->
