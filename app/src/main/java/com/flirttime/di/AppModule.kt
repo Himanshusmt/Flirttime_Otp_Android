@@ -1,6 +1,7 @@
 package com.flirttime.di
 
 import com.flirttime.core.common.NetworkConnectivityObserver
+import com.flirttime.core.common.SessionExpiryManager
 import org.koin.android.ext.koin.androidContext
 import com.flirttime.core.database.SessionManager
 import com.flirttime.core.network.ApiService
@@ -73,7 +74,10 @@ val appModule = module {
     single { NetworkConnectivityObserver(get()) }
 
     // Network
-    single { NetworkModuleProvider.provideOkHttpClient(get(), get()) }
+    // Session Expiry Coordinator
+    single { SessionExpiryManager(androidContext(), get(), lazy { get<ChatSocketManager>() }) }
+
+    single { NetworkModuleProvider.provideOkHttpClient(get(), get(), get()) }
     single { NetworkModuleProvider.provideRetrofit(get()) }
     single<ApiService> { get<Retrofit>().create(ApiService::class.java) }
     single<AuthApiService> { get<Retrofit>().create(AuthApiService::class.java) }

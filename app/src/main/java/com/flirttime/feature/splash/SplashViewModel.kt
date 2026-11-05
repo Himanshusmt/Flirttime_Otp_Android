@@ -59,7 +59,7 @@ class SplashViewModel(
                         if (resource.code == 401 || resource.code == 403) {
                             // Token is invalid/expired -> Clear session and redirect to Login
                             sessionManager.clearSession()
-                            _navigationEvent.emit(Destination.Login)
+                            _navigationEvent.emit(Destination.Login(sessionExpired = true))
                         } else {
                             // Network failure / temporary server outage -> Gracefully fallback to cached state
                             if (sessionManager.isProfileComplete()) {

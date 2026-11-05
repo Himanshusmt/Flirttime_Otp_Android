@@ -22,6 +22,8 @@ import com.flirttime.R
 import com.flirttime.core.database.SessionManager
 import com.flirttime.core.navigation.AppNavigator
 import com.flirttime.core.navigation.Destination
+import com.flirttime.core.common.SessionExpiryManager
+import com.flirttime.core.ui.dialog.SessionExpiredDialog
 import com.flirttime.databinding.ActivityLoginBinding
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -31,6 +33,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModel()
     private val sessionManager: SessionManager by inject()
+    private val sessionExpiryManager: SessionExpiryManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +44,8 @@ class LoginActivity : AppCompatActivity() {
         setupScreenSpecificEdgeToEdge()
         setupPrivacyPolicySpannable()
         setupListeners()
+        sessionExpiryManager.reset()
+        checkSessionExpiredPrompt()
     }
 
     /**
@@ -52,6 +57,17 @@ class LoginActivity : AppCompatActivity() {
      *   so the screen's red background flows continuously to the bottom edge.
      */
     @Suppress("DEPRECATION")
+    private fun checkSessionExpiredPrompt() {
+        if (intent.getBooleanExtra(AppNavigator.EXTRA_SESSION_EXPIRED, false)) {
+            // Consume the extra so it doesn't re-prompt on configuration changes
+            intent.removeExtra(AppNavigator.EXTRA_SESSION_EXPIRED)
+            SessionExpiredDialog.show(
+                context = this,
+                onConfirm = { /* User is already on LoginActivity */ }
+            )
+        }
+    }
+
     private fun setupLoginWindow() {
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
